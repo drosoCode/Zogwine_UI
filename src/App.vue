@@ -12,6 +12,11 @@
 import MainLayout from './layouts/MainLayout.vue'
 export default {
   components: { MainLayout },
-  name: 'App'
+  name: 'App',
+  meta: {
+    meta: {
+      robots: { name: 'robots', content: 'noindex' }
+    }
+  }
 }
 </script>
