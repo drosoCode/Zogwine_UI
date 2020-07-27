@@ -42,7 +42,7 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
-    path: '/tvshows',
+    path: '/tvshow',
     name: 'tvshows',
     component: () => import('pages/tvs/Main.vue'),
     beforeEnter: isAuthenticated
