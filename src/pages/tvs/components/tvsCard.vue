@@ -2,7 +2,7 @@
     <div class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
       <router-link :to="link">
         <q-card class="tvs_card">
-            <q-img class="tvs_img" :src="img">
+            <q-img class="tvs_img" :src="$store.getters.imageEndpoint + img">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ title }}</div>
                     <div class="text-subtitle2">{{ watchedEp }} / {{ nbEp }}</div>

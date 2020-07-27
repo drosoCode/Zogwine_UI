@@ -4,8 +4,8 @@
       style="height: 22em;"
       class="q-mx-xl"
     >
-    <div class="row no-wrap">
-        <tvsCard class="seasonCard" v-for="item in seasons" v-bind:title="item.title" v-bind:link="{name: 'season', params: {id: idShow, season: item.season}}" v-bind:img="$store.getters.imageEndpoint+item.icon" v-bind:nbEp="item.episodes" v-bind:watchedEp="item.watchedEpisodes"></tvsCard>
+    <div class="row wrap no-wrap-sm">
+        <tvsCard class="seasonCard" v-for="item in seasons" v-bind:title="item.title" v-bind:link="{name: 'season', params: {id: idShow, season: item.season}}" v-bind:img="item.icon" v-bind:nbEp="item.episodes" v-bind:watchedEp="item.watchedEpisodes"></tvsCard>
     </div>
     </q-scroll-area>
 </template>

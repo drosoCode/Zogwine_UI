@@ -1,6 +1,6 @@
 <template>
   <q-page class="row wrap justify-around">
-    <tvsCard v-for="item in tvs" v-bind:title="item.title" v-bind:link="{name: 'tvshow', params: {id: item.id}}" v-bind:img="$store.getters.imageEndpoint+item.icon" v-bind:nbEp="item.episodes" v-bind:watchedEp="item.watchedEpisodes"></tvsCard>
+    <tvsCard v-for="item in tvs" v-bind:title="item.title" v-bind:link="{name: 'tvshow', params: {id: item.id}}" v-bind:img="item.icon" v-bind:nbEp="item.episodes" v-bind:watchedEp="item.watchedEpisodes"></tvsCard>
   </q-page>
 </template>
 

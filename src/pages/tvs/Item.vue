@@ -1,11 +1,11 @@
 <template>
   <q-page>
-    <div class="bg-image" :style="{backgroundImage: 'url(\''+ $store.getters.imageEndpoint + tvs.fanart + '\')'}"></div>
+    <backgroundImage :image="tvs.fanart"/>
 
     <div class="row wrap justify-around">
       <q-img :src="$store.getters.imageEndpoint+tvs.icon" class="col-3 q-mt-lg tvsIcon rounded-borders"></q-img>
 
-      <q-card class="col-5 q-mt-lg tvsCard">
+      <q-card class="col-12 col-sm-4 col-md-5 q-mt-lg tvsCard">
         <q-card-section>
           <div class="text-h6">{{ tvs.title }}</div>
         </q-card-section>
@@ -25,26 +25,13 @@
       </q-card>
     </div>
     <br>
-    <div class="">
-      <seasons :idShow="$route.params.id" />
-      <br><br>
-    </div>
+    <seasons :idShow="$route.params.id" />
+    <br><br>
 
   </q-page>
 </template>
 
 <style scoped>
-.bg-image {
-  width: 100%;
-  height: 57rem;
-  filter: blur(3px) brightness(50%);
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  overflow: hidden;
-  position: fixed;
-}
 .tvsIcon {
   height: 30rem;
   width: 23em;
@@ -58,10 +45,11 @@
 
 <script>
 import Vue from 'vue'
-import seasons from 'pages/tvs/components/seasons'
+import seasons from './components/seasons'
+import backgroundImage from './components/backgroundImage'
 
 export default Vue.extend({
-  components: { seasons },
+  components: { seasons, backgroundImage },
   data () {
     return {
       tvs: []
