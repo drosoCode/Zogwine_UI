@@ -4,6 +4,7 @@
 
     <div class="row wrap justify-around">
       <q-img :src="$store.getters.imageEndpoint+tvs.icon" class="col-3 q-mt-lg tvsIcon rounded-borders"></q-img>
+
       <q-card class="col-5 q-mt-lg tvsCard">
         <q-card-section>
           <div class="text-h6">{{ tvs.title }}</div>
@@ -24,8 +25,9 @@
       </q-card>
     </div>
     <br>
-    <div class="row wrap justify-around">
-
+    <div class="">
+      <seasons :idShow="$route.params.id" />
+      <br><br>
     </div>
 
   </q-page>
@@ -50,13 +52,16 @@
 .tvsCard {
   height: 30rem;
   opacity: 0.8;
+  overflow: scroll;
 }
 </style>
 
 <script>
 import Vue from 'vue'
+import seasons from 'pages/tvs/components/seasons'
 
 export default Vue.extend({
+  components: { seasons },
   data () {
     return {
       tvs: []
