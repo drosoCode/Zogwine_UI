@@ -5,6 +5,7 @@
         <h3>
           Error 404
         </h3>
+        <h6>Token: {{ $store.getters.token }}</h6>
         <pre class="text-black">
                                                        ▓▓▓▓▓▓▓▓▓▓
               ▓▓▓▓  ▓▓▓▓▓▓▓▓▓▓▓▓  ▓▓▓▓              ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
