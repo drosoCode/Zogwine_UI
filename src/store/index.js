@@ -9,7 +9,8 @@ export default new Vuex.Store({
     baseURL: 'http://192.168.1.64:8083',
     appName: 'Zogwine',
     token: localStorage.getItem('zogwine-token') || null,
-    userData: []
+    userData: [],
+    darkMode: null
   },
   getters: {
     imageEndpoint: state => {
@@ -49,6 +50,23 @@ export default new Vuex.Store({
       } else {
         return null
       }
+    },
+    darkMode: (state) => {
+      if (state.darkMode === null) {
+        if (localStorage.getItem('zogwine-dark') !== null) {
+          if (localStorage.getItem('zogwine-dark') === 'true') {
+            state.darkMode = true
+          } else {
+            state.darkMode = false
+          }
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          state.darkMode = true
+        } else {
+          state.darkMode = false
+        }
+        localStorage.setItem('zogwine-dark', state.darkMode)
+      }
+      return state.darkMode
     }
   },
   actions: {
@@ -74,6 +92,13 @@ export default new Vuex.Store({
         state.isAdmin = false
         state.userData = []
         localStorage.removeItem('zogwine-token')
+        resolve(true)
+      })
+    },
+    darkMode ({ state }, status) {
+      return new Promise((resolve) => {
+        state.darkMode = status
+        localStorage.setItem('zogwine-dark', status)
         resolve(true)
       })
     }

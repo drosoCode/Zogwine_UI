@@ -23,7 +23,14 @@
         </q-toolbar-title>
 
         <!--<div>Quasar v{{ $q.version }}</div>-->
-      <q-btn flat icon="mdi-exit-to-app" :label="$store.getters.username" @click="logout" v-if="$store.getters.isAuthenticated"/>
+        <q-toggle
+          v-model="dark"
+          checked-icon="mdi-weather-night"
+          color="black"
+          unchecked-icon="mdi-white-balance-sunny"
+          @input="darkMode"
+        />
+        <q-btn flat icon="mdi-exit-to-app" :label="$store.getters.username" @click="logout" v-if="$store.getters.isAuthenticated"/>
       </q-toolbar>
     </q-header>
 
@@ -146,18 +153,23 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      miniState: true
+      miniState: true,
+      dark: false
     }
-  },
-  mounted: function () {
-    this.$q.dark.set(true)
   },
   methods: {
     logout: function () {
       this.$store.dispatch('logout').then((resp) => {
         this.$router.push('/login')
       })
+    },
+    darkMode: function () {
+      this.$store.dispatch('darkMode', this.dark)
+      this.$q.dark.set(this.dark)
     }
+  },
+  mounted: function () {
+    this.dark = this.$store.getters.darkMode
   }
 }
 </script>
