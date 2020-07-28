@@ -13,6 +13,7 @@
                     Premiered: {{ season.premiered }} <br>
                     <br>
                     <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ season.watchedEpisodes }} / {{ season.episodes }}</q-chip>
+                    <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />
                 </div>
                 <div class="col-12 col-md-6 q-pt-md">
                     {{ overview }}
@@ -92,6 +93,19 @@ export default Vue.extend({
       .then((response) => {
         this.tvs = response
       })
+  },
+  methods: {
+    toggleSeason: function () {
+      this.$apiCall('tvs/toggleSeasonStatus?idShow=' + this.$route.params.id + '&season=' + this.$route.params.season)
+        .then((response) => {
+          this.$q.notify({
+            message: 'Season status changed',
+            icon: 'done',
+            position: 'bottom-left',
+            color: 'teal'
+          })
+        })
+    }
   }
 })
 </script>
