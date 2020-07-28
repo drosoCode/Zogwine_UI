@@ -2,7 +2,7 @@
     <div class="q-px-md q-pt-md col-xs-6 col-sm-5 col-md-3 col-lg-3 col-xl-2">
       <router-link :to="link">
         <q-card class="epCard">
-            <q-img :src="$store.getters.imageEndpoint + img" basic>
+            <q-img :src="image" basic>
                 <div class="absolute-bottom text-h6">
                     E{{ episode }} - {{ title }}
                 </div>
@@ -38,6 +38,13 @@ export default defineComponent({
         return 'teal'
       } else {
         return 'red'
+      }
+    },
+    image: function () {
+      if (this.img !== null) {
+        return this.$store.getters.imageEndpoint + this.img
+      } else {
+        return this.$store.getters.imageEndpoint + 'static/icons/undefinedEp.png'
       }
     }
   },
