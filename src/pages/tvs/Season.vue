@@ -10,11 +10,12 @@
                     <div class="text-h6">{{ tvs.title }} - {{ season.title }}</div>
                     Season: {{ season.season }} <br>
                     Episodes: {{ season.episodes }} <br>
+                    Premiered: {{ season.premiered }} <br>
                     <br>
                     <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ season.watchedEpisodes }} / {{ season.episodes }}</q-chip>
                 </div>
                 <div class="col-12 col-md-6 q-pt-md">
-                    {{ description }}
+                    {{ overview }}
                 </div>
         </q-card>
 
@@ -34,8 +35,6 @@
 .tvsCard {
   width: 100%;
   opacity: 0.8;
-  /*height: 30rem;
-  overflow: scroll;*/
 }
 </style>
 
@@ -72,7 +71,7 @@ export default Vue.extend({
         return 'schedule'
       }
     },
-    description: function () {
+    overview: function () {
       if (this.season.overview === '') {
         return 'No data available'
       } else {
