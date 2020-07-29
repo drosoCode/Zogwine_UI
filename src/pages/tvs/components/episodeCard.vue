@@ -12,7 +12,11 @@
       <q-dialog v-model="details" position="right" full-height>
         <q-card>
             <q-card-section>
-              <div class="text-h6">Episode {{ episode }}: {{ title }}</div>
+              <div class="text-h6">
+                Episode {{ episode }}: {{ title }}
+                &nbsp;&nbsp;
+                <q-btn color="primary" label="Toggle" size="sm" @click="toggleEpisodeStatus" />
+              </div>
             </q-card-section>
             <q-separator inset />
             <q-card-section>
@@ -52,6 +56,17 @@ export default defineComponent({
     },
     download: function () {
       console.log('download')
+    },
+    toggleEpisodeStatus: function () {
+      this.$apiCall('tvs/toggleEpisodeStatus?idEpisode=' + this.id)
+        .then((response) => {
+          this.$q.notify({
+            message: 'Episode status updated',
+            icon: 'done',
+            position: 'bottom-left',
+            color: 'teal'
+          })
+        })
     }
   },
   computed: {
@@ -78,9 +93,6 @@ export default defineComponent({
       required: true
     },
     img: {
-      required: true
-    },
-    link: {
       required: true
     },
     episode: {
