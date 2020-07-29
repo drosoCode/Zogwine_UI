@@ -16,11 +16,7 @@
 <style scoped>
 .body--dark .epCard:hover {
     box-shadow: 6px 10px #000000;
-}/*
-.epCardH {
-    height: 14em;
-    width: 18em;
-}*/
+}
 </style>
 
 <script>
