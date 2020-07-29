@@ -7,10 +7,6 @@
                     E{{ episode }} - {{ title }}
                 </div>
             </q-img>
-            <!--
-            <q-card-section>
-                {{ overview }}
-            </q-card-section>-->
             <q-linear-progress value="100" :color="barColor"/>
         </q-card>
       </router-link>
@@ -44,21 +40,18 @@ export default defineComponent({
       if (this.img !== null) {
         return this.$store.getters.imageEndpoint + this.img
       } else {
-        return this.$store.getters.imageEndpoint + 'static/icons/undefinedEp.png'
+        return this.$store.getters.imageEndpoint + '/static/icons/undefinedEp.png'
       }
     }
   },
   props: {
     title: {
-      type: String,
       required: true
     },
     overview: {
-      type: String,
       required: true
     },
     img: {
-      type: String,
       required: false,
       default: 'https://cdn.quasar.dev/img/parallax1.jpg'
     },
@@ -66,11 +59,9 @@ export default defineComponent({
       required: true
     },
     episode: {
-      type: Number,
       required: true
     },
     watchCount: {
-      type: Number,
       required: true
     }
   }

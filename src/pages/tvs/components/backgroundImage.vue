@@ -23,7 +23,6 @@ export default defineComponent({
   name: 'backgroundImage',
   props: {
     image: {
-      type: String,
       required: true
     }
   }

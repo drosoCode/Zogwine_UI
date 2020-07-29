@@ -14,7 +14,7 @@ export default new Vuex.Store({
   },
   getters: {
     imageEndpoint: state => {
-      return state.baseURL + '/'
+      return state.baseURL
     },
     token: state => {
       return state.token
