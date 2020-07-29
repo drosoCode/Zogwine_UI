@@ -2,22 +2,22 @@
   <q-page>
     <backgroundImage :image="tvs.fanart"/>
 
-    <div class="row wrap justify-around machin">
+    <div class="row wrap justify-around">
 
         <q-card class="q-ma-sm-lg tvsCard row">
-                <q-img :src="$store.getters.imageEndpoint+season.icon" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>
-                <div class="col-xs-5 col-sm-8 col-md-4 q-pt-md q-pl-md">
-                    <div class="text-h6">{{ tvs.title }} - {{ season.title }}</div>
-                    Season: {{ season.season }} <br>
-                    Episodes: {{ season.episodes }} <br>
-                    Premiered: {{ season.premiered }} <br>
-                    <br>
-                    <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ season.watchedEpisodes }} / {{ season.episodes }}</q-chip>
-                    <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />
-                </div>
-                <div class="col-12 col-md-6 q-pt-md">
-                    {{ overview }}
-                </div>
+            <q-img :src="$store.getters.imageEndpoint+season.icon" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>
+            <div class="col-xs-5 col-sm-8 col-md-4 q-pt-md q-pl-md">
+                <div class="text-h6">{{ tvs.title }} - {{ season.title }}</div>
+                Season: {{ season.season }} <br>
+                Episodes: {{ season.episodes }} <br>
+                Premiered: {{ season.premiered }} <br>
+                <br>
+                <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ season.watchedEpisodes }} / {{ season.episodes }}</q-chip>
+                <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />
+            </div>
+            <div class="col-12 col-md-6 q-pt-md">
+                {{ overview }}
+            </div>
         </q-card>
 
         <episodeCard v-for="item in episodes" v-bind:title="item.title" v-bind:overview="item.overview" v-bind:link="{name: 'season', params: {id: $route.params.id, season: $route.params.season}}" v-bind:img="item.icon" v-bind:episode="item.episode" v-bind:watchCount="item.watchCount"></episodeCard>
