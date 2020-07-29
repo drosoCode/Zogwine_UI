@@ -1,15 +1,29 @@
 <template>
-    <div class="q-px-md q-pt-md col-xs-6 col-sm-5 col-md-3 col-lg-3 col-xl-2">
-      <router-link :to="link">
-        <q-card class="epCard">
+    <div>
+        <q-card class="epCard" @click="play">
             <q-img :src="image" basic>
-                <div class="absolute-bottom text-h6">
+                <div class="absolute-bottom text-h6" @click="showDetails">
                     E{{ episode }} - {{ title }}
                 </div>
             </q-img>
             <q-linear-progress value="100" :color="barColor"/>
         </q-card>
-      </router-link>
+
+      <q-dialog v-model="details" position="right" full-height>
+        <q-card>
+            <q-card-section>
+              <div class="text-h6">Episode {{ episode }}: {{ title }}</div>
+            </q-card-section>
+            <q-separator inset />
+            <q-card-section>
+              <q-btn color="teal" class="full-width" label="Play" icon="play_arrow" @click="play" />
+              <br><br>
+              <q-btn color="orange" class="full-width" label="Download" icon="cloud_download" @click="download" />
+              <br><br>
+              {{ overview }}
+            </q-card-section>
+          </q-card>
+      </q-dialog>
     </div>
 </template>
 
@@ -24,6 +38,22 @@ import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   name: 'episodeCard',
+  data () {
+    return {
+      details: false
+    }
+  },
+  methods: {
+    showDetails: function () {
+      this.details = true
+    },
+    play: function () {
+      console.log('play')
+    },
+    download: function () {
+      console.log('download')
+    }
+  },
   computed: {
     barColor: function () {
       if (this.watchCount > 0) {
@@ -48,8 +78,7 @@ export default defineComponent({
       required: true
     },
     img: {
-      required: false,
-      default: 'https://cdn.quasar.dev/img/parallax1.jpg'
+      required: true
     },
     link: {
       required: true
@@ -58,6 +87,9 @@ export default defineComponent({
       required: true
     },
     watchCount: {
+      required: true
+    },
+    id: {
       required: true
     }
   }
