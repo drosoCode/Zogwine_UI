@@ -92,7 +92,13 @@ const routes = [
   {
     path: '/player',
     name: 'player',
-    component: () => import('pages/Error404.vue'),
+    component: () => import('pages/player/Main.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/player/:mediaType/:data',
+    name: 'playItem',
+    component: () => import('pages/player/Item.vue'),
     beforeEnter: isAuthenticated
   },
   {
