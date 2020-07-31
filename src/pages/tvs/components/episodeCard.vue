@@ -2,14 +2,14 @@
     <div>
         <q-card class="epCard" @click="play">
             <q-img :src="image" basic>
-                <div class="absolute-bottom text-h6" @click="showDetails">
+                <div class="absolute-bottom text-h6" @click.stop="showDetails">
                     E{{ episode }} - {{ title }}
                 </div>
             </q-img>
             <q-linear-progress value="100" :color="barColor"/>
         </q-card>
 
-      <q-dialog v-model="details" position="right" full-height>
+      <q-dialog v-model="details" position="right" full-height @click="hideDetails">
         <q-card>
             <q-card-section>
               <div class="text-h6">
@@ -51,8 +51,12 @@ export default defineComponent({
     showDetails: function () {
       this.details = true
     },
+    hideDetails: function () {
+      this.details = false
+    },
     play: function () {
       console.log('play')
+      this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.id } })
     },
     download: function () {
       console.log('download')
