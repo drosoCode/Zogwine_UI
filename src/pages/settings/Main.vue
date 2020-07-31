@@ -23,7 +23,7 @@
                 <q-card>
                     <q-card-section>
                         <h5>Actions</h5>
-                        <q-btn color="orange" label="Refresh Library" icon="refresh" @click="refreshLib" />&nbsp;
+                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" @click="refreshTVS" />&nbsp;
                         <q-btn color="orange" label="Refresh Cache" icon="refresh" @click="refreshCache" />
                     </q-card-section>
                 </q-card>
@@ -76,14 +76,14 @@ export default Vue.extend({
       })
   },
   methods: {
-    refreshLib: function () {
+    refreshTVS: function () {
       this.$q.notify({
         message: 'Scanning Library',
         icon: 'done',
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('core/runScan')
+      this.$apiCall('tvs/runScan')
     },
     refreshCache: function () {
       this.$q.notify({
