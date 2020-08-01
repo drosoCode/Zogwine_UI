@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Notify } from 'quasar'
 
 export default ({ Vue, store, router }) => {
-  Vue.prototype.$apiCall = function (data) {
+  Vue.prototype.$apiCall = function (data, displayErrors = true) {
     return new Promise((resolve) => {
       let url = store.state.baseURL + '/api/' + data
       if (data.includes('?')) {
@@ -15,33 +15,37 @@ export default ({ Vue, store, router }) => {
         .then((response) => {
           resolve(response.data)
         }).catch((error) => {
-          if (error.response.status === 401) {
-            Notify.create({
-              message: 'Not Authenticated',
-              icon: 'mdi-alert',
-              position: 'bottom-left',
-              color: 'red'
-            })
-            store.dispatch('logout').then(() => {
-              router.push('/login')
-            })
-          } else if (error.response.status === 403) {
-            Notify.create({
-              message: 'Not Authorized',
-              icon: 'mdi-alert',
-              position: 'bottom-left',
-              color: 'red'
-            })
-            router.push('/')
+          if (displayErrors) {
+            if (error.response.status === 401) {
+              Notify.create({
+                message: 'Not Authenticated',
+                icon: 'mdi-alert',
+                position: 'bottom-left',
+                color: 'red'
+              })
+              store.dispatch('logout').then(() => {
+                router.push('/login')
+              })
+            } else if (error.response.status === 403) {
+              Notify.create({
+                message: 'Not Authorized',
+                icon: 'mdi-alert',
+                position: 'bottom-left',
+                color: 'red'
+              })
+              router.push('/')
+            } else {
+              Notify.create({
+                message: 'Network Error',
+                icon: 'mdi-alert',
+                position: 'bottom-left',
+                color: 'red'
+              })
+            }
+            resolve(null)
           } else {
-            Notify.create({
-              message: 'Network Error',
-              icon: 'mdi-alert',
-              position: 'bottom-left',
-              color: 'red'
-            })
+            resolve(error.response.status)
           }
-          resolve(null)
         })
     })
   }

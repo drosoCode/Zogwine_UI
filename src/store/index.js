@@ -16,6 +16,9 @@ export default new Vuex.Store({
     imageEndpoint: state => {
       return state.baseURL
     },
+    apiEndpoint: state => {
+      return state.baseURL + '/api/'
+    },
     token: state => {
       return state.token
     },
