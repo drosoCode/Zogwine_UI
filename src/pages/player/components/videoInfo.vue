@@ -68,11 +68,9 @@ video, .video-js {
 
 <script>
 import { defineComponent } from '@vue/composition-api'
-import customSlider from './customSlider'
 
 export default defineComponent({
   name: 'videoInfo',
-  components: { customSlider },
   data () {
     return {
       fileInfos: [],
