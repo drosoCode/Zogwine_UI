@@ -6,7 +6,7 @@
                     E{{ episode }} - {{ title }}
                 </div>
             </q-img>
-            <q-linear-progress value="100" :color="barColor"/>
+            <q-linear-progress :value="100" :color="barColor"/>
         </q-card>
 
       <q-dialog v-model="details" position="right" full-height @click="hideDetails">

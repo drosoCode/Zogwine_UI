@@ -36,14 +36,14 @@
         </div>
 
         <div v-if="playing && nativePlayer">
-            <video controls>
+            <video controls ref="videoPlayer">
                 <source :src="videoUrl" type="video/mp4">
                 <p>HTML5 video error</p>
             </video>
         </div>
 
         <div v-if="playing && !nativePlayer" :hidden="loading">
-            <video ref="videojsPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>
+            <video ref="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>
         </div>
 
         <div v-if="loading">
@@ -59,11 +59,20 @@
     </div>
 </template>
 
+<style scoped>
+video, .video-js {
+  width: 90vw;
+  height:90vh;
+}
+</style>
+
 <script>
 import { defineComponent } from '@vue/composition-api'
+import customSlider from './customSlider'
 
 export default defineComponent({
   name: 'videoInfo',
+  components: { customSlider },
   data () {
     return {
       fileInfos: [],
@@ -84,7 +93,7 @@ export default defineComponent({
       videoUrl: null,
       loading: false,
       videojsPlayer: null,
-      interval: null
+      loadingInterval: null
     }
   },
   mounted () {
@@ -98,6 +107,8 @@ export default defineComponent({
           this.subStreamValue = this.subStream[0]
         }
       })
+    window.addEventListener('hashchange', () => this.stopPlayer())
+    window.addEventListener('beforeunload', () => this.stopPlayer())
   },
   computed: {
     duration: function () {
@@ -129,12 +140,18 @@ export default defineComponent({
       } else {
         this.nativePlayer = false
         // start transcoding
-        const audio = this.audioStreamValue.value || '0'
-        const sub = this.subStreamValue.value || '0'
+        let audio = '0'
+        if (this.audioStreamValue !== null) {
+          audio = this.audioStreamValue.value
+        }
+        let sub = '-1'
+        if (this.subStreamValue !== null) {
+          sub = this.subStreamValue.value
+        }
         this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + this.startFromValue + '&resize=' + this.resizeValue.value)
           .then(() => {
             this.loading = true
-            this.interval = setInterval(this.checkPlaylist, 10000)
+            this.loadingInterval = setInterval(this.checkPlaylist, 10000)
           })
       }
     },
@@ -144,18 +161,37 @@ export default defineComponent({
           if (resp !== 404) {
             // playlist is available, stop loading
             this.loading = false
-            clearInterval(this.interval)
-            this.interval = null
+            clearInterval(this.loadingInterval)
+            this.loadingInterval = null
             // play playlist
             const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
-            this.videojsPlayer = this.$videojs(this.$refs.videojsPlayer, { liveui: true, autoplay: true })
+            this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
             this.videojsPlayer.src({
               src: videoUrl,
               type: 'application/x-mpegURL'
             })
           }
         })
+    },
+    stopPlayer: function () {
+      if (this.loadingInterval !== null) {
+        clearInterval(this.loadingInterval)
+      }
+      if (this.playing) {
+        if (this.videojsPlayer !== null) {
+          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + this.videojsPlayer.currentTime())
+          this.videojsPlayer.dispose()
+        } else if (this.$refs.videoPlayer !== undefined) {
+          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + this.$refs.videoPlayer.currentTime)
+        } else {
+          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=0')
+        }
+        this.playing = false
+      }
     }
+  },
+  beforeDestroy: function () {
+    this.stopPlayer()
   },
   props: {
     mediaType: {
