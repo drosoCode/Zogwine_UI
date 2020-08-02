@@ -100,6 +100,12 @@ export default defineComponent({
     this.$apiCall('player/getInfos?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
       .then((response) => {
         this.fileInfos = response
+        if (this.fileInfos.general.format.includes('mp4')) {
+          // if format is natively supported, start playing
+          this.playing = true
+          this.nativePlayer = true
+          this.videoUrl = this.$store.getters.apiEndpoint + 'player/getFile?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+        }
         if (this.audioStream.length > 0) {
           this.audioStreamValue = this.audioStream[0]
         }
@@ -133,27 +139,22 @@ export default defineComponent({
   },
   methods: {
     playVideo: function () {
+      // start transcoding
       this.playing = true
-      if (this.fileInfos.general.format.includes('mp4')) {
-        this.nativePlayer = true
-        this.videoUrl = this.$store.getters.apiEndpoint + 'player/getFile?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
-      } else {
-        this.nativePlayer = false
-        // start transcoding
-        let audio = '0'
-        if (this.audioStreamValue !== null) {
-          audio = this.audioStreamValue.value
-        }
-        let sub = '-1'
-        if (this.subStreamValue !== null) {
-          sub = this.subStreamValue.value
-        }
-        this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + this.startFromValue + '&resize=' + this.resizeValue.value)
-          .then(() => {
-            this.loading = true
-            this.loadingInterval = setInterval(this.checkPlaylist, 10000)
-          })
+      this.nativePlayer = false
+      let audio = '0'
+      if (this.audioStreamValue !== null) {
+        audio = this.audioStreamValue.value
       }
+      let sub = '-1'
+      if (this.subStreamValue !== null) {
+        sub = this.subStreamValue.value
+      }
+      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + this.startFromValue + '&resize=' + this.resizeValue.value)
+        .then(() => {
+          this.loading = true
+          this.loadingInterval = setInterval(this.checkPlaylist, 10000)
+        })
     },
     checkPlaylist: function () {
       this.$apiCall('player/m3u8', false)
