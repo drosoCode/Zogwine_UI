@@ -121,10 +121,9 @@ module.exports = function (/* ctx */) {
         name: 'Zogwine',
         short_name: 'Zogwine',
         description: 'Media Control App',
-        display: 'standalone',
-        orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#027be3',
+        display: 'fullscreen',
+        background_color: '#121212',
+        theme_color: '#111111',
         icons: [
           {
             src: 'icons/icon-128x128.png',
@@ -151,7 +150,16 @@ module.exports = function (/* ctx */) {
             sizes: '512x512',
             type: 'image/png'
           }
-        ]
+        ],
+        share_target: {
+          action: '/api/share/',
+          method: 'GET',
+          params: {
+            title: 'title',
+            text: 'text',
+            url: 'url'
+          }
+        }
       }
     },
 
