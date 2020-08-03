@@ -85,7 +85,7 @@ export default defineComponent({
       if (this.img !== null) {
         return this.$store.getters.imageEndpoint + this.img
       } else {
-        return this.$store.getters.imageEndpoint + '/static/icons/undefinedEp.png'
+        return '/images/undefined_h.png'
       }
     }
   },
