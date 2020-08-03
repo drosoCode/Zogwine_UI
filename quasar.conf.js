@@ -56,7 +56,7 @@ module.exports = function (/* ctx */) {
       // rtl: false, // https://quasar.dev/options/rtl-support
       // preloadChunks: true,
       // showProgress: false,
-      // gzip: true,
+      gzip: true,
       // analyze: true,
 
       // Options below are automatically set depending on the env, set them if you want to override
@@ -152,7 +152,7 @@ module.exports = function (/* ctx */) {
           }
         ],
         share_target: {
-          action: '/api/share/',
+          action: '#/player',
           method: 'GET',
           params: {
             title: 'title',
@@ -192,7 +192,6 @@ module.exports = function (/* ctx */) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-
         appId: 'zogwine'
       },
 
