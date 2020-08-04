@@ -32,7 +32,7 @@ const routes = [
   {
     name: 'home',
     path: '/',
-    component: () => import('pages/Error404.vue'),
+    component: () => import('pages/home/Main.vue'),
     beforeEnter: isAuthenticated
   },
   {
