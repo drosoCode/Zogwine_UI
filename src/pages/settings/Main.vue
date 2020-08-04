@@ -24,6 +24,7 @@
                     <q-card-section>
                         <h5>Actions</h5>
                         <q-btn color="orange" label="Refresh TVS Library" icon="refresh" @click="refreshTVS" />&nbsp;
+                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" @click="refreshUEp" />&nbsp;
                         <q-btn color="orange" label="Refresh Cache" icon="refresh" @click="refreshCache" />
                     </q-card-section>
                 </q-card>
@@ -84,6 +85,15 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('tvs/runScan')
+    },
+    refreshUEp: function () {
+      this.$q.notify({
+        message: 'Scanning Upcoming Episodes',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('tvs/runUpcomingScan')
     },
     refreshCache: function () {
       this.$q.notify({
