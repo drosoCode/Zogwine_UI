@@ -70,7 +70,7 @@ video, .video-js {
 import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
-  name: 'videoInfo',
+  name: 'videoPlayer',
   data () {
     return {
       fileInfos: [],
