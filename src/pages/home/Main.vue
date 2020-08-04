@@ -12,7 +12,7 @@
       <div class="row wrap">
         <h4 class="q-ma-xs">Upcoming Episodes</h4>
         <q-separator/>
-          <episodeCard v-for="item in ep" :key="item.id" class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" :date="item.date" :img="item.icon" :title="item.title" :overview="item.overview" :season="item.season" :episode="item.episode" :showTitle="item.showTitle"/>
+          <episodeCard v-for="item in ep" :key="item.id" class="col-xs-6 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-px-md q-pt-md" :date="item.date" :img="item.icon" :title="item.title" :overview="item.overview" :season="item.season" :episode="item.episode" :showTitle="item.showTitle"/>
       </div>
     </div>
 </template>
