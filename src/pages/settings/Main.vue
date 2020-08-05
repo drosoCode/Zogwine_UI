@@ -23,11 +23,11 @@
                 <q-card>
                     <q-card-section>
                         <h5>Actions</h5>
-                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" @click="refreshTVS" />&nbsp;
-                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" @click="refreshMovies" />&nbsp;
-                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" @click="refreshUEp" />&nbsp;
-                        <q-btn color="orange" label="Refresh Cache" icon="refresh" @click="refreshCache" />&nbsp;
-                        <q-btn color="orange" label="Refresh Persons" icon="refresh" @click="refreshPersons" />&nbsp;
+                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" class="q-ma-sm" @click="refreshTVS" />
+                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" />
+                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" />
+                        <q-btn color="orange" label="Refresh Cache" icon="refresh" class="q-ma-sm" @click="refreshCache" />
+                        <q-btn color="orange" label="Refresh Persons" icon="refresh" class="q-ma-sm" @click="refreshPersons" />
                     </q-card-section>
                 </q-card>
             </q-tab-panel>
