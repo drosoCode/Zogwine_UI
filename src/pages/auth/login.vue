@@ -36,7 +36,7 @@ export default Vue.extend({
     login: function () {
       this.$store.dispatch('login', [this.username, this.password, this.remember]).then((resp) => {
         if (resp) {
-          this.$router.push('/')
+          this.$router.push(this.$route.query.redirect || '/')
         } else {
           this.$q.notify({
             message: 'Login Failed',

@@ -4,7 +4,7 @@ const isAuthenticated = (to, from, next) => {
   if (store.getters.isAuthenticated) {
     next()
   } else {
-    next('/login')
+    next({ name: 'login', query: { redirect: to.path } })
   }
 }
 
