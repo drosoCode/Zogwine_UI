@@ -24,7 +24,7 @@ export default ({ Vue, store, router }) => {
                 color: 'red'
               })
               store.dispatch('logout').then(() => {
-                router.push('/login')
+                router.push({ name: 'login', query: { redirect: this.$route.currentRoute.path } })
               })
             } else if (error.response.status === 403) {
               Notify.create({
