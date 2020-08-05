@@ -24,8 +24,10 @@
                     <q-card-section>
                         <h5>Actions</h5>
                         <q-btn color="orange" label="Refresh TVS Library" icon="refresh" @click="refreshTVS" />&nbsp;
+                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" @click="refreshMovies" />&nbsp;
                         <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" @click="refreshUEp" />&nbsp;
-                        <q-btn color="orange" label="Refresh Cache" icon="refresh" @click="refreshCache" />
+                        <q-btn color="orange" label="Refresh Cache" icon="refresh" @click="refreshCache" />&nbsp;
+                        <q-btn color="orange" label="Refresh Persons" icon="refresh" @click="refreshPersons" />&nbsp;
                     </q-card-section>
                 </q-card>
             </q-tab-panel>
@@ -79,12 +81,21 @@ export default Vue.extend({
   methods: {
     refreshTVS: function () {
       this.$q.notify({
-        message: 'Scanning Library',
+        message: 'Scanning TVS Library',
         icon: 'done',
         position: 'bottom-left',
         color: 'teal'
       })
       this.$apiCall('tvs/runScan')
+    },
+    refreshMovies: function () {
+      this.$q.notify({
+        message: 'Scanning Movies Library',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('movies/runScan')
     },
     refreshUEp: function () {
       this.$q.notify({
@@ -103,6 +114,15 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('core/refreshCache')
+    },
+    refreshPersons: function () {
+      this.$q.notify({
+        message: 'Refreshing Persons',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('core/runPersonsScan')
     },
     refreshLogs: function () {
       this.$apiCall('core/getLogs?amount=50')
