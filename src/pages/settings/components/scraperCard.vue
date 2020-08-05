@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md" v-if="show">
       <q-card class="bg-teal-10 row">
-        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :id="index" :idShow="idShow" :title="item.title" :icon="item.fanart" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.desc" v-on:selected="select"/>
+        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :id="index" :idShow="idShow" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
       </q-card>
     </div>
 </template>
