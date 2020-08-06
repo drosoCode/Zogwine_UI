@@ -12,7 +12,8 @@
             <div class="text-caption text-grey">
               Premiered: {{ date }}<br>
               Scraper: {{ scraper }}<br>
-              In Production: {{ in_production }}<br><br>
+              <span v-if="mediaType === 2">In Production: {{ in_production }}</span>
+              <br><br>
               {{ overview }}
             <q-btn color="teal" class="full-width" label="Select" @click="select"/>
             </div>
@@ -36,35 +37,31 @@ export default defineComponent({
   name: 'scraperItem',
   props: {
     title: {
-      type: String,
       required: true
     },
     overview: {
-      type: String,
       required: true
     },
     icon: {
-      type: String,
       required: true
     },
     scraper: {
-      type: String,
       required: true
     },
     in_production: {
-      type: Boolean,
-      required: true
+      required: false,
+      default: false
     },
     date: {
-      type: String,
       required: true
     },
     id: {
-      type: Number,
       required: true
     },
-    idShow: {
-      type: Number,
+    idMedia: {
+      required: true
+    },
+    mediaType: {
       required: true
     }
   },
@@ -76,7 +73,11 @@ export default defineComponent({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('tvs/setID?idShow=' + this.idShow + '&id=' + this.id)
+      if (this.mediaType === 2) {
+        this.$apiCall('tvs/setID?idShow=' + this.idMedia + '&id=' + this.id)
+      } else if (this.mediaType === 3) {
+        this.$apiCall('movies/setID?idMovie=' + this.idMedia + '&id=' + this.id)
+      }
       this.$emit('selected')
     }
   }

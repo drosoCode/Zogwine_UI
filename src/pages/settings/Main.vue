@@ -34,7 +34,8 @@
 
             <q-tab-panel name="scrapers">
                 <div>
-                    <scraperCard v-for="tvs in scraper_tvs" :data="tvs.multipleResults" :idShow="tvs.id"/>
+                    <scraperCard v-for="tvs in scraper_tvs" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :path="tvs.path"/>
+                    <scraperCard v-for="mov in scraper_movies" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :path="mov.path"/>
                 </div>
             </q-tab-panel>
 
@@ -65,7 +66,8 @@ export default Vue.extend({
     return {
       logs: '',
       tab: 'config',
-      scraper_tvs: []
+      scraper_tvs: [],
+      scraper_movies: []
     }
   },
   mounted () {
@@ -76,6 +78,10 @@ export default Vue.extend({
     this.$apiCall('tvs/getShowsMultipleResults')
       .then((response) => {
         this.scraper_tvs = response
+      })
+    this.$apiCall('movies/getMultipleResults')
+      .then((response) => {
+        this.scraper_movies = response
       })
   },
   methods: {

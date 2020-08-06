@@ -1,7 +1,8 @@
 <template>
   <div class="q-pa-md" v-if="show">
       <q-card class="bg-teal-10 row">
-        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :id="index" :idShow="idShow" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
+        <h6>{{ path }}</h6>
+        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :id="index" :mediaType="mediaType" :idMedia="idMedia" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
       </q-card>
     </div>
 </template>
@@ -24,8 +25,16 @@ export default defineComponent({
       type: String,
       required: true
     },
-    idShow: {
+    idMedia: {
       type: Number,
+      required: true
+    },
+    mediaType: {
+      type: Number,
+      required: true
+    },
+    path: {
+      type: String,
       required: true
     }
   },

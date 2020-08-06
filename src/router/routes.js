@@ -36,9 +36,15 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
-    path: '/movies',
+    path: '/movie',
     name: 'movies',
-    component: () => import('pages/Error404.vue'),
+    component: () => import('pages/movies/Main.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/movie/:id',
+    name: 'movie',
+    component: () => import('pages/movies/Item.vue'),
     beforeEnter: isAuthenticated
   },
   {

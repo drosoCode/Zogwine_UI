@@ -148,7 +148,7 @@ export default defineComponent({
       if (this.subStreamValue !== null) {
         sub = this.subStreamValue.value
       }
-      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + this.startFromValue + '&resize=' + this.resizeValue.value)
+      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value)
         .then(() => {
           this.loading = true
           this.loadingInterval = setInterval(this.checkPlaylist, 10000)
