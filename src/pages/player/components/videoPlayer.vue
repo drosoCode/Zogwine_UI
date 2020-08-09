@@ -23,6 +23,12 @@
                 </template>
             </q-select>
             <br>
+            <q-select v-model="remove3dValue" :options="remove3D" label="Remove 3D" v-if="mediaType == 3">
+                <template v-slot:prepend>
+                    <q-icon name="broken_image" />
+                </template>
+            </q-select>
+            <br>
             <q-slider
                 v-model="startFromValue"
                 :min="startFromMin"
@@ -86,6 +92,12 @@ export default defineComponent({
         { label: '480p', value: 480 },
         { label: '320p', value: 320 }
       ],
+      remove3dValue: { label: 'None', value: -1 },
+      remove3D: [
+        { label: 'None', value: -1 },
+        { label: 'TOP AND BOTTOM', value: 'tab' },
+        { label: 'SIDE BY SIDE', value: 'sbs' }
+      ],
       playing: false,
       nativePlayer: false,
       videoUrl: null,
@@ -148,7 +160,7 @@ export default defineComponent({
       if (this.subStreamValue !== null) {
         sub = this.subStreamValue.value
       }
-      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value)
+      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value)
         .then(() => {
           this.loading = true
           this.loadingInterval = setInterval(this.checkPlaylist, 10000)

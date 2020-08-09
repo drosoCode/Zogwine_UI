@@ -7,7 +7,7 @@
           <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="tv" title="TV Shows" :value="stats.tvsCount" color="secondary"/>
           <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="receipt" title="Episodes" :value="stats.watchedEpCount + '/' + stats.epCount" color="secondary"/>
           <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="schedule" title="Lost Time" :value="stats.lostTime + 'H'" color="negative"/>
-          <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="local_movies" title="Movies" value="0" color="primary"/>
+          <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="local_movies" title="Movies" :value="stats.watchedMoviesCount + '/' + stats.moviesCount" color="primary"/>
       </div>
       <div class="row wrap">
         <h4 class="q-ma-xs">Upcoming Episodes</h4>
