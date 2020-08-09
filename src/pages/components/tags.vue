@@ -87,7 +87,7 @@ export default defineComponent({
     },
     showPeople: function () {
       if (this.people.length === 0) {
-        this.$apiCall('core/getPersons?mediaType=2&mediaData=' + this.idShow)
+        this.$apiCall('core/getPersons?mediaType=' + this.mediaType + '&mediaData=' + this.idMedia)
           .then((response) => {
             this.people = response
             this.showPeopleData = true
@@ -98,13 +98,16 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.$apiCall('core/getTags?mediaType=2&mediaData=' + this.idShow)
+    this.$apiCall('core/getTags?mediaType=' + this.mediaType + '&mediaData=' + this.idMedia)
       .then((response) => {
         this.tags = response
       })
   },
   props: {
-    idShow: {
+    idMedia: {
+      required: true
+    },
+    mediaType: {
       required: true
     }
   }

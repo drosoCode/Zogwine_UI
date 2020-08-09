@@ -51,8 +51,7 @@ export default defineComponent({
     },
     img: {
       type: String,
-      required: false,
-      default: 'https://cdn.quasar.dev/img/parallax1.jpg'
+      required: false
     },
     link: {
       required: true

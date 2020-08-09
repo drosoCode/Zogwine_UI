@@ -41,7 +41,7 @@
 
 <script>
 import Vue from 'vue'
-import backgroundImage from './components/backgroundImage'
+import backgroundImage from '../components/backgroundImage'
 import episodeCard from './components/episodeCard'
 
 export default Vue.extend({
