@@ -5,7 +5,7 @@
 <style scoped>
 .bg-image {
   width: 100%;
-  height: 57rem;
+  height: 1000%;
   filter: blur(3px) brightness(50%);
   background-size: cover;
   background-position: center center;
