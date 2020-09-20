@@ -12,7 +12,6 @@
               <br>
               <q-btn color="secondary" label="Login" type="submit" class="full-width"/>
               <div>
-                <q-btn color="primary" label="Login with WebAuthn" size="sm" @click="webauthn" />
                 <q-checkbox label="Remember Me" v-model="remember" />
               </div>
             </q-form>
