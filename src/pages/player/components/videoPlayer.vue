@@ -1,6 +1,9 @@
 <template>
     <div>
         <div v-if="!playing">
+            <q-btn color="teal" class="full-width" label="Play Video" icon="play_arrow" @click="playNativeVideo" v-if="nativelySupported"/>
+            <br>
+            <br>
             <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.general.video_codec }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="camera">Format: {{ fileInfos.general.format }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="access_time">Duration: {{ duration }} min</q-chip>
@@ -38,7 +41,7 @@
                 color="teal"
             />
             <br>
-            <q-btn color="teal" class="full-width" label="Start" icon="play_arrow" @click="playVideo"/>
+            <q-btn color="teal" class="full-width" label="Start Transcoder" icon="play_arrow" @click="playVideo"/>
         </div>
 
         <div v-if="playing && nativePlayer">
@@ -103,7 +106,8 @@ export default defineComponent({
       videoUrl: null,
       loading: false,
       videojsPlayer: null,
-      loadingInterval: null
+      loadingInterval: null,
+      nativelySupported: false
     }
   },
   mounted () {
@@ -111,10 +115,9 @@ export default defineComponent({
       .then((response) => {
         this.fileInfos = response
         if (this.fileInfos.general.format.includes('mp4')) {
-          // if format is natively supported, start playing
-          this.playing = true
-          this.nativePlayer = true
-          this.videoUrl = this.$store.getters.apiEndpoint + 'player/getFile?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+          // if format is natively supported, display "play native" option
+          console.log('supported')
+          this.nativelySupported = true
         }
         if (this.audioStream.length > 0) {
           this.audioStreamValue = this.audioStream[0]
@@ -148,6 +151,11 @@ export default defineComponent({
     }
   },
   methods: {
+    playNativeVideo: function () {
+      this.playing = true
+      this.nativePlayer = true
+      this.videoUrl = this.$store.getters.apiEndpoint + 'player/getFile?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+    },
     playVideo: function () {
       // start transcoding
       this.playing = true
