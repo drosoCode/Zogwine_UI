@@ -1,27 +1,27 @@
 <template>
     <div>
       <router-link :to="link">
-        <q-card class="mov_card">
-            <q-img class="mov_img" :src="$store.getters.imageEndpoint + img">
+        <q-card class="c_card">
+            <q-img class="c_img" :src="$store.getters.imageEndpoint + img">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ title }}</div>
-                    <div class="text-subtitle2">{{ premiered }}</div>
+                    <div class="text-subtitle2">{{ watchedMovies }} / {{ movieCount }}</div>
                 </div>
             </q-img>
-            <q-linear-progress :value="100" :color="barColor"/>
+            <q-linear-progress :value="watchedPercent" :color="barColor"/>
         </q-card>
       </router-link>
     </div>
 </template>
 
 <style scoped>
-.body--dark .mov_card:hover {
+.body--dark .c_card:hover {
     box-shadow: 6px 10px #000000;
 }
-.mov_card {
+.c_card {
     height: 100%
 }
-.mov_img {
+.c_img {
     height: 100%;
 }
 </style>
@@ -30,13 +30,24 @@
 import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
-  name: 'movCard',
+  name: 'collectionCard',
   computed: {
-    barColor: function () {
-      if (this.watchCount > 0) {
-        return 'teal'
+    watchedPercent: function () {
+      const dat = this.watchedMovies / this.movieCount
+      if (dat === 0) {
+        return 100
       } else {
+        return dat
+      }
+    },
+    barColor: function () {
+      const dat = this.watchedMovies / this.movieCount
+      if (dat === 1) {
+        return 'teal'
+      } else if (dat === 0) {
         return 'red'
+      } else {
+        return 'orange'
       }
     }
   },
@@ -45,15 +56,15 @@ export default defineComponent({
       required: true
     },
     img: {
-      required: true
+      required: false
     },
     link: {
       required: true
     },
-    premiered: {
+    movieCount: {
       required: true
     },
-    watchCount: {
+    watchedMovies: {
       required: true
     }
   }

@@ -1,25 +1,60 @@
 <template>
-  <q-page class="row wrap justify-around">
-    <movCard class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2" v-for="item in movies" :title="item.title" :link="{name: 'movie', params: {id: item.id}}" :img="item.icon" :watchCount="item.watchCount" :premiered="item.premiered"></movCard>
+  <q-page class="row wrap justify-around q-mb-lg">
+      <div v-for="item in display" :key="item.id" class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+        <movCard v-if="'idCollection' in item" :title="item.title" :link="{name: 'movie', params: {id: item.id}}" :img="item.icon" :watchCount="item.watchCount" :premiered="item.premiered"></movCard>
+        <collectionCard v-else :title="item.title" :link="{name: 'movie_collection', params: {id: item.id}}" :img="item.icon" :movieCount="item.movieCount" :watchedMovies="item.watchedMovies"></collectionCard>
+      </div>
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 
 import movCard from './components/movCard.vue'
+import collectionCard from './components/collectionCard.vue'
 
 export default Vue.extend({
-  components: { movCard },
+  components: { movCard, collectionCard },
   data () {
     return {
-      movies: []
+      movies: [],
+      collections: []
+    }
+  },
+  computed: {
+    display: function () {
+      const ret = []
+      const includedCollections = []
+      for (let i = 0; i < this.movies.length; i++) {
+        if (this.movies[i].idCollection == null) {
+          ret.push(this.movies[i])
+        } else {
+          if (includedCollections.indexOf(this.movies[i].idCollection) === -1) {
+            let j = 0
+            while (j < this.collections.length) {
+              if (this.collections[j].id === this.movies[i].idCollection) {
+                ret.push(this.collections[j])
+                break
+              }
+              j++
+            }
+            includedCollections.push(this.movies[i].idCollection)
+          }
+        }
+      }
+      console.log(ret)
+      return ret
     }
   },
   mounted () {
     this.$apiCall('movies/getMovies')
       .then((response) => {
         this.movies = response
+      })
+    this.$apiCall('movies/getCollections')
+      .then((response) => {
+        this.collections = response
+        console.log(this.display)
       })
   }
 })

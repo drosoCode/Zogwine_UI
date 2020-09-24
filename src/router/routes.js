@@ -48,6 +48,12 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
+    path: '/movie/c/:id',
+    name: 'movie_collection',
+    component: () => import('pages/movies/Collection.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
     path: '/tvshow',
     name: 'tvshows',
     component: () => import('pages/tvs/Main.vue'),
