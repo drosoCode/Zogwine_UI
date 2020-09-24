@@ -5,7 +5,7 @@
       class="q-mx-xl"
     >
     <div class="row no-wrap">
-        <tvsCard class="seasonCard" v-for="item in seasons" v-bind:title="item.title" v-bind:link="{name: 'season', params: {id: idShow, season: item.season}}" v-bind:img="item.icon" v-bind:nbEp="item.episodes" v-bind:watchedEp="item.watchedEpisodes"></tvsCard>
+        <tvsCard class="seasonCard" v-for="item in seasons" :key="item.id" :title="item.title" :link="{name: 'season', params: {id: idShow, season: item.season}}" :img="item.icon" :nbEp="item.episodes" :watchedEp="item.watchedEpisodes"></tvsCard>
     </div>
     </q-scroll-area>
 </template>

@@ -34,8 +34,8 @@
 
             <q-tab-panel name="scrapers">
                 <div>
-                    <scraperCard v-for="tvs in scraper_tvs" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :path="tvs.path"/>
-                    <scraperCard v-for="mov in scraper_movies" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :path="mov.path"/>
+                    <scraperCard v-for="tvs in scraper_tvs" :key="tvs.id" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :path="tvs.path"/>
+                    <scraperCard v-for="mov in scraper_movies" :key="mov.id" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :path="mov.path"/>
                 </div>
             </q-tab-panel>
 
@@ -45,7 +45,7 @@
                   <q-btn color="orange" icon="refresh" label="Refresh Logs" @click="refreshLogs" />
                   <br><br>
                    <q-scroll-area style="height: 35rem;" ref="logScroll">
-                      <logLine v-for="line in logs" :data="line"/>
+                      <logLine v-for="line in logs" :key="line" :data="line"/>
                    </q-scroll-area>
                 </div>
             </q-tab-panel>

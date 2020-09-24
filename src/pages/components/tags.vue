@@ -40,7 +40,7 @@
             <q-separator />
             <q-card-section style="max-height: 70vh" class="scroll">
                 <div class="row wrap">
-                    <person v-for="person in people" :name="person.name" :role="person.role" :id="person.idPers"  :img="person.icon" :description="person.description" :birthdate="person.birthdate" :deathdate="person.deathdate" :known_for="person.known_for" :gender="person.gender" />
+                    <person v-for="person in people" :key="person.id" :name="person.name" :role="person.role" :id="person.idPers"  :img="person.icon" :description="person.description" :birthdate="person.birthdate" :deathdate="person.deathdate" :known_for="person.known_for" :gender="person.gender" />
                 </div>
             </q-card-section>
             <q-separator />
