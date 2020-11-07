@@ -58,7 +58,7 @@
         <div v-if="loading">
             <h1>
                 <q-spinner
-                    color="primary"
+                    :color="loadingColor"
                     size="1em"
                 />
                 Loading ...
@@ -107,7 +107,8 @@ export default defineComponent({
       loading: false,
       videojsPlayer: null,
       loadingInterval: null,
-      nativelySupported: false
+      nativelySupported: false,
+      loadingColor: 'primary'
     }
   },
   mounted () {
@@ -158,6 +159,8 @@ export default defineComponent({
     },
     playVideo: function () {
       // start transcoding
+      this.loading = true
+      this.loadingColor = 'orange'
       this.playing = true
       this.nativePlayer = false
       let audio = '0'
@@ -170,7 +173,7 @@ export default defineComponent({
       }
       this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value)
         .then(() => {
-          this.loading = true
+          this.loadingColor = 'primary'
           this.loadingInterval = setInterval(this.checkPlaylist, 10000)
         })
     },
