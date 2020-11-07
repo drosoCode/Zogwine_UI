@@ -87,7 +87,7 @@ export default defineComponent({
     },
     showPeople: function () {
       if (this.people.length === 0) {
-        this.$apiCall('core/getPersons?mediaType=' + this.mediaType + '&mediaData=' + this.idMedia)
+        this.$apiCall('core/getPeople?mediaType=' + this.mediaType + '&mediaData=' + this.idMedia)
           .then((response) => {
             this.people = response
             this.showPeopleData = true

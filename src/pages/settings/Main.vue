@@ -23,11 +23,36 @@
                 <q-card>
                     <q-card-section>
                         <h5>Actions</h5>
-                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" class="q-ma-sm" @click="refreshTVS" />
-                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" />
-                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" />
-                        <q-btn color="orange" label="Refresh Cache" icon="refresh" class="q-ma-sm" @click="refreshCache" />
-                        <q-btn color="orange" label="Refresh Persons" icon="refresh" class="q-ma-sm" @click="refreshPersons" />
+                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" class="q-ma-sm" @click="refreshTVS" :loading="threadStatus.tvs && runningThread" :disable="!threadStatus.tvs && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" :loading="threadStatus.movies && runningThread" :disable="!threadStatus.movies && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" :loading="threadStatus.upEpisodes && runningThread" :disable="!threadStatus.upEpisodes && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                        <q-btn color="orange" label="Refresh Cache" icon="refresh" class="q-ma-sm" @click="refreshCache" :loading="threadStatus.cache && runningThread" :disable="!threadStatus.cache && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                        <q-btn color="orange" label="Refresh People" icon="refresh" class="q-ma-sm" @click="refreshPeople" :loading="threadStatus.people && runningThread" :disable="!threadStatus.people && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
                     </q-card-section>
                 </q-card>
             </q-tab-panel>
@@ -67,10 +92,23 @@ export default Vue.extend({
       logs: '',
       tab: 'config',
       scraper_tvs: [],
-      scraper_movies: []
+      scraper_movies: [],
+      threadStatus: {
+        tvs: false,
+        movies: false,
+        upEpisodes: false,
+        cache: false,
+        people: false
+      },
+      runningThread: false
     }
   },
   mounted () {
+    this.$apiCall('core/getThreads')
+      .then((response) => {
+        this.threadStatus = response
+        this.runningThread = Object.values(response).includes(true)
+      })
     this.$apiCall('core/getLogs?amount=50')
       .then((response) => {
         this.logs = response
@@ -121,14 +159,14 @@ export default Vue.extend({
       })
       this.$apiCall('core/refreshCache')
     },
-    refreshPersons: function () {
+    refreshPeople: function () {
       this.$q.notify({
-        message: 'Refreshing Persons',
+        message: 'Refreshing People',
         icon: 'done',
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('core/runPersonsScan')
+      this.$apiCall('core/runPeopleScan')
     },
     refreshLogs: function () {
       this.$apiCall('core/getLogs?amount=50')
