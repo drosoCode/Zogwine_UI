@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    // baseURL: 'http://192.168.1.30:8083',
+    // baseURL: 'http://10.10.2.1:8083',
     baseURL: '',
     appName: 'Zogwine',
     token: localStorage.getItem('zogwine-token') || null,
@@ -40,9 +40,9 @@ export default new Vuex.Store({
     userData: (state, getters) => {
       if (getters.isAuthenticated) {
         if (state.userData.length === 0) {
-          axios.get(state.baseURL + '/api/users/data?token=' + state.token)
+          axios.get(state.baseURL + '/api/user/data?token=' + state.token)
             .then((response) => {
-              state.userData = response.data
+              state.userData = response.data.data
             }).catch(() => {})
         }
         return state.userData
@@ -76,9 +76,10 @@ export default new Vuex.Store({
   actions: {
     login ({ state }, auth) {
       return new Promise((resolve) => {
-        axios.get(state.baseURL + '/api/users/authenticate?user=' + auth[0] + '&password=' + auth[1])
+        axios.get(state.baseURL + '/api/user/signin?user=' + auth[0] + '&password=' + auth[1])
           .then((response) => {
-            state.token = response.data.response
+            state.token = response.data.data
+            console.log(state.token)
             if (auth[2]) {
               localStorage.setItem('zogwine-token', state.token)
             }
@@ -92,6 +93,7 @@ export default new Vuex.Store({
     },
     logout ({ state }) {
       return new Promise((resolve) => {
+        axios.get(state.baseURL + '/api/user/signout?token=' + state.token)
         state.token = null
         state.isAdmin = false
         state.userData = []

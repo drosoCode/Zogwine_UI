@@ -13,7 +13,7 @@ export default ({ Vue, store, router }) => {
 
       axios.get(url)
         .then((response) => {
-          resolve(response.data)
+          resolve(response.data.data)
         }).catch((error) => {
           if (displayErrors) {
             if (error.response.status === 401) {
