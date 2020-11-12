@@ -100,16 +100,17 @@ export default Vue.extend({
         cache: false,
         people: false
       },
-      runningThread: false
+      runningThread: false,
+      statusInterval: null
     }
   },
   mounted () {
-    this.$apiCall('core/getThreads')
+    this.$apiCall('process/status')
       .then((response) => {
         this.threadStatus = response
         this.runningThread = Object.values(response).includes(true)
       })
-    this.$apiCall('core/getLogs?amount=50')
+    this.$apiCall('core/logs?amount=50')
       .then((response) => {
         this.logs = response
       })
@@ -122,7 +123,23 @@ export default Vue.extend({
         this.scraper_movies = response
       })
   },
+  destoyed: function () {
+    if (this.statusInterval != null) {
+      clearInterval(this.statusInterval)
+    }
+  },
   methods: {
+    refreshStatus: function () {
+      this.$apiCall('process/status')
+        .then((response) => {
+          this.threadStatus = response
+          this.runningThread = Object.values(response).includes(true)
+          if (!this.runningThread) {
+            clearInterval(this.statusInterval)
+            this.statusInterval = null
+          }
+        })
+    },
     refreshTVS: function () {
       this.$q.notify({
         message: 'Scanning TVS Library',
@@ -130,7 +147,10 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('tvs/runScan')
+      this.$apiCall('tvs/scan')
+      this.threadStatus.tvs = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshMovies: function () {
       this.$q.notify({
@@ -139,7 +159,10 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('movies/runScan')
+      this.$apiCall('movies/scan')
+      this.threadStatus.movies = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshUEp: function () {
       this.$q.notify({
@@ -148,7 +171,10 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('tvs/runUpcomingScan')
+      this.$apiCall('tvs/upc_scan')
+      this.threadStatus.upEpisodes = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshCache: function () {
       this.$q.notify({
@@ -157,7 +183,10 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('core/refreshCache')
+      this.$apiCall('process/cache')
+      this.threadStatus.cache = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshPeople: function () {
       this.$q.notify({
@@ -166,10 +195,13 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('core/runPeopleScan')
+      this.$apiCall('process/people')
+      this.threadStatus.people = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshLogs: function () {
-      this.$apiCall('core/getLogs?amount=50')
+      this.$apiCall('core/logs?amount=50')
         .then((response) => {
           this.logs = response
         })

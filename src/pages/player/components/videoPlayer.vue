@@ -4,9 +4,10 @@
             <q-btn color="teal" class="full-width" label="Play Video" icon="play_arrow" @click="playNativeVideo" v-if="nativelySupported"/>
             <br>
             <br>
-            <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.general.video_codec }}</q-chip>
-            <q-chip square color="primary" text-color="white" icon="camera">Format: {{ fileInfos.general.format }}</q-chip>
+            <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.video_codec }}</q-chip>
+            <q-chip square color="primary" text-color="white" icon="camera">Format: {{ fileInfos.format }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="access_time">Duration: {{ duration }} min</q-chip>
+            <q-chip square color="orange" text-color="white" icon="fiber_smart_record" v-if="this.fileInfos.stereo3d > 0">3D</q-chip>
             <br>
             <q-select v-model="audioStreamValue" :options="audioStream" label="Audio Stream">
                 <template v-slot:prepend>
@@ -84,7 +85,7 @@ export default defineComponent({
     return {
       fileInfos: [],
       audioStreamValue: null,
-      subStreamValue: null,
+      subStreamValue: { label: 'None', value: -1 },
       resizeValue: { label: 'Original', value: -1 },
       startFromValue: 0,
       startFromMin: 0,
@@ -95,11 +96,11 @@ export default defineComponent({
         { label: '480p', value: 480 },
         { label: '320p', value: 320 }
       ],
-      remove3dValue: { label: 'None', value: -1 },
+      remove3dValue: null,
       remove3D: [
-        { label: 'None', value: -1 },
-        { label: 'TOP AND BOTTOM', value: 'tab' },
-        { label: 'SIDE BY SIDE', value: 'sbs' }
+        { label: 'None', value: 0 },
+        { label: 'SIDE BY SIDE', value: 1 },
+        { label: 'TOP AND BOTTOM', value: 2 }
       ],
       playing: false,
       nativePlayer: false,
@@ -112,10 +113,10 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.$apiCall('player/getInfos?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+    this.$apiCall('player/info?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
       .then((response) => {
         this.fileInfos = response
-        if (this.fileInfos.general.format.includes('mp4')) {
+        if (this.fileInfos.format.includes('mp4')) {
           // if format is natively supported, display "play native" option
           console.log('supported')
           this.nativelySupported = true
@@ -126,13 +127,14 @@ export default defineComponent({
         if (this.subStream.length > 0) {
           this.subStreamValue = this.subStream[0]
         }
+        this.remove3dValue = this.remove3D[response.stereo3d]
       })
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
   },
   computed: {
     duration: function () {
-      return Math.round(this.fileInfos.general.duration / 60)
+      return Math.round(this.fileInfos.duration / 60)
     },
     audioStream: function () {
       const data = []
@@ -143,7 +145,7 @@ export default defineComponent({
       return data
     },
     subStream: function () {
-      const data = []
+      const data = [{ label: 'None', value: -1 }]
       const s = this.fileInfos.subtitles
       for (let i = 0; i < s.length; i++) {
         data.push({ label: s[i].language + ' | ' + s[i].title, value: i })
@@ -155,7 +157,7 @@ export default defineComponent({
     playNativeVideo: function () {
       this.playing = true
       this.nativePlayer = true
-      this.videoUrl = this.$store.getters.apiEndpoint + 'player/getFile?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+      this.videoUrl = this.$store.getters.apiEndpoint + 'player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
     },
     playVideo: function () {
       // start transcoding
@@ -171,7 +173,7 @@ export default defineComponent({
       if (this.subStreamValue !== null) {
         sub = this.subStreamValue.value
       }
-      this.$apiCall('player/start?audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value)
+      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value)
         .then(() => {
           this.loadingColor = 'primary'
           this.loadingInterval = setInterval(this.checkPlaylist, 10000)

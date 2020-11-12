@@ -31,7 +31,7 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('core/getStatistics')
+    this.$apiCall('core/statistics')
       .then((response) => {
         this.stats = response
       })
