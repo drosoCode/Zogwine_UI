@@ -35,7 +35,7 @@
             <br>
             <q-slider
                 v-model="startFromValue"
-                :min="startFromMin"
+                :min="0"
                 :max="duration"
                 :step="1"
                 label
@@ -88,7 +88,6 @@ export default defineComponent({
       subStreamValue: { label: 'None', value: -1 },
       resizeValue: { label: 'Original', value: -1 },
       startFromValue: 0,
-      startFromMin: 0,
       resize: [
         { label: 'Original', value: 0 },
         { label: '1080p', value: 1080 },
@@ -118,7 +117,6 @@ export default defineComponent({
         this.fileInfos = response
         if (this.fileInfos.format.includes('mp4')) {
           // if format is natively supported, display "play native" option
-          console.log('supported')
           this.nativelySupported = true
         }
         if (this.audioStream.length > 0) {
@@ -128,6 +126,7 @@ export default defineComponent({
           this.subStreamValue = this.subStream[0]
         }
         this.remove3dValue = this.remove3D[response.stereo3d]
+        this.startFromValue = Math.round(response.startFrom / 60)
       })
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
