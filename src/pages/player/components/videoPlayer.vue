@@ -42,7 +42,26 @@
                 color="teal"
             />
             <br>
-            <q-btn color="teal" class="full-width" label="Start Transcoder" icon="play_arrow" @click="playVideo"/>
+            <q-btn-dropdown
+              split
+              class="full-width"
+              color="teal"
+              label="Start Transcoder"
+              icon="play_arrow"
+              @click="playVideo(-1)"
+            >
+              <q-list v-if="$store.getters.cast">
+                <q-item clickable v-close-popup @click="playVideo(dev.id)" v-for="dev in devices" :key="dev.id">
+                  <q-item-section avatar>
+                    <q-avatar icon="cast" color="secondary" text-color="white" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ dev.name }}</q-item-label>
+                    <q-item-label caption>{{ dev.type }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
         </div>
 
         <div v-if="playing && nativePlayer">
@@ -108,7 +127,8 @@ export default defineComponent({
       videojsPlayer: null,
       loadingInterval: null,
       nativelySupported: false,
-      loadingColor: 'primary'
+      loadingColor: 'primary',
+      devices: null
     }
   },
   mounted () {
@@ -127,6 +147,17 @@ export default defineComponent({
         }
         this.remove3dValue = this.remove3D[response.stereo3d]
         this.startFromValue = Math.round(response.startFrom / 60)
+        if (this.$store.getters.cast) {
+          this.$apiCall('device/list')
+            .then((response) => {
+              this.devices = []
+              response.forEach(dev => {
+                if (dev.enabled === 1 && dev.available === true) {
+                  this.devices.push(dev)
+                }
+              })
+            })
+        }
       })
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
@@ -158,7 +189,7 @@ export default defineComponent({
       this.nativePlayer = true
       this.videoUrl = this.$store.getters.apiEndpoint + 'player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
     },
-    playVideo: function () {
+    playVideo: function (idDevice) {
       // start transcoding
       this.loading = true
       this.loadingColor = 'orange'
@@ -172,10 +203,15 @@ export default defineComponent({
       if (this.subStreamValue !== null) {
         sub = this.subStreamValue.value
       }
-      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value)
+      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value + '&idDevice=' + idDevice)
         .then(() => {
-          this.loadingColor = 'primary'
-          this.loadingInterval = setInterval(this.checkPlaylist, 10000)
+          if (idDevice === -1) {
+            this.loadingColor = 'primary'
+            this.loadingInterval = setInterval(this.checkPlaylist, 10000)
+          } else {
+            this.playing = false
+            this.$router.push({ name: 'player' })
+          }
         })
     },
     checkPlaylist: function () {
@@ -202,7 +238,7 @@ export default defineComponent({
       }
       if (this.playing) {
         if (this.videojsPlayer !== null) {
-          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + this.videojsPlayer.currentTime())
+          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + (this.fileInfos.startFrom + this.videojsPlayer.currentTime()))
           this.videojsPlayer.dispose()
         } else if (this.$refs.videoPlayer !== undefined) {
           this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + this.$refs.videoPlayer.currentTime)
