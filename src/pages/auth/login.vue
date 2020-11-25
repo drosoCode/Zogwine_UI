@@ -45,13 +45,6 @@ export default Vue.extend({
           })
         }
       })
-    },
-    webauthn: function () {
-      this.$store.dispatch('login', [this.username, this.password]).then((resp) => {
-        if (resp) {
-          this.$router.push('/')
-        }
-      })
     }
   }
 })
