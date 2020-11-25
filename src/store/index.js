@@ -37,6 +37,13 @@ export default new Vuex.Store({
         return false
       }
     },
+    cast: (getters) => {
+      if (getters.userData.cast === 1) {
+        return true
+      } else {
+        return false
+      }
+    },
     userData: (state, getters) => {
       if (getters.isAuthenticated) {
         if (state.userData.length === 0) {

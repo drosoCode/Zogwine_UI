@@ -28,6 +28,18 @@ const goSettings = (to, from, next) => {
   }
 }
 
+const goDevices = (to, from, next) => {
+  if (store.getters.isAuthenticated) {
+    if (store.getters.cast) {
+      next()
+    } else {
+      next('/')
+    }
+  } else {
+    next('/login')
+  }
+}
+
 const routes = [
   {
     name: 'home',
@@ -98,8 +110,8 @@ const routes = [
   {
     path: '/devices',
     name: 'devices',
-    component: () => import('pages/Error404.vue'),
-    beforeEnter: isAuthenticated
+    component: () => import('pages/devices/Main.vue'),
+    beforeEnter: goDevices
   },
   {
     path: '/player',

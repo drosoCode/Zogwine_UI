@@ -108,7 +108,7 @@
 
          <q-separator/>
 
-        <q-item clickable :to="{name: 'devices'}">
+        <q-item clickable :to="{name: 'devices'}" v-if="$store.getters.cast">
           <q-item-section avatar>
             <q-icon name="memory"/>
           </q-item-section>
