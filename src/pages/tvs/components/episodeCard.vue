@@ -4,6 +4,9 @@
             <q-img :src="image" basic>
                 <div class="absolute-bottom text-h6" @click.stop="showDetails">
                     E{{ episode }} - {{ title }}
+                    <q-badge transparent align="middle" :color="fillerColor" v-if="filler > 0">
+                      Filler
+                    </q-badge>
                 </div>
             </q-img>
             <q-linear-progress :value="100" :color="barColor"/>
@@ -87,6 +90,13 @@ export default defineComponent({
       } else {
         return '/images/undefined_h.png'
       }
+    },
+    fillerColor: function () {
+      if (this.filler === 1) {
+        return 'orange'
+      } else {
+        return 'red'
+      }
     }
   },
   props: {
@@ -106,6 +116,9 @@ export default defineComponent({
       required: true
     },
     id: {
+      required: true
+    },
+    filler: {
       required: true
     }
   }
