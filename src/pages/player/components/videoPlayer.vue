@@ -104,7 +104,7 @@ export default defineComponent({
     return {
       fileInfos: [],
       audioStreamValue: null,
-      subStreamValue: { label: 'None', value: -1 },
+      subStreamValue: { label: 'None', value: -1, type: 1 },
       resizeValue: { label: 'Original', value: -1 },
       startFromValue: 0,
       resize: [
@@ -175,10 +175,16 @@ export default defineComponent({
       return data
     },
     subStream: function () {
-      const data = [{ label: 'None', value: -1 }]
+      const data = [{ label: 'None', value: -1, type: 1 }]
       const s = this.fileInfos.subtitles
       for (let i = 0; i < s.length; i++) {
-        data.push({ label: s[i].language + ' | ' + s[i].title, value: i })
+        if ('file' in s[i]) {
+          // subtitle file
+          data.push({ label: s[i].language + ' | ' + s[i].title, value: s[i].file, type: 2 })
+        } else {
+          // subtitle streams included in the video file
+          data.push({ label: s[i].language + ' | ' + s[i].title, value: i, type: 1 })
+        }
       }
       return data
     }
@@ -199,11 +205,16 @@ export default defineComponent({
       if (this.audioStreamValue !== null) {
         audio = this.audioStreamValue.value
       }
-      let sub = '-1'
-      if (this.subStreamValue !== null) {
-        sub = this.subStreamValue.value
+      let subStream = '-1'
+      let subFile = ''
+      if (this.subStreamValue !== null && this.subStreamValue.value !== null) {
+        if (this.subStreamValue.type === 1) {
+          subStream = this.subStreamValue.value
+        } else if (this.subStreamValue.type === 2) {
+          subFile = this.subStreamValue.value
+        }
       }
-      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + sub + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value + '&idDevice=' + idDevice)
+      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + subStream + '&subFile=' + subFile + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value + '&idDevice=' + idDevice)
         .then(() => {
           if (idDevice === -1) {
             this.loadingColor = 'primary'
@@ -215,22 +226,20 @@ export default defineComponent({
         })
     },
     checkPlaylist: function () {
-      this.$apiCall('player/m3u8', false)
+      this.$apiCall('player/m3u8', null, 'GET', false)
         .then((resp) => {
-          if (resp !== 404) {
-            // playlist is available, stop loading
-            this.loading = false
-            clearInterval(this.loadingInterval)
-            this.loadingInterval = null
-            // play playlist
-            const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
-            this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
-            this.videojsPlayer.src({
-              src: videoUrl,
-              type: 'application/x-mpegURL'
-            })
-          }
-        })
+          // playlist is available, stop loading
+          this.loading = false
+          clearInterval(this.loadingInterval)
+          this.loadingInterval = null
+          // play playlist
+          const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
+          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
+          this.videojsPlayer.src({
+            src: videoUrl,
+            type: 'application/x-mpegURL'
+          })
+        }).catch(() => {})
     },
     stopPlayer: function () {
       if (this.loadingInterval !== null) {
