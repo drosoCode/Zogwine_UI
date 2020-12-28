@@ -64,14 +64,7 @@
             </q-btn-dropdown>
         </div>
 
-        <div v-if="playing && nativePlayer">
-            <video controls ref="videoPlayer">
-                <source :src="videoUrl" type="video/mp4">
-                <p>HTML5 video error</p>
-            </video>
-        </div>
-
-        <div v-if="playing && !nativePlayer" :hidden="loading">
+        <div :hidden="loading || !playing">
             <video ref="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>
         </div>
 
@@ -121,7 +114,6 @@ export default defineComponent({
         { label: 'TOP AND BOTTOM', value: 2 }
       ],
       playing: false,
-      nativePlayer: false,
       videoUrl: null,
       loading: false,
       videojsPlayer: null,
@@ -192,15 +184,18 @@ export default defineComponent({
   methods: {
     playNativeVideo: function () {
       this.playing = true
-      this.nativePlayer = true
-      this.videoUrl = this.$store.getters.apiEndpoint + 'player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+      const videoUrl = this.$store.getters.apiEndpoint + 'player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+      this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
+      this.videojsPlayer.src({
+        src: videoUrl,
+        type: 'application/x-mpegURL'
+      })
     },
     playVideo: function (idDevice) {
       // start transcoding
       this.loading = true
       this.loadingColor = 'orange'
       this.playing = true
-      this.nativePlayer = false
       let audio = '0'
       if (this.audioStreamValue !== null) {
         audio = this.audioStreamValue.value
