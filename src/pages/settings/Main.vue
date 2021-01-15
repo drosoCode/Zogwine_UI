@@ -12,6 +12,8 @@
         >
           <q-tab name="config" label="Config" icon="settings" />
           <q-tab name="scrapers" label="Scrapers" icon="create" />
+          <q-tab name="content" label="Content" icon="view_list" />
+          <q-tab name="users" label="Users" icon="people" />
           <q-tab name="logs" label="Logs" icon="subject" />
         </q-tabs>
 
@@ -59,8 +61,23 @@
 
             <q-tab-panel name="scrapers">
                 <div>
-                    <scraperCard v-for="tvs in scraper_tvs" :key="tvs.id" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :path="tvs.path"/>
-                    <scraperCard v-for="mov in scraper_movies" :key="mov.id" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :path="mov.path"/>
+                    <scraperCard v-for="tvs in scraper_tvs" :key="tvs.id" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :title="tvs.title"/>
+                    <scraperCard v-for="mov in scraper_movies" :key="mov.id" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :title="mov.title"/>
+                </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="content">
+              <q-bar>
+                <div class="cursor-pointer" @click="contentType = 2">TV Shows</div>
+                <div class="cursor-pointer" @click="contentType = 3">Movies</div>
+              </q-bar>
+                <div>
+                    <contentManager :type="contentType"/>
+                </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="users">
+                <div>
                 </div>
             </q-tab-panel>
 
@@ -84,9 +101,10 @@ import Vue from 'vue'
 
 import logLine from 'pages/settings/components/logLine.vue'
 import scraperCard from 'pages/settings/components/scraperCard.vue'
+import contentManager from 'pages/settings/components/contentManager.vue'
 
 export default Vue.extend({
-  components: { logLine, scraperCard },
+  components: { logLine, scraperCard, contentManager },
   data () {
     return {
       logs: '',
@@ -101,7 +119,8 @@ export default Vue.extend({
         people: false
       },
       runningThread: false,
-      statusInterval: null
+      statusInterval: null,
+      contentType: 2
     }
   },
   mounted () {
