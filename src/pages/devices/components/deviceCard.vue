@@ -144,7 +144,9 @@ export default defineComponent({
     this.$apiCall('device/functions?idDevice=' + this.$attrs.id)
       .then((response) => {
         this.functions = response
-        this.updateStatus()
+        if (this.enabled && this.available) {
+          this.updateStatus()
+        }
       })
   },
   props: [{
