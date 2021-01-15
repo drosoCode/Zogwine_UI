@@ -62,7 +62,10 @@ export default defineComponent({
       this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.id } })
     },
     download: function () {
-      window.open(this.$store.getters.apiEndpoint + 'player/file?mediaType=1&mediaData=' + this.id + '&token=' + this.$store.state.token)
+      this.$apiCall('player/file?mediaType=1&mediaData=' + this.id)
+        .then((response) => {
+          window.open(response)
+        })
     },
     toggleEpisodeStatus: function () {
       this.$apiCall('tvs/toggleEpisodeStatus?idEpisode=' + this.id)

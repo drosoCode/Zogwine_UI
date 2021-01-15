@@ -183,13 +183,15 @@ export default defineComponent({
   },
   methods: {
     playNativeVideo: function () {
-      this.playing = true
-      const videoUrl = this.$store.getters.apiEndpoint + 'player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
-      this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
-      this.videojsPlayer.src({
-        src: videoUrl,
-        type: 'application/x-mpegURL'
-      })
+      this.$apiCall('player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+        .then((videoUrl) => {
+          this.playing = true
+          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
+          this.videojsPlayer.src({
+            src: videoUrl,
+            type: 'application/x-mpegURL'
+          })
+        })
     },
     playVideo: function (idDevice) {
       // start transcoding
