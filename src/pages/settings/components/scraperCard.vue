@@ -3,7 +3,7 @@
       <q-card class="bg-teal-10 row" style="min-height: 5rem">
 
         <div class="row" style="height: 2rem;">
-          <span class="subtitle-2" style="height: 3rem">{{ path }}</span>
+          <span class="subtitle-2" style="height: 3rem">{{ title }}</span>
           &nbsp;&nbsp;
           <q-input
             v-model="newTitle"
@@ -46,7 +46,7 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    path: {
+    title: {
       type: String,
       required: true
     }
