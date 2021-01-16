@@ -5,6 +5,7 @@
   "display": "fullscreen",
   "background_color": "#121212",
   "theme_color": "#111111",
+  "start_url": "/index.html",
   "icons": [
     {
       "src": "icons/icon-128x128.png",
@@ -35,6 +36,7 @@
   "share_target": {
     "action": "#/player",
     "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
     "params": {
       "title": "title",
       "text": "text",
