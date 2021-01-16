@@ -186,10 +186,10 @@ export default defineComponent({
       this.$apiCall('player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
         .then((videoUrl) => {
           this.playing = true
-          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
+          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { autoplay: true })
           this.videojsPlayer.src({
             src: videoUrl,
-            type: 'application/x-mpegURL'
+            type: 'video/mp4'
           })
         })
     },
