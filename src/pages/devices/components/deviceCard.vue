@@ -62,37 +62,53 @@ export default defineComponent({
       status: null,
       position: null,
       length: null,
-      playingMedia: null
+      playingMedia: null,
+      lengthOverride: false
     }
   },
   methods: {
     updateStatus: function () {
-      if (this.functions.includes('position')) {
+      if (this.functions.includes('status')) {
+        this.$apiCall('device/status?idDevice=' + this.$attrs.id)
+          .then((response) => {
+            console.log(response)
+            this.status = response
+          })
+      }
+      if (this.functions.includes('position') && this.status > 0) {
         this.$apiCall('device/position?idDevice=' + this.$attrs.id)
           .then((response) => {
             this.position = response
           })
       }
-      if (this.functions.includes('length')) {
+      if (this.functions.includes('length') && !this.lengthOverride && this.status > 0) {
         this.$apiCall('device/length?idDevice=' + this.$attrs.id)
           .then((response) => {
             this.length = response
           })
       }
-      if (this.functions.includes('status')) {
-        this.$apiCall('device/status?idDevice=' + this.$attrs.id)
-          .then((response) => {
-            this.status = response
-          })
-      }
-      if (this.functions.includes('playingMedia')) {
+      if (this.functions.includes('playingMedia') && this.status > 0) {
         this.$apiCall('device/playingMedia?idDevice=' + this.$attrs.id)
           .then((response) => {
-            this.playingMedia = response
+            this.$apiCall('player/info?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
+              .then((resp) => {
+                this.playingMedia = resp.dimension
+                if (resp.includes('duration')) {
+                  this.lengthOverride = true
+                  this.length = resp.duration
+                }
+              })
           })
       }
     },
     callDeviceFunction: function (name) {
+      if (name === 'play') {
+        this.status = 2
+      } else if (name === 'pause') {
+        this.status = 1
+      } else if (name === 'stop') {
+        this.status = 0
+      }
       this.$apiCall('device/' + name + '?idDevice=' + this.$attrs.id)
         .then((response) => {
         })
@@ -100,7 +116,7 @@ export default defineComponent({
   },
   computed: {
     playedPercent: function () {
-      if (this.$attrs.enabled === 1 && this.$attrs.available === 1 && this.position !== null && this.length !== null) {
+      if (this.$attrs.enabled === 1 && this.$attrs.available === true && this.position !== null && this.length !== null) {
         return this.position / this.length
       } else {
         return 100
@@ -122,19 +138,12 @@ export default defineComponent({
       }
     },
     statusLabel: function () {
-      let time = ''
-      if (this.position !== null) {
-        time = ' | ' + Math.round(this.position / 60)
-      }
-      if (this.length !== null) {
-        time += ' / ' + Math.round(this.length / 60)
-      }
       if (this.status === 0) {
         return 'STOPPED'
       } else if (this.status === 1) {
-        return 'PAUSED' + time
+        return 'PAUSED'
       } else if (this.status === 2) {
-        return 'PLAYING' + time
+        return 'PLAYING'
       } else {
         return 'UNKNOWN'
       }
@@ -144,7 +153,7 @@ export default defineComponent({
     this.$apiCall('device/functions?idDevice=' + this.$attrs.id)
       .then((response) => {
         this.functions = response
-        if (this.enabled && this.available) {
+        if (this.$attrs.enabled && this.$attrs.available) {
           this.updateStatus()
         }
       })
