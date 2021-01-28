@@ -74,7 +74,7 @@ export default defineComponent({
         color: 'teal'
       })
       if (this.mediaType === 2) {
-        this.$apiCall('tvs/setID?idShow=' + this.idMedia + '&id=' + this.id)
+        this.$apiCall('/tvs/show/' + this.idMedia + '/select/' + this.id, null, 'POST')
       } else if (this.mediaType === 3) {
         this.$apiCall('movies/setID?idMovie=' + this.idMedia + '&id=' + this.id)
       }

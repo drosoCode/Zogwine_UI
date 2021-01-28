@@ -133,7 +133,7 @@ export default Vue.extend({
       .then((response) => {
         this.logs = response
       })
-    this.$apiCall('tvs/getShowsMultipleResults')
+    this.$apiCall('tvs/scan/result')
       .then((response) => {
         this.scraper_tvs = response
       })
@@ -190,7 +190,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('tvs/upc_scan')
+      this.$apiCall('/tvs/scan/upcoming')
       this.threadStatus.upEpisodes = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)

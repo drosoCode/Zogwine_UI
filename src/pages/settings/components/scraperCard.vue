@@ -62,7 +62,7 @@ export default defineComponent({
     },
     setNewSearch: function () {
       if (this.mediaType === 2) {
-        this.$apiCall('tvs/setNewSearch?idShow=' + this.idMedia + '&title=' + this.newTitle)
+        this.$apiCall('/tvs/show/' + this.idMedia + '/scanTitle', { title: this.newTitle }, 'PUT')
       } else if (this.mediaType === 3) {
         this.$apiCall('movies/setNewSearch?idMovie=' + this.idMedia + '&title=' + this.newTitle)
       }

@@ -68,7 +68,7 @@ export default defineComponent({
         })
     },
     toggleEpisodeStatus: function () {
-      this.$apiCall('tvs/toggleEpisodeStatus?idEpisode=' + this.id)
+      this.$apiCall('episode/' + this.id + '/status')
         .then((response) => {
           this.$q.notify({
             message: 'Episode status updated',

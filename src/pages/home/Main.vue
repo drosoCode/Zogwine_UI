@@ -35,7 +35,7 @@ export default Vue.extend({
       .then((response) => {
         this.stats = response
       })
-    this.$apiCall('tvs/getUpcomingEpisodes')
+    this.$apiCall('tvs/episode/upcoming')
       .then((response) => {
         this.ep = response
       })

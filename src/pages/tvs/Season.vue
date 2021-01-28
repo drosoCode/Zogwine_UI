@@ -81,22 +81,22 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('tvs/getSeasons?idShow=' + this.$route.params.id + '&season=' + this.$route.params.season)
+    this.$apiCall('/tvs/show/' + this.$route.params.id + '/season/' + this.$route.params.season)
       .then((response) => {
         this.season = response[0]
       })
-    this.$apiCall('tvs/getEpisodes?idShow=' + this.$route.params.id + '&season=' + this.$route.params.season)
+    this.$apiCall('/tvs/show/' + this.$route.params.id + '/season/' + this.$route.params.season + '/episode')
       .then((response) => {
         this.episodes = response
       })
-    this.$apiCall('tvs/getShow?idShow=' + this.$route.params.id)
+    this.$apiCall('tvs/show/' + this.$route.params.id)
       .then((response) => {
         this.tvs = response
       })
   },
   methods: {
     toggleSeason: function () {
-      this.$apiCall('tvs/toggleSeasonStatus?idShow=' + this.$route.params.id + '&season=' + this.$route.params.season)
+      this.$apiCall('/tvs/show/' + this.$route.params.id + '/season/' + this.$route.params.season + '/status')
         .then((response) => {
           this.$q.notify({
             message: 'Season status updated',

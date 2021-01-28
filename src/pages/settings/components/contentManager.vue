@@ -72,7 +72,7 @@ export default defineComponent({
     loadData: function () {
       let url = ''
       if (this.type === 1) {
-        url = 'tvs/getEpisodes?idShow=' + this.id
+        url = 'tvs/show/' + this.id + '/episode'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
           { name: 'season', label: 'Season', field: 'season' },
@@ -81,7 +81,7 @@ export default defineComponent({
         ]
       } else if (this.type === 2) {
         this.id = -1
-        url = 'tvs/getShows'
+        url = 'tvs/show'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
           { name: 'episodes', label: 'Episodes', field: 'episodes' },
@@ -108,7 +108,7 @@ export default defineComponent({
       if (this.type === 1) {
         url = 'tvs/episode/' + id
       } else if (this.type === 2) {
-        url = 'tvs/show/' + id
+        url = 'tvs/' + id
       }
 
       this.$apiCall(url, null, 'delete')

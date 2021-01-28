@@ -44,7 +44,8 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('tvs/getShow?idShow=' + this.$route.params.id)
+    console.log(this.$route.params.id)
+    this.$apiCall('tvs/show/' + this.$route.params.id)
       .then((response) => {
         this.tvs = response
       })
