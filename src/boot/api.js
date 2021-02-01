@@ -4,17 +4,15 @@ import { Notify } from 'quasar'
 export default ({ Vue, store, router }) => {
   Vue.prototype.$apiCall = function (endpoint, data = null, method = 'GET', displayErrors = true) {
     return new Promise((resolve) => {
-      let url = store.state.baseURL + '/api/' + endpoint
-      if (endpoint.includes('?')) {
-        url += '&token=' + store.getters.token
-      } else {
-        url += '?token=' + store.getters.token
-      }
-
+      const url = store.state.baseURL + '/api/' + endpoint
       axios({
         method: method,
         url: url,
-        data: data
+        data: data,
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + store.getters.token
+        }
       }).then((response) => {
         resolve(response.data.data)
       }).catch((error) => {
