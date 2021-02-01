@@ -31,7 +31,7 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.$apiCall('tvs/show/' + this.idShow + '/season')
+    this.$apiCall('tvs/' + this.idShow + '/season')
       .then((response) => {
         this.seasons = response
       })

@@ -17,7 +17,7 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('tvs/show')
+    this.$apiCall('tvs')
       .then((response) => {
         this.tvs = response
       })
