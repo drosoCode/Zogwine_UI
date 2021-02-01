@@ -41,7 +41,7 @@ export default defineComponent({
   },
   methods: {
     toggleStatus: function () {
-      this.$apiCall('movies/toggleStatus?idMovie=' + this.$route.params.id)
+      this.$apiCall('movie/' + this.$route.params.id + '/status', null, 'PUT')
         .then((response) => {
           this.$q.notify({
             message: 'Movie status updated',

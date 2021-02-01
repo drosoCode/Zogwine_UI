@@ -53,11 +53,11 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('movies/getCollectionMovies?idCollection=' + this.$route.params.id)
+    this.$apiCall('movie/fromCollection/' + this.$route.params.id)
       .then((response) => {
         this.movs = response
       })
-    this.$apiCall('movies/getCollections?idCollection=' + this.$route.params.id)
+    this.$apiCall('movies/collection/' + this.$route.params.id)
       .then((response) => {
         this.collection = response
       })

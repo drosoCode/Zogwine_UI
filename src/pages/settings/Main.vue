@@ -137,7 +137,7 @@ export default Vue.extend({
       .then((response) => {
         this.scraper_tvs = response
       })
-    this.$apiCall('movies/getMultipleResults')
+    this.$apiCall('movie/scan/result')
       .then((response) => {
         this.scraper_movies = response
       })
@@ -178,7 +178,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('movies/scan')
+      this.$apiCall('movie/scan')
       this.threadStatus.movies = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)

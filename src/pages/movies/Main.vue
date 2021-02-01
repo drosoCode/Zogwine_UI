@@ -47,11 +47,11 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('movies/getMovies')
+    this.$apiCall('movie')
       .then((response) => {
         this.movies = response
       })
-    this.$apiCall('movies/getCollections')
+    this.$apiCall('movie/collection')
       .then((response) => {
         this.collections = response
         console.log(this.display)

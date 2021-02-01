@@ -47,7 +47,7 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('movies/getMovie?idMovie=' + this.$route.params.id)
+    this.$apiCall('movie/' + this.$route.params.id)
       .then((response) => {
         this.mov = response
       })
