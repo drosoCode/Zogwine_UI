@@ -6,8 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    baseURL: 'http://10.10.2.1:8083',
-    // baseURL: '',
+    // baseURL: 'http://10.10.2.1:8083',
+    baseURL: '',
     appName: 'Zogwine',
     token: localStorage.getItem('zogwine-token') || null,
     userData: [],
