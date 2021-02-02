@@ -90,7 +90,17 @@ export default new Vuex.Store({
   actions: {
     login ({ state }, auth) {
       return new Promise((resolve) => {
-        axios.get(state.baseURL + '/api/user/signin?user=' + auth[0] + '&password=' + auth[1])
+        axios({
+          headers: {
+            'content-type': 'application/json'
+          },
+          data: {
+            username: auth[0],
+            password: auth[1]
+          },
+          url: state.baseURL + '/api/user/login',
+          method: 'POST'
+        })
           .then((response) => {
             state.token = response.data.data
             if (auth[2]) {
@@ -111,7 +121,7 @@ export default new Vuex.Store({
             'content-type': 'application/json',
             Authorization: 'Bearer ' + state.token
           },
-          url: state.baseURL + '/api/user/signout',
+          url: state.baseURL + '/api/user/logout',
           method: 'GET'
         })
         state.token = null
