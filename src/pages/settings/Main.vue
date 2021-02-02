@@ -55,6 +55,7 @@
                             Loading...
                           </template>
                         </q-btn>
+                        <q-btn color="green" label="Swagger API" icon="mdi-api" class="q-ma-sm" @click="openSwagger()"></q-btn>
                     </q-card-section>
                 </q-card>
             </q-tab-panel>
@@ -225,6 +226,9 @@ export default Vue.extend({
           this.logs = response
         })
       this.$refs.logScroll.setScrollPosition(this.$refs.logScroll.getScrollTarget().scrollHeight)
+    },
+    openSwagger: function () {
+      window.open('api/swagger/?token=' + this.$store.state.token, '_blank')
     }
   }
 })
