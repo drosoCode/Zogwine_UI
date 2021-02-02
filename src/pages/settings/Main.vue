@@ -31,13 +31,13 @@
                             Loading...
                           </template>
                         </q-btn>
-                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" :loading="threadStatus.movies && runningThread" :disable="!threadStatus.movies && runningThread">
+                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" :loading="threadStatus.movie && runningThread" :disable="!threadStatus.movie && runningThread">
                           <template v-slot:loading>
                             <q-spinner-gears class="on-left" />
                             Loading...
                           </template>
                         </q-btn>
-                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" :loading="threadStatus.upEpisodes && runningThread" :disable="!threadStatus.upEpisodes && runningThread">
+                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" :loading="threadStatus.upcomingEpisode && runningThread" :disable="!threadStatus.upcomingEpisode && runningThread">
                           <template v-slot:loading>
                             <q-spinner-gears class="on-left" />
                             Loading...
@@ -49,7 +49,7 @@
                             Loading...
                           </template>
                         </q-btn>
-                        <q-btn color="orange" label="Refresh People" icon="refresh" class="q-ma-sm" @click="refreshPeople" :loading="threadStatus.people && runningThread" :disable="!threadStatus.people && runningThread">
+                        <q-btn color="orange" label="Refresh People" icon="refresh" class="q-ma-sm" @click="refreshPeople" :loading="threadStatus.person && runningThread" :disable="!threadStatus.person && runningThread">
                           <template v-slot:loading>
                             <q-spinner-gears class="on-left" />
                             Loading...
@@ -113,10 +113,10 @@ export default Vue.extend({
       scraper_movies: [],
       threadStatus: {
         tvs: false,
-        movies: false,
-        upEpisodes: false,
+        movie: false,
+        upcomingEpisode: false,
         cache: false,
-        people: false
+        person: false
       },
       runningThread: false,
       statusInterval: null,
@@ -124,12 +124,12 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('process/status')
+    this.$apiCall('core/scan/status')
       .then((response) => {
         this.threadStatus = response
         this.runningThread = Object.values(response).includes(true)
       })
-    this.$apiCall('core/logs?amount=50')
+    this.$apiCall('core/log/50')
       .then((response) => {
         this.logs = response
       })
@@ -149,7 +149,7 @@ export default Vue.extend({
   },
   methods: {
     refreshStatus: function () {
-      this.$apiCall('process/status')
+      this.$apiCall('core/scan/status')
         .then((response) => {
           this.threadStatus = response
           this.runningThread = Object.values(response).includes(true)
@@ -202,7 +202,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('process/cache')
+      this.$apiCall('core/scan/cache')
       this.threadStatus.cache = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
@@ -214,13 +214,13 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('process/people')
+      this.$apiCall('core/scan/person')
       this.threadStatus.people = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshLogs: function () {
-      this.$apiCall('core/logs?amount=50')
+      this.$apiCall('core/log/50')
         .then((response) => {
           this.logs = response
         })
