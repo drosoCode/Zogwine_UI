@@ -69,26 +69,26 @@ export default defineComponent({
   methods: {
     updateStatus: function () {
       if (this.functions.includes('status')) {
-        this.$apiCall('device/status?idDevice=' + this.$attrs.id)
+        this.$apiCall('device/' + this.$attrs.id + '/function/status')
           .then((response) => {
             console.log(response)
             this.status = response
           })
       }
       if (this.functions.includes('position') && this.status > 0) {
-        this.$apiCall('device/position?idDevice=' + this.$attrs.id)
+        this.$apiCall('device/' + this.$attrs.id + '/function/position')
           .then((response) => {
             this.position = response
           })
       }
       if (this.functions.includes('length') && !this.lengthOverride && this.status > 0) {
-        this.$apiCall('device/length?idDevice=' + this.$attrs.id)
+        this.$apiCall('device/' + this.$attrs.id + '/function/length')
           .then((response) => {
             this.length = response
           })
       }
       if (this.functions.includes('playingMedia') && this.status > 0) {
-        this.$apiCall('device/playingMedia?idDevice=' + this.$attrs.id)
+        this.$apiCall('device/' + this.$attrs.id + '/function/playingMedia')
           .then((response) => {
             this.$apiCall('player/info?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
               .then((resp) => {
@@ -109,7 +109,7 @@ export default defineComponent({
       } else if (name === 'stop') {
         this.status = 0
       }
-      this.$apiCall('device/' + name + '?idDevice=' + this.$attrs.id)
+      this.$apiCall('device/' + this.$attrs.id + '/function/' + name)
         .then((response) => {
         })
     }
@@ -150,7 +150,7 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.$apiCall('device/functions?idDevice=' + this.$attrs.id)
+    this.$apiCall('device/' + this.$attrs.id + '/function')
       .then((response) => {
         this.functions = response
         if (this.$attrs.enabled && this.$attrs.available) {

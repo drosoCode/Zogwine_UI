@@ -17,7 +17,7 @@ export default Vue.extend({
     }
   },
   mounted () {
-    this.$apiCall('device/list')
+    this.$apiCall('device')
       .then((response) => {
         this.devices = response
       })
