@@ -57,7 +57,7 @@ export default Vue.extend({
       .then((response) => {
         this.movs = response
       })
-    this.$apiCall('movies/collection/' + this.$route.params.id)
+    this.$apiCall('movie/collection/' + this.$route.params.id)
       .then((response) => {
         this.collection = response
       })
