@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="!playing">
-            <q-btn color="teal" class="full-width" label="Play Video" icon="play_arrow" @click="playNativeVideo" v-if="nativelySupported"/>
+            <q-btn color="teal" class="full-width" label="Play Video" icon="play_arrow" @click="playNativeVideo"/>
             <br>
             <br>
             <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.video_codec }}</q-chip>
@@ -124,7 +124,7 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.$apiCall('player/info?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+    this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
       .then((response) => {
         this.fileInfos = response
         if (this.fileInfos.format.includes('mp4')) {
@@ -140,7 +140,7 @@ export default defineComponent({
         this.remove3dValue = this.remove3D[response.stereo3d]
         this.startFromValue = Math.round(response.startFrom / 60)
         if (this.$store.getters.cast) {
-          this.$apiCall('device/list')
+          this.$apiCall('device')
             .then((response) => {
               this.devices = []
               response.forEach(dev => {
@@ -193,7 +193,7 @@ export default defineComponent({
           })
         })
     },
-    playVideo: function (idDevice) {
+    playVideo: function (idDevice = -1) {
       // start transcoding
       this.loading = true
       this.loadingColor = 'orange'
@@ -211,7 +211,7 @@ export default defineComponent({
           subFile = this.subStreamValue.value
         }
       }
-      this.$apiCall('player/start?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&audioStream=' + audio + '&subStream=' + subStream + '&subFile=' + subFile + '&startFrom=' + parseInt(this.startFromValue) * 60 + '&resize=' + this.resizeValue.value + '&remove3D=' + this.remove3dValue.value + '&idDevice=' + idDevice)
+      this.$apiCall('player/start', { mediaType: this.mediaType, mediaData: this.mediaData, audioStream: audio, subStream: subStream, subFile: subFile, startFrom: parseInt(this.startFromValue) * 60, resize: this.resizeValue.value, remove3D: this.remove3dValue.value, idDevice: idDevice }, 'POST')
         .then(() => {
           if (idDevice === -1) {
             this.loadingColor = 'primary'

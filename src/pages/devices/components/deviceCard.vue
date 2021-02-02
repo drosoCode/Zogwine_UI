@@ -90,7 +90,7 @@ export default defineComponent({
       if (this.functions.includes('playingMedia') && this.status > 0) {
         this.$apiCall('device/' + this.$attrs.id + '/function/playingMedia')
           .then((response) => {
-            this.$apiCall('player/info?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
+            this.$apiCall('player/property?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
               .then((resp) => {
                 this.playingMedia = resp.dimension
                 if (resp.includes('duration')) {
