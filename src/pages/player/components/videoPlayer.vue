@@ -56,6 +56,14 @@
                     <q-item-label>Force Transcoding</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item clickable v-close-popup @click="playVideo(-1, true)">
+                  <q-item-section avatar>
+                    <q-avatar icon="blur_on" color="secondary" text-color="white" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Force Transcoding with subs</q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup @click="playVideo(dev.id)" v-for="dev in devices" :key="dev.id">
                   <q-item-section avatar>
                     <q-avatar icon="cast" color="secondary" text-color="white" />
@@ -124,7 +132,8 @@ export default defineComponent({
       videojsPlayer: null,
       loadingInterval: null,
       loadingColor: 'primary',
-      devices: null
+      devices: null,
+      bitmapCodecs: ['hdmv_pgs_subtitle', 'dvd_subtitle']
     }
   },
   mounted () {
@@ -218,10 +227,34 @@ export default defineComponent({
             src: videoUrl,
             type: 'video/mp4'
           })
+          this.videojsPlayer.currentTime(this.startFromValue * 60)
         })
     },
-    playVideo: function (idDevice = -1) {
+    addSubtitleTracks: function () {
+      for (let i = 0; i < this.subStream.length; i++) {
+        if (!(this.subStream[i].codec in this.bitmapCodecs) && this.subStream[i].value !== -1) {
+          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+
+          if (this.subStream[i].type === 1) {
+            src += '&subStream=' + this.subStream[i].value
+          } else if (this.subStream[i].type === 2) {
+            src += '&subFile=' + this.subStream[i].value
+          }
+
+          this.videojsPlayer.addRemoteTextTrack({
+            kind: 'subtitles',
+            language: 'en',
+            label: this.subStream[i].label,
+            src: src,
+            // eslint-disable-next-line quote-props
+            'default': this.subStream[i].value === this.subStreamValue.value
+          }, true)
+        }
+      }
+    },
+    playVideo: function (idDevice = -1, forceSubs = false) {
       // start transcoding
+      this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
       this.loading = true
       this.loadingColor = 'orange'
       this.playing = true
@@ -230,17 +263,19 @@ export default defineComponent({
         audio = this.audioStreamValue.value
       }
       let subStream = '-1'
-      let subFile = ''
       if (this.subStreamValue !== null && this.subStreamValue.value !== null) {
-        if (this.subStreamValue.type === 1) {
+        if ((this.subStreamValue.codec in this.bitmapCodecs) || forceSubs) {
+          // set substream to burn the subtitles if the codec is bitmap-type or if user wants to force it
           subStream = this.subStreamValue.value
-        } else if (this.subStreamValue.type === 2) {
-          subFile = this.subStreamValue.value
+        } else {
+          // else add text subtitles directly to videojs player
+          this.addSubtitleTracks()
         }
       }
-      this.$apiCall('player/start', { mediaType: this.mediaType, mediaData: this.mediaData, audioStream: audio, subStream: subStream, subFile: subFile, startFrom: parseInt(this.startFromValue) * 60, resize: this.resizeValue.value, remove3D: this.remove3dValue.value, idDevice: idDevice }, 'POST')
+
+      this.$apiCall('player/start', { mediaType: this.mediaType, mediaData: this.mediaData, audioStream: audio, subStream: subStream, startFrom: parseInt(this.startFromValue) * 60, resize: this.resizeValue.value, remove3D: this.remove3dValue.value, idDevice: idDevice }, 'POST')
         .then(() => {
-          if (idDevice === -1) {
+          if (idDevice < 0) {
             this.loadingColor = 'primary'
             this.loadingInterval = setInterval(this.checkPlaylist, 10000)
           } else {
@@ -258,7 +293,6 @@ export default defineComponent({
           this.loadingInterval = null
           // play playlist
           const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
-          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
           this.videojsPlayer.src({
             src: videoUrl,
             type: 'application/x-mpegURL'
