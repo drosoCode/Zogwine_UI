@@ -5,21 +5,21 @@ if (navigator.serviceWorker) {
       installingWorker.onstatechange = () => {
         if (installingWorker.state === 'installed') {
           if (navigator.serviceWorker.controller) {
+            console.log('new update available')
             // new update available
-            this.$q.notify({
-              message: 'Updating application ...',
-              icon: 'sync',
-              position: 'bottom-left',
-              color: 'light-blue'
-            })
-
+            window.newUpdateProxy.newUpdate = true
             caches.keys().then(function (keyList) {
               return Promise.all(keyList.map(function (key) {
                 return caches.delete(key)
               })).then(function () {
-                window.location.reload(true)
+                window.setTimeout(
+                  window.location.reload(true),
+                  3000
+                )
               })
             })
+          } else {
+            console.log('no update available')
           }
         }
       }

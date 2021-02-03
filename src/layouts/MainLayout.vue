@@ -170,6 +170,21 @@ export default {
   },
   mounted: function () {
     this.dark = this.$store.getters.darkMode
+    window.newUpdateObj = { newUpdate: false }
+    window.newUpdateProxy = new Proxy(window.newUpdateObj, {
+      set: (target, key, value) => {
+        if (value) {
+          this.$q.notify({
+            message: 'Updating application ...',
+            icon: 'sync',
+            position: 'bottom-left',
+            color: 'light-blue'
+          })
+          target[key] = value
+        }
+        return true
+      }
+    })
   }
 }
 </script>
