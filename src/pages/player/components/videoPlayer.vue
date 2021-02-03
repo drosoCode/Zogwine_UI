@@ -1,9 +1,6 @@
 <template>
     <div>
         <div v-if="!playing">
-            <q-btn color="teal" class="full-width" label="Play Video" icon="play_arrow" @click="playNativeVideo"/>
-            <br>
-            <br>
             <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.video_codec }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="camera">Format: {{ fileInfos.format }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="access_time">Duration: {{ duration }} min</q-chip>
@@ -46,11 +43,19 @@
               split
               class="full-width"
               color="teal"
-              label="Start Transcoder"
+              label="Play"
               icon="play_arrow"
-              @click="playVideo(-1)"
+              @click="playNativeVideo"
             >
               <q-list v-if="$store.getters.cast">
+                <q-item clickable v-close-popup @click="playVideo(-1)">
+                  <q-item-section avatar>
+                    <q-avatar icon="blur_linear" color="secondary" text-color="white" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Force Transcoding</q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup @click="playVideo(dev.id)" v-for="dev in devices" :key="dev.id">
                   <q-item-section avatar>
                     <q-avatar icon="cast" color="secondary" text-color="white" />
@@ -118,7 +123,6 @@ export default defineComponent({
       loading: false,
       videojsPlayer: null,
       loadingInterval: null,
-      nativelySupported: false,
       loadingColor: 'primary',
       devices: null
     }
@@ -127,10 +131,6 @@ export default defineComponent({
     this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
       .then((response) => {
         this.fileInfos = response
-        if (this.fileInfos.format.includes('mp4')) {
-          // if format is natively supported, display "play native" option
-          this.nativelySupported = true
-        }
         if (this.audioStream.length > 0) {
           this.audioStreamValue = this.audioStream[0]
         }
@@ -183,10 +183,37 @@ export default defineComponent({
   },
   methods: {
     playNativeVideo: function () {
+      // try to play native video and fall back to transcoding if it's not possible
+      if (this.audioStream.length > 1 && this.audioStreamValue.value !== 0) {
+        // multiple audio streams are not supported by browser
+        this.playVideo(-1)
+        return
+      }
+
+      const formats = {
+        ogg: 'video/ogg; codecs="theora"',
+        h264: 'video/mp4; codecs="avc1.42E01E"',
+        webm: 'video/webm; codecs="vp8, vorbis"',
+        vp9: 'video/webm; codecs="vp9"',
+        hls: 'application/x-mpegURL; codecs="avc1.42E01E"'
+      }
+      const support = document.createElement('video').canPlayType(formats[this.fileInfos.video_codec] || 'video/' + this.fileInfos.video_codec)
+
+      if (support === '') {
+        // the browser doesn't report that the codec is supported
+        this.playVideo(-1)
+        return
+      }
+
+      // try to play the file
       this.$apiCall('player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
         .then((videoUrl) => {
           this.playing = true
           this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { autoplay: true })
+          this.videojsPlayer.on('error', () => {
+            // if there is an error while playing, fall back to transcoding
+            this.playVideo(-1)
+          })
           this.videojsPlayer.src({
             src: videoUrl,
             type: 'video/mp4'
@@ -267,4 +294,5 @@ export default defineComponent({
     }
   }
 })
+
 </script>
