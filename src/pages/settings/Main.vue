@@ -228,7 +228,7 @@ export default Vue.extend({
       this.$refs.logScroll.setScrollPosition(this.$refs.logScroll.getScrollTarget().scrollHeight)
     },
     openSwagger: function () {
-      window.open('api/swagger/?token=' + this.$store.state.token, '_blank')
+      window.open(this.$store.getters.apiEndpoint + 'swagger/?token=' + this.$store.state.token, '_blank')
     }
   }
 })
