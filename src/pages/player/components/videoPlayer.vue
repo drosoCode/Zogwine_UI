@@ -33,10 +33,11 @@
             <q-slider
                 v-model="startFromValue"
                 :min="0"
-                :max="duration"
+                :max="fileInfos.duration"
                 :step="1"
                 label
                 color="teal"
+                :label-value="sliderLabelValue"
             />
             <br>
             <q-btn-dropdown
@@ -78,7 +79,8 @@
         </div>
 
         <div :hidden="loading || !playing">
-            <video ref="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>
+            <div ref="videoPlayerContainer"></div>
+            <customSlider :min="0" :max="fileInfos.duration" :value="customSeekValue" @update="seekChange" :buffered="customSeekBuffer" v-if="customSeekValue >= 0"></customSlider>
         </div>
 
         <div v-if="loading">
@@ -94,17 +96,12 @@
     </div>
 </template>
 
-<style scoped>
-video, .video-js {
-  width: 90vw;
-  height:90vh;
-}
-</style>
-
 <script>
 import { defineComponent } from '@vue/composition-api'
+import customSlider from './customSlider'
 
 export default defineComponent({
+  components: { customSlider },
   name: 'videoPlayer',
   data () {
     return {
@@ -133,7 +130,9 @@ export default defineComponent({
       loadingInterval: null,
       loadingColor: 'primary',
       devices: null,
-      bitmapCodecs: ['hdmv_pgs_subtitle', 'dvd_subtitle']
+      bitmapCodecs: ['hdmv_pgs_subtitle', 'dvd_subtitle'],
+      customSeekBuffer: 0,
+      customSeekValue: -1
     }
   },
   mounted () {
@@ -147,7 +146,7 @@ export default defineComponent({
           this.subStreamValue = this.subStream[0]
         }
         this.remove3dValue = this.remove3D[response.stereo3d]
-        this.startFromValue = Math.round(response.startFrom / 60)
+        this.startFromValue = response.startFrom
         if (this.$store.getters.cast) {
           this.$apiCall('device')
             .then((response) => {
@@ -188,13 +187,20 @@ export default defineComponent({
         }
       }
       return data
+    },
+    sliderLabelValue: function () {
+      return Math.floor(this.startFromValue / 60) + ':' + this.startFromValue % 60
     }
   },
   methods: {
+    createPlayer: function () {
+      this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" style="width: 90vw; height:90vh;"></video>'
+      this.videojsPlayer = this.$videojs(document.querySelector('#videoPlayer'), { autoplay: true })
+    },
     playNativeVideo: function () {
       // try to play native video and fall back to transcoding if it's not possible
-      if (this.audioStream.length > 1 && this.audioStreamValue.value !== 0) {
-        // multiple audio streams are not supported by browser
+      if ((this.audioStream.length > 1 && this.audioStreamValue.value !== 0) || (this.subStreamValue.codec in this.bitmapCodecs)) {
+        // multiple audio streams and bitmap subtitles are not supported by browser
         this.playVideo(-1)
         return
       }
@@ -218,7 +224,8 @@ export default defineComponent({
       this.$apiCall('player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
         .then((videoUrl) => {
           this.playing = true
-          this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { autoplay: true })
+          this.createPlayer()
+          this.addSubtitleTracks()
           this.videojsPlayer.on('error', () => {
             // if there is an error while playing, fall back to transcoding
             this.playVideo(-1)
@@ -227,13 +234,12 @@ export default defineComponent({
             src: videoUrl,
             type: 'video/mp4'
           })
-          this.videojsPlayer.currentTime(this.startFromValue * 60)
         })
     },
     addSubtitleTracks: function () {
       for (let i = 0; i < this.subStream.length; i++) {
         if (!(this.subStream[i].codec in this.bitmapCodecs) && this.subStream[i].value !== -1) {
-          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token
+          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token + '&startFrom=' + this.startFromValue
 
           if (this.subStream[i].type === 1) {
             src += '&subStream=' + this.subStream[i].value
@@ -254,7 +260,8 @@ export default defineComponent({
     },
     playVideo: function (idDevice = -1, forceSubs = false) {
       // start transcoding
-      this.videojsPlayer = this.$videojs(this.$refs.videoPlayer, { liveui: true, autoplay: true })
+      this.createPlayer()
+      this.customSeekValue = -1
       this.loading = true
       this.loadingColor = 'orange'
       this.playing = true
@@ -270,33 +277,51 @@ export default defineComponent({
         } else {
           // else add text subtitles directly to videojs player
           this.addSubtitleTracks()
+          // update the custom progress bar
+          this.customSeekValue = 0
+          this.videojsPlayer.on('timeupdate', () => {
+            this.customSeekBuffer = Math.floor(this.videojsPlayer.buffered().end(0) + this.startFromValue)
+            this.customSeekValue = Math.floor(this.videojsPlayer.currentTime() + this.startFromValue)
+          })
         }
       }
 
-      this.$apiCall('player/start', { mediaType: this.mediaType, mediaData: this.mediaData, audioStream: audio, subStream: subStream, startFrom: parseInt(this.startFromValue) * 60, resize: this.resizeValue.value, remove3D: this.remove3dValue.value, idDevice: idDevice }, 'POST')
+      this.$apiCall('player/start', { mediaType: this.mediaType, mediaData: this.mediaData, audioStream: audio, subStream: subStream, startFrom: this.startFromValue, resize: this.resizeValue.value, remove3D: this.remove3dValue.value, idDevice: idDevice }, 'POST')
         .then(() => {
           if (idDevice < 0) {
             this.loadingColor = 'primary'
-            this.loadingInterval = setInterval(this.checkPlaylist, 10000)
+            this.loadingInterval = setInterval(this.checkStatus, 4000)
           } else {
             this.playing = false
             this.$router.push({ name: 'player' })
           }
         })
     },
-    checkPlaylist: function () {
-      this.$apiCall('player/m3u8', null, 'GET', false)
+    checkStatus: function () {
+      this.$apiCall('player/status', null, 'GET', false)
         .then((resp) => {
-          // playlist is available, stop loading
-          this.loading = false
-          clearInterval(this.loadingInterval)
-          this.loadingInterval = null
-          // play playlist
-          const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
-          this.videojsPlayer.src({
-            src: videoUrl,
-            type: 'application/x-mpegURL'
-          })
+          if (resp.available && resp.running) {
+            // playlist is available, stop loading
+            this.loading = false
+            clearInterval(this.loadingInterval)
+            this.loadingInterval = null
+            // play playlist
+            const videoUrl = this.$store.getters.apiEndpoint + 'player/m3u8?token=' + this.$store.state.token
+            this.videojsPlayer.src({
+              src: videoUrl,
+              type: 'application/x-mpegURL'
+            })
+            this.videojsPlayer.currentTime(0)
+          } else if (!resp.running) {
+            clearInterval(this.loadingInterval)
+            this.playing = false
+            this.$q.notify({
+              message: 'Transcoding Error',
+              icon: 'mdi-alert',
+              position: 'bottom-left',
+              color: 'red'
+            })
+          }
         }).catch(() => {})
     },
     stopPlayer: function () {
@@ -313,6 +338,17 @@ export default defineComponent({
           this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=0')
         }
         this.playing = false
+      }
+    },
+    seekChange: function (val) {
+      this.customSeekValue = val
+      if ((this.customSeekValue < this.startFromValue || this.customSeekValue > this.customSeekBuffer) && this.customSeekValue > 0) {
+        console.log('restarting transcoder')
+        this.startFromValue = this.customSeekValue
+        this.stopPlayer()
+        this.playVideo(-1)
+      } else {
+        this.videojsPlayer.currentTime(this.customSeekValue - this.startFromValue)
       }
     }
   },

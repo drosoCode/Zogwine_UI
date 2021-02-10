@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-slider v-model="progress" :min="min" :max="max" ref="slider" />
+        <q-slider @change="handleInput" @input="valChange" :value="value" :min="min" :max="max" ref="slider" label :label-value="labelVal" />
     </div>
 </template>
 
@@ -11,23 +11,36 @@ export default defineComponent({
   name: 'customSlider',
   data () {
     return {
-      progress: this.value
+      currentVal: -1
     }
   },
   methods: {
     handleInput (e) {
-      this.$emit('input', this.progress)
+      if (e !== this.value) {
+        this.$emit('update', e)
+      }
+    },
+    valChange (value) {
+      this.$refs.slider.$el.childNodes[0].childNodes[0].style.width = value / this.max * 100 + '%'
+      this.currentVal = value
     }
   },
   mounted () {
-    this.$refs.slider.$el.childNodes[0].innerHTML += "<div class='q-slider__track q-slider__track--h absolute' style='left: 0px; width: " + this.buffered + '%;color:' + this.bufferedColor + ";z-index:-1;'></div>"
+    this.$refs.slider.$el.childNodes[0].innerHTML += "<div class='q-slider__track q-slider__track--h absolute' style='left: 0px; width: " + (this.buffered / this.max * 100) + '%;color:' + this.bufferedColor + ";z-index:-1;'></div>"
+    this.currentVal = this.value
+  },
+  computed: {
+    labelVal: function () {
+      return Math.floor(this.currentVal / 60) + ':' + this.currentVal % 60
+    }
   },
   watch: {
     buffered: function (newVal, oldVal) {
-      this.$refs.slider.$el.childNodes[0].childNodes[1].style.width = newVal + '%'
+      this.$refs.slider.$el.childNodes[0].childNodes[1].style.width = newVal / this.max * 100 + '%'
     },
-    progress: function (newVal, oldVal) {
+    value: function (newVal, oldVal) {
       this.$refs.slider.$el.childNodes[0].childNodes[0].style.width = newVal / this.max * 100 + '%'
+      this.currentVal = newVal
     }
   },
   props: {
