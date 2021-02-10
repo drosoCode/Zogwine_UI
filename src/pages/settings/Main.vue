@@ -180,7 +180,7 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('movie/scan')
-      this.threadStatus.movies = true
+      this.threadStatus.movie = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
@@ -192,7 +192,7 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('/tvs/scan/upcoming')
-      this.threadStatus.upEpisodes = true
+      this.threadStatus.upcomingEpisode = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
@@ -216,7 +216,7 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('core/scan/person')
-      this.threadStatus.people = true
+      this.threadStatus.person = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
