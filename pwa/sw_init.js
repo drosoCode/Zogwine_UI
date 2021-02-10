@@ -14,7 +14,7 @@ if (navigator.serviceWorker) {
               })).then(function () {
                 window.setTimeout(
                   window.location.reload(true),
-                  3000
+                  6000
                 )
               })
             })
