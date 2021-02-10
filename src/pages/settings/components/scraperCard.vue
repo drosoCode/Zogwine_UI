@@ -13,7 +13,6 @@
           <q-btn icon="search" color="primary" style="height: 3rem" @click="setNewSearch"/>
         </div>
         <br>
-
         <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :key="index" :id="index" :mediaType="mediaType" :idMedia="idMedia" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
       </q-card>
     </div>
@@ -36,7 +35,7 @@ export default defineComponent({
   props: {
     data: {
       type: String,
-      required: true
+      required: false
     },
     idMedia: {
       type: Number,
