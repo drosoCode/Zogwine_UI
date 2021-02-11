@@ -80,7 +80,13 @@
 
         <div :hidden="loading || !playing">
             <div ref="videoPlayerContainer"></div>
-            <customSlider :min="0" :max="fileInfos.duration" :value="customSeekValue" @update="seekChange" :buffered="customSeekBuffer" v-if="customSeekValue >= 0"></customSlider>
+            <div class="row">
+              <customSlider :min="0" :max="fileInfos.duration" :value="customSeekValue" @update="seekChange" :buffered="customSeekBuffer" class="col-12 col-lg-11" v-if="customSeekValue >= 0"></customSlider>
+              <div class="col-12 col-lg-1">
+                &nbsp;
+                <q-btn class="q-mt-sm" color="primary" label="Next" icon="skip_next" size="xs" v-if="nextEpisode !== -1 && nextEpisode !== mediaData" @click="skipEpisode"/>
+              </div>
+            </div>
         </div>
 
         <div v-if="loading">
@@ -132,33 +138,12 @@ export default defineComponent({
       devices: null,
       bitmapCodecs: ['hdmv_pgs_subtitle', 'dvd_subtitle'],
       customSeekBuffer: 0,
-      customSeekValue: -1
+      customSeekValue: -1,
+      nextEpisode: -1
     }
   },
   mounted () {
-    this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
-      .then((response) => {
-        this.fileInfos = response
-        if (this.audioStream.length > 0) {
-          this.audioStreamValue = this.audioStream[0]
-        }
-        if (this.subStream.length > 0) {
-          this.subStreamValue = this.subStream[0]
-        }
-        this.remove3dValue = this.remove3D[response.stereo3d]
-        this.startFromValue = response.startFrom
-        if (this.$store.getters.cast) {
-          this.$apiCall('device')
-            .then((response) => {
-              this.devices = []
-              response.forEach(dev => {
-                if (dev.enabled === 1 && dev.available === true) {
-                  this.devices.push(dev)
-                }
-              })
-            })
-        }
-      })
+    this.loadData()
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
   },
@@ -170,7 +155,7 @@ export default defineComponent({
       const data = []
       const a = this.fileInfos.audio
       for (let i = 0; i < a.length; i++) {
-        data.push({ label: a[i].language, value: i })
+        data.push({ label: a[i].language, value: i, codec: a[i].codec })
       }
       return data
     },
@@ -193,28 +178,71 @@ export default defineComponent({
     }
   },
   methods: {
+    loadData: function () {
+      this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+        .then((response) => {
+          this.fileInfos = response
+          if (this.audioStream.length > 0) {
+            this.audioStreamValue = this.audioStream[0]
+          }
+          if (this.subStream.length > 0) {
+            this.subStreamValue = this.subStream[0]
+          }
+          this.remove3dValue = this.remove3D[response.stereo3d]
+          this.startFromValue = response.startFrom
+          if (this.$store.getters.cast) {
+            this.$apiCall('device')
+              .then((response) => {
+                this.devices = []
+                response.forEach(dev => {
+                  if (dev.enabled === 1 && dev.available === true) {
+                    this.devices.push(dev)
+                  }
+                })
+              })
+          }
+        })
+
+      if (parseInt(this.mediaType) === 1) {
+        this.$apiCall('tvs/episode/' + this.mediaData).then((resp) => {
+          this.$apiCall('tvs/' + resp.idShow + '/episode').then((data) => {
+            for (let i = 0; i < data.length; i++) {
+              if (parseInt(this.mediaData) === data[i].id && i + 1 < data.length) {
+                this.nextEpisode = data[i + 1].id
+                break
+              }
+            }
+          })
+        })
+      }
+    },
     createPlayer: function () {
       this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" style="width: 90vw; height:90vh;"></video>'
       this.videojsPlayer = this.$videojs(document.querySelector('#videoPlayer'), { autoplay: true })
     },
     playNativeVideo: function () {
       // try to play native video and fall back to transcoding if it's not possible
-      if ((this.audioStream.length > 1 && this.audioStreamValue.value !== 0) || (this.subStreamValue.codec in this.bitmapCodecs)) {
+      if ((this.audioStream.length > 1 && this.audioStreamValue.value !== 0) || (this.subStreamValue.codec in this.bitmapCodecs) || this.resizeValue.value !== -1 || this.remove3dValue.value !== 0) {
         // multiple audio streams and bitmap subtitles are not supported by browser
+        // also, video resize and 3D removal must be done on the server side
         this.playVideo(-1)
         return
       }
 
-      const formats = {
+      const videoMime = {
         ogg: 'video/ogg; codecs="theora"',
         h264: 'video/mp4; codecs="avc1.42E01E"',
         webm: 'video/webm; codecs="vp8, vorbis"',
         vp9: 'video/webm; codecs="vp9"',
         hls: 'application/x-mpegURL; codecs="avc1.42E01E"'
       }
-      const support = document.createElement('video').canPlayType(formats[this.fileInfos.video_codec] || 'video/' + this.fileInfos.video_codec)
+      const audioMime = {
+        dts: 'audio/vnd.dts'
+      }
+      const testVid = document.createElement('video')
+      const support = testVid.canPlayType(videoMime[this.fileInfos.video_codec] || 'video/' + this.fileInfos.video_codec) !== '' && testVid.canPlayType(audioMime[this.audioStreamValue.codec] || 'audio/' + this.audioStreamValue.codec) !== ''
 
-      if (support === '') {
+      if (!support) {
         // the browser doesn't report that the codec is supported
         this.playVideo(-1)
         return
@@ -225,7 +253,7 @@ export default defineComponent({
         .then((videoUrl) => {
           this.playing = true
           this.createPlayer()
-          this.addSubtitleTracks()
+          this.addSubtitleTracks(false)
           this.videojsPlayer.on('error', () => {
             // if there is an error while playing, fall back to transcoding
             this.playVideo(-1)
@@ -234,12 +262,13 @@ export default defineComponent({
             src: videoUrl,
             type: 'video/mp4'
           })
+          this.videojsPlayer.currentTime(this.startFromValue)
         })
     },
-    addSubtitleTracks: function () {
+    addSubtitleTracks: function (useStartFrom = true) {
       for (let i = 0; i < this.subStream.length; i++) {
         if (!(this.subStream[i].codec in this.bitmapCodecs) && this.subStream[i].value !== -1) {
-          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token + '&startFrom=' + this.startFromValue
+          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token + '&startFrom=' + (useStartFrom ? this.startFromValue : 0)
 
           if (this.subStream[i].type === 1) {
             src += '&subStream=' + this.subStream[i].value
@@ -350,10 +379,20 @@ export default defineComponent({
       } else {
         this.videojsPlayer.currentTime(this.customSeekValue - this.startFromValue)
       }
+    },
+    skipEpisode: function () {
+      this.stopPlayer()
+      this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.nextEpisode } })
     }
   },
   beforeDestroy: function () {
     this.stopPlayer()
+  },
+  watch: {
+    $route (to, from) {
+      // reload data on route change
+      this.loadData()
+    }
   },
   props: {
     mediaType: {

@@ -58,7 +58,6 @@ export default defineComponent({
       this.details = false
     },
     play: function () {
-      console.log('play')
       this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.id } })
     },
     download: function () {
