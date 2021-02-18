@@ -102,6 +102,13 @@
     </div>
 </template>
 
+<style>
+video, .video-js {
+  width: 90vw;
+  height:90vh;
+}
+</style>
+
 <script>
 import { defineComponent } from '@vue/composition-api'
 import customSlider from './customSlider'
@@ -217,7 +224,7 @@ export default defineComponent({
       }
     },
     createPlayer: function () {
-      this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" style="width: 90vw; height:90vh;"></video>'
+      this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>'
       this.videojsPlayer = this.$videojs(document.querySelector('#videoPlayer'), { autoplay: true, playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] })
     },
     playNativeVideo: function () {
