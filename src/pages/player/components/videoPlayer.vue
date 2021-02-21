@@ -153,6 +153,9 @@ export default defineComponent({
     this.loadData()
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
+    if (this.startPlayer) {
+      this.playNativeVideo()
+    }
   },
   computed: {
     duration: function () {
@@ -210,6 +213,7 @@ export default defineComponent({
           }
         })
 
+      // try to get the next episode if this is a tv show type
       if (parseInt(this.mediaType) === 1) {
         this.$apiCall('tvs/episode/' + this.mediaData).then((resp) => {
           this.$apiCall('tvs/' + resp.idShow + '/episode').then((data) => {
@@ -221,6 +225,23 @@ export default defineComponent({
             }
           })
         })
+      }
+
+      // try to setup player according to the properties
+      if (this.startFromSetup !== undefined && Number.isInteger(this.startFromSetup)) {
+        this.startFromValue = this.startFromSetup
+      }
+      if (this.audioStreamSetup !== undefined && Number.isInteger(this.subStreamSetup)) {
+        this.subStreamValue = this.subStream[this.audioStreamSetup]
+      }
+      if (this.subStreamSetup !== undefined && Number.isInteger(this.subStreamSetup)) {
+        this.subStreamValue = this.subStream[this.subStreamSetup]
+      }
+      if (this.resizeSetup !== undefined && Number.isInteger(this.resizeSetup)) {
+        this.resizeValue = this.resize[this.resizeSetup]
+      }
+      if (this.remove3dSetup !== undefined && Number.isInteger(this.remove3dSetup)) {
+        this.remove3dValue = this.remove3D[this.remove3dSetup]
       }
     },
     createPlayer: function () {
@@ -348,6 +369,9 @@ export default defineComponent({
               type: 'application/x-mpegURL'
             })
             this.videojsPlayer.currentTime(0)
+            if (this.fullscreen) {
+              this.videojsPlayer.requestFullScreen()
+            }
           } else if (!resp.running) {
             clearInterval(this.loadingInterval)
             this.playing = false
@@ -399,6 +423,38 @@ export default defineComponent({
     $route (to, from) {
       // reload data on route change
       this.loadData()
+    },
+    startPlayer: function (oldVal, newVal) {
+      if (newVal && !this.playing) {
+        this.playNativeVideo()
+      } else if (!newVal && this.playing) {
+        this.stopPlayer()
+      }
+    },
+    startFromSetup: function (oldVal, newVal) {
+      if (this.playing) {
+        this.seekChange(newVal)
+      }
+    },
+    subStreamSetup: function (oldVal, newVal) {
+      if (newVal !== undefined && Number.isInteger(newVal)) {
+        this.subStreamValue = this.subStream[newVal]
+      }
+    },
+    audioStreamSetup: function (oldVal, newVal) {
+      if (newVal !== undefined && Number.isInteger(newVal)) {
+        this.audioStreamValue = this.audioStream[newVal]
+      }
+    },
+    resizeSetup: function (oldVal, newVal) {
+      if (newVal !== undefined && Number.isInteger(newVal)) {
+        this.resizeValue = newVal
+      }
+    },
+    remove3dSetup: function (oldVal, newVal) {
+      if (newVal !== undefined && Number.isInteger(newVal)) {
+        this.remove3dValue = newVal
+      }
     }
   },
   props: {
@@ -407,6 +463,34 @@ export default defineComponent({
     },
     mediaData: {
       required: true
+    },
+    startPlayer: {
+      required: false,
+      default: false
+    },
+    fullscreen: {
+      required: false,
+      default: false
+    },
+    audioStreamSetup: {
+      required: false,
+      default: undefined
+    },
+    subStreamSetup: {
+      required: false,
+      default: undefined
+    },
+    resizeSetup: {
+      required: false,
+      default: undefined
+    },
+    remove3dSetup: {
+      required: false,
+      default: undefined
+    },
+    startFromSetup: {
+      required: false,
+      default: undefined
     }
   }
 })
