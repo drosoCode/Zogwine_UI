@@ -48,7 +48,7 @@
               icon="play_arrow"
               @click="playNativeVideo"
             >
-              <q-list v-if="$store.getters.cast">
+              <q-list>
                 <q-item clickable v-close-popup @click="playVideo(-1)">
                   <q-item-section avatar>
                     <q-avatar icon="blur_linear" color="secondary" text-color="white" />
@@ -124,7 +124,7 @@ export default defineComponent({
       resizeValue: { label: 'Original', value: -1 },
       startFromValue: 0,
       resize: [
-        { label: 'Original', value: 0 },
+        { label: 'Original', value: -1 },
         { label: '1080p', value: 1080 },
         { label: '720p', value: 720 },
         { label: '480p', value: 480 },
@@ -142,20 +142,18 @@ export default defineComponent({
       videojsPlayer: null,
       loadingInterval: null,
       loadingColor: 'primary',
-      devices: null,
+      devices: [],
       bitmapCodecs: ['hdmv_pgs_subtitle', 'dvd_subtitle'],
       customSeekBuffer: 0,
       customSeekValue: -1,
-      nextEpisode: -1
+      nextEpisode: -1,
+      loadedStatus: 0
     }
   },
   mounted () {
     this.loadData()
     window.addEventListener('hashchange', () => this.stopPlayer())
     window.addEventListener('beforeunload', () => this.stopPlayer())
-    if (this.startPlayer) {
-      this.playNativeVideo()
-    }
   },
   computed: {
     duration: function () {
@@ -164,7 +162,7 @@ export default defineComponent({
     audioStream: function () {
       const data = []
       const a = this.fileInfos.audio
-      for (let i = 0; i < a.length; i++) {
+      for (let i = 0; i < (a === undefined ? 0 : a.length); i++) {
         data.push({ label: a[i].language, value: i, codec: a[i].codec })
       }
       return data
@@ -172,7 +170,7 @@ export default defineComponent({
     subStream: function () {
       const data = [{ label: 'None', value: -1, type: 1 }]
       const s = this.fileInfos.subtitles
-      for (let i = 0; i < s.length; i++) {
+      for (let i = 0; i < (s === undefined ? 0 : s.length); i++) {
         if ('file' in s[i]) {
           // subtitle file
           data.push({ label: s[i].language + ' | ' + s[i].title, value: s[i].file, type: 2 })
@@ -203,18 +201,29 @@ export default defineComponent({
           if (this.$store.getters.cast) {
             this.$apiCall('device')
               .then((response) => {
-                this.devices = []
                 response.forEach(dev => {
                   if (dev.enabled === 1 && dev.available === true) {
                     this.devices.push(dev)
                   }
                 })
+                console.log('--' + this.loadedStatus)
+                this.loadedStatus++
               })
+          } else if (this.$store.getters.receive) {
+            this.devices.push({
+              id: 1,
+              name: 'Remote Player',
+              type: 'web'
+            })
+            this.loadedStatus++
+          } else {
+            this.loadedStatus++
           }
+          this.loadedStatus++
         })
 
       // try to get the next episode if this is a tv show type
-      if (parseInt(this.mediaType) === 1) {
+      if (this.showNext && parseInt(this.mediaType) === 1) {
         this.$apiCall('tvs/episode/' + this.mediaData).then((resp) => {
           this.$apiCall('tvs/' + resp.idShow + '/episode').then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -228,25 +237,56 @@ export default defineComponent({
       }
 
       // try to setup player according to the properties
-      if (this.startFromSetup !== undefined && Number.isInteger(this.startFromSetup)) {
-        this.startFromValue = this.startFromSetup
+      if (this.position !== undefined && Number.isInteger(this.position)) {
+        this.startFromValue = this.position
       }
       if (this.audioStreamSetup !== undefined && Number.isInteger(this.subStreamSetup)) {
         this.subStreamValue = this.subStream[this.audioStreamSetup]
       }
       if (this.subStreamSetup !== undefined && Number.isInteger(this.subStreamSetup)) {
-        this.subStreamValue = this.subStream[this.subStreamSetup]
+        for (let i = 0; i < this.subStream.length; i++) {
+          if (this.subStream[i].type === 1 && this.subStream[i].value === this.subStreamSetup) {
+            this.subStreamValue = this.subStream[i]
+          }
+        }
+      }
+      if (this.subFileSetup !== undefined) {
+        for (let i = 0; i < this.subStream.length; i++) {
+          if (this.subStream[i].type === 2 && this.subStream[i].value === this.subFileSetup) {
+            this.subStreamValue = this.subStream[i]
+          }
+        }
       }
       if (this.resizeSetup !== undefined && Number.isInteger(this.resizeSetup)) {
-        this.resizeValue = this.resize[this.resizeSetup]
+        for (let i = 0; i < this.resize.length; i++) {
+          if (this.resize[i].value === this.resizeSetup) {
+            this.resizeValue = this.resize[i]
+          }
+        }
       }
       if (this.remove3dSetup !== undefined && Number.isInteger(this.remove3dSetup)) {
         this.remove3dValue = this.remove3D[this.remove3dSetup]
       }
+      this.loadedStatus++
     },
     createPlayer: function () {
       this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>'
       this.videojsPlayer = this.$videojs(document.querySelector('#videoPlayer'), { autoplay: true, playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] })
+      this.attachListeners()
+    },
+    attachListeners: function () {
+      this.videojsPlayer.on('timeupdate', () => {
+        this.$emit('time', this.videojsPlayer.currentTime())
+      })
+      this.videojsPlayer.on('pause', () => {
+        this.$emit('status', 1)
+      })
+      this.videojsPlayer.on('play', () => {
+        this.$emit('status', 2)
+      })
+      this.videojsPlayer.on('ended', () => {
+        this.$emit('status', 0)
+      })
     },
     playNativeVideo: function () {
       // try to play native video and fall back to transcoding if it's not possible
@@ -328,8 +368,9 @@ export default defineComponent({
       }
       let subStream = '-1'
       if (this.subStreamValue !== null && this.subStreamValue.value !== null) {
-        if ((this.subStreamValue.codec in this.bitmapCodecs) || forceSubs) {
+        if ((this.subStreamValue.codec in this.bitmapCodecs) || forceSubs || idDevice !== -1) {
           // set substream to burn the subtitles if the codec is bitmap-type or if user wants to force it
+          // subStream is also set if you are casting to a device
           subStream = this.subStreamValue.value
         } else {
           // else add text subtitles directly to videojs player
@@ -424,36 +465,57 @@ export default defineComponent({
       // reload data on route change
       this.loadData()
     },
-    startPlayer: function (oldVal, newVal) {
+    startPlayer: function (newVal) {
       if (newVal && !this.playing) {
         this.playNativeVideo()
       } else if (!newVal && this.playing) {
         this.stopPlayer()
       }
     },
-    startFromSetup: function (oldVal, newVal) {
+    position: function (newVal) {
       if (this.playing) {
         this.seekChange(newVal)
       }
     },
-    subStreamSetup: function (oldVal, newVal) {
+    subStreamSetup: function (newVal) {
       if (newVal !== undefined && Number.isInteger(newVal)) {
         this.subStreamValue = this.subStream[newVal]
       }
     },
-    audioStreamSetup: function (oldVal, newVal) {
+    audioStreamSetup: function (newVal) {
       if (newVal !== undefined && Number.isInteger(newVal)) {
         this.audioStreamValue = this.audioStream[newVal]
       }
     },
-    resizeSetup: function (oldVal, newVal) {
+    resizeSetup: function (newVal) {
       if (newVal !== undefined && Number.isInteger(newVal)) {
         this.resizeValue = newVal
       }
     },
-    remove3dSetup: function (oldVal, newVal) {
+    remove3dSetup: function (newVal) {
       if (newVal !== undefined && Number.isInteger(newVal)) {
         this.remove3dValue = newVal
+      }
+    },
+    status: function (newVal) {
+      if (!this.playing) {
+        return
+      }
+
+      if (newVal === 0) {
+        this.stopPlayer()
+      } else if (newVal === 1 && !this.videojsPlayer.paused()) {
+        this.videojsPlayer.pause()
+      } else if (newVal === 2 && this.videojsPlayer.paused()) {
+        this.videojsPlayer.play()
+      }
+    },
+    loadedStatus: function (val) {
+      if (val >= 3) {
+        // the page is considered as fully loaded
+        if (this.startPlayer) {
+          this.playNativeVideo()
+        }
       }
     }
   },
@@ -488,9 +550,17 @@ export default defineComponent({
       required: false,
       default: undefined
     },
-    startFromSetup: {
+    position: {
       required: false,
       default: undefined
+    },
+    status: {
+      required: false,
+      default: 2
+    },
+    showNext: {
+      required: false,
+      default: true
     }
   }
 })

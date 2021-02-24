@@ -20,6 +20,9 @@ export default new Vuex.Store({
     apiEndpoint: state => {
       return state.baseURL + '/api/'
     },
+    socketioEndpoint: state => {
+      return state.baseURL
+    },
     token: state => {
       return state.token
     },
@@ -39,6 +42,13 @@ export default new Vuex.Store({
     },
     cast: (getters) => {
       if (getters.userData.cast === 1) {
+        return true
+      } else {
+        return false
+      }
+    },
+    receive: (getters) => {
+      if (getters.userData.receive === 1) {
         return true
       } else {
         return false
