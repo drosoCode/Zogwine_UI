@@ -206,16 +206,20 @@ export default defineComponent({
                     this.devices.push(dev)
                   }
                 })
-                console.log('--' + this.loadedStatus)
                 this.loadedStatus++
               })
           } else if (this.$store.getters.receive) {
-            this.devices.push({
-              id: 1,
-              name: 'Remote Player',
-              type: 'web'
-            })
-            this.loadedStatus++
+            this.$apiCall('device/1')
+              .then((response) => {
+                if (response.enabled === 1 && response.available === true) {
+                  this.devices.push({
+                    id: 1,
+                    name: 'Remote Player',
+                    type: 'web'
+                  })
+                  this.loadedStatus++
+                }
+              })
           } else {
             this.loadedStatus++
           }
