@@ -31,7 +31,7 @@ export default defineComponent({
   },
   computed: {
     labelVal: function () {
-      return Math.floor(this.currentVal / 60) + ':' + this.currentVal % 60
+      return Math.floor(this.currentVal / 60) + ':' + Math.round(this.currentVal % 60)
     }
   },
   watch: {
