@@ -198,6 +198,9 @@ export default defineComponent({
           }
           this.remove3dValue = this.remove3D[response.stereo3d]
           this.startFromValue = response.startFrom
+
+          this.setupParams()
+
           if (this.$store.getters.cast) {
             this.$apiCall('device')
               .then((response) => {
@@ -240,6 +243,9 @@ export default defineComponent({
         })
       }
 
+      this.loadedStatus++
+    },
+    setupParams () {
       // try to setup player according to the properties
       if (this.position !== undefined && Number.isInteger(this.position)) {
         this.startFromValue = this.position
@@ -271,7 +277,6 @@ export default defineComponent({
       if (this.remove3dSetup !== undefined && Number.isInteger(this.remove3dSetup)) {
         this.remove3dValue = this.remove3D[this.remove3dSetup]
       }
-      this.loadedStatus++
     },
     createPlayer: function () {
       this.$refs.videoPlayerContainer.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto"></video>'
