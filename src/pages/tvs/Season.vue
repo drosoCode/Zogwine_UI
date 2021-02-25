@@ -20,7 +20,7 @@
             </div>
         </q-card>
 
-        <episodeCard class="q-px-md q-pt-md col-xs-6 col-sm-5 col-md-3 col-lg-3 col-xl-2" v-for="item in episodes" :key="item.id" :id="item.id" :filler="item.filler" v-bind:title="item.title" v-bind:overview="item.overview" v-bind:img="item.icon" v-bind:episode="item.episode" v-bind:watchCount="item.watchCount"></episodeCard>
+        <episodeCard class="q-px-md q-pt-md col-xs-6 col-sm-5 col-md-3 col-lg-3 col-xl-2" v-for="item in episodes" :key="item.id" :id="item.id" :filler="item.filler" :title="item.title" :overview="item.overview" :img="item.icon" :episode="item.episode" :watchCount="item.watchCount" :showDetails="item.episode == $route.params.episode ? true : false"></episodeCard>
 
     </div>
     <br>

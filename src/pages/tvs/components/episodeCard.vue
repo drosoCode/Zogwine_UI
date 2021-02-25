@@ -2,7 +2,7 @@
     <div>
         <q-card class="epCard" @click="play">
             <q-img :src="image" basic>
-                <div class="absolute-bottom text-h6" @click.stop="showDetails">
+                <div class="absolute-bottom text-h6" @click.stop="detailsPanel(true)">
                     E{{ episode }} - {{ title }}
                     <q-badge transparent align="middle" :color="fillerColor" v-if="filler > 0">
                       Filler
@@ -12,7 +12,7 @@
             <q-linear-progress :value="100" :color="barColor"/>
         </q-card>
 
-      <q-dialog v-model="details" position="right" full-height @click="hideDetails">
+      <q-dialog v-model="details" position="right" full-height @click="detailsPanel(false)">
         <q-card>
             <q-card-section>
               <div class="text-h6">
@@ -51,11 +51,8 @@ export default defineComponent({
     }
   },
   methods: {
-    showDetails: function () {
-      this.details = true
-    },
-    hideDetails: function () {
-      this.details = false
+    detailsPanel: function (show) {
+      this.details = show
     },
     play: function () {
       this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.id } })
@@ -101,6 +98,9 @@ export default defineComponent({
       }
     }
   },
+  mounted () {
+    this.details = this.showDetails
+  },
   props: {
     title: {
       required: true
@@ -122,6 +122,10 @@ export default defineComponent({
     },
     filler: {
       required: true
+    },
+    showDetails: {
+      required: false,
+      default: false
     }
   }
 })

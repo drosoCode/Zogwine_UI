@@ -84,6 +84,12 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
+    path: '/tvshow/:id/:season/:episode',
+    name: 'episode',
+    component: () => import('pages/tvs/Season.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
     path: '/music',
     name: 'music',
     component: () => import('pages/Error404.vue'),
