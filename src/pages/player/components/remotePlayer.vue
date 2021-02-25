@@ -31,7 +31,8 @@ export default defineComponent({
       subStreamSetup: undefined,
       subFileSetup: undefined,
       resizeSetup: undefined,
-      remove3dSetup: undefined
+      remove3dSetup: undefined,
+      lastTime: 0
     }
   },
   methods: {
@@ -44,12 +45,16 @@ export default defineComponent({
       })
     },
     updatePosition: function (value) {
-      this.socket.emit('remote_player', {
-        type: 'status',
-        action: 'position',
-        data: value,
-        name: this.name
-      })
+      value = Math.floor(value)
+      if (value !== this.lastTime) {
+        this.socket.emit('remote_player', {
+          type: 'status',
+          action: 'position',
+          data: value,
+          name: this.name
+        })
+        this.lastTime = value
+      }
     },
     playMedia: function (data) {
       this.mediaType = data.mediaType
