@@ -23,18 +23,18 @@
 
             <q-card-section class="q-pt-none" v-if="$attrs.enabled && $attrs.available">
                 <div class="text-subtitle1">
-                  {{ statusLabel }}
-                </div>
-                <div class="text-caption text-grey" v-if="playingMedia !== null">
-                    {{ playingMedia }}
+                  <span v-if="playingMediaTitle !== null"> {{ playingMediaTitle }} | </span> {{ statusLabel }}
                 </div>
             </q-card-section>
 
             <q-separator v-if="$attrs.enabled && $attrs.available && this.status !== 0 && this.status !== null" />
-            <q-card-actions align="right" v-if="$attrs.enabled && $attrs.available && this.status !== 0 && this.status !== null">
+            <q-card-actions align="right" v-if="$attrs.enabled && $attrs.available && this.status !== 0 && this.status !== null" class="col">
                 <q-btn flat round color="teal" icon="play_arrow" v-if="functions.includes('play') && this.status === 1" @click="callDeviceFunction('play')"/>
                 <q-btn flat round color="orange" icon="pause" v-if="functions.includes('pause') && this.status === 2" @click="callDeviceFunction('pause')"/>
                 <q-btn flat round color="red" icon="stop" v-if="functions.includes('stop') && this.status !== 0 && this.status !== null" @click="callDeviceFunction('stop')" />
+                <router-link :to="{ name: 'remote', params: { device: $attrs.id } }" v-if="this.status !== 0 && this.status !== null">
+                  <q-btn flat round color="white" icon="games" />
+                </router-link>
             </q-card-actions>
         </q-card>
     </div>
@@ -61,9 +61,11 @@ export default defineComponent({
       functions: [],
       status: null,
       position: null,
-      length: null,
-      playingMedia: null,
-      lengthOverride: false
+      duration: null,
+      playingMedia: { mediaType: -1, mediaData: '' },
+      playingMediaTitle: null,
+      lengthOverride: false,
+      interval: null
     }
   },
   methods: {
@@ -71,35 +73,49 @@ export default defineComponent({
       if (this.functions.includes('status')) {
         this.$apiCall('device/' + this.$attrs.id + '/function/status')
           .then((response) => {
-            console.log(response)
             this.status = response
+
+            if (this.functions.includes('position') && this.status > 0) {
+              this.$apiCall('device/' + this.$attrs.id + '/function/position')
+                .then((response) => {
+                  this.position = response
+                })
+            }
+            if (this.functions.includes('playingMedia') && this.status > 0) {
+              this.$apiCall('device/' + this.$attrs.id + '/function/playingMedia')
+                .then((resp) => {
+                  if (resp.mediaType !== this.playingMedia.mediaType && resp.mediaData !== this.playingMedia.mediaData) {
+                    this.playingMedia.mediaType = resp.mediaType
+                    this.playingMedia.mediaData = resp.mediaData
+                    this.getMediaData()
+                  }
+                })
+            }
           })
       }
-      if (this.functions.includes('position') && this.status > 0) {
-        this.$apiCall('device/' + this.$attrs.id + '/function/position')
-          .then((response) => {
-            this.position = response
+    },
+    getMediaData: function () {
+      if (this.playingMedia.mediaType === 1) {
+        this.$apiCall('tvs/episode/' + this.playingMedia.mediaData)
+          .then((resp) => {
+            this.playingMediaTitle = resp.title + ' (Episode)'
+          })
+      } else if (this.playingMedia.mediaType === 2) {
+        this.$apiCall('tvs/' + this.playingMedia.mediaData)
+          .then((resp) => {
+            this.playingMediaTitle = resp.title + ' (TV Show)'
+          })
+      } else if (this.playingMedia.mediaType === 3) {
+        this.$apiCall('movie/' + this.playingMedia.mediaData)
+          .then((resp) => {
+            this.playingMediaTitle = resp.title + ' (Movie)'
           })
       }
-      if (this.functions.includes('length') && !this.lengthOverride && this.status > 0) {
-        this.$apiCall('device/' + this.$attrs.id + '/function/length')
-          .then((response) => {
-            this.length = response
-          })
-      }
-      if (this.functions.includes('playingMedia') && this.status > 0) {
-        this.$apiCall('device/' + this.$attrs.id + '/function/playingMedia')
-          .then((response) => {
-            this.$apiCall('player/property?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
-              .then((resp) => {
-                this.playingMedia = resp.dimension
-                if (resp.includes('duration')) {
-                  this.lengthOverride = true
-                  this.length = resp.duration
-                }
-              })
-          })
-      }
+
+      this.$apiCall('player/property?mediaType=' + this.playingMedia.mediaType + '&mediaData=' + this.playingMedia.mediaData)
+        .then((resp) => {
+          this.duration = resp.duration
+        })
     },
     callDeviceFunction: function (name) {
       if (name === 'play') {
@@ -110,14 +126,13 @@ export default defineComponent({
         this.status = 0
       }
       this.$apiCall('device/' + this.$attrs.id + '/function/' + name)
-        .then((response) => {
-        })
+        .then((response) => {})
     }
   },
   computed: {
     playedPercent: function () {
-      if (this.$attrs.enabled === 1 && this.$attrs.available === true && this.position !== null && this.length !== null) {
-        return this.position / this.length
+      if (this.$attrs.enabled === 1 && this.$attrs.available === true && this.position !== null && this.duration !== null) {
+        return this.position / this.duration
       } else {
         return 100
       }
@@ -155,8 +170,14 @@ export default defineComponent({
         this.functions = response
         if (this.$attrs.enabled && this.$attrs.available) {
           this.updateStatus()
+          this.interval = setInterval(() => { this.updateStatus() }, 10000)
         }
       })
+  },
+  beforeDestroy: function () {
+    if (this.interval != null) {
+      clearInterval(this.interval)
+    }
   },
   props: [{
     id: {
