@@ -35,10 +35,10 @@ export default defineComponent({
     }
   },
   watch: {
-    buffered: function (newVal, oldVal) {
+    buffered: function (newVal) {
       this.$refs.slider.$el.childNodes[0].childNodes[1].style.width = newVal / this.max * 100 + '%'
     },
-    value: function (newVal, oldVal) {
+    value: function (newVal) {
       this.$refs.slider.$el.childNodes[0].childNodes[0].style.width = newVal / this.max * 100 + '%'
       this.currentVal = newVal
     }
