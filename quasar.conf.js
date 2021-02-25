@@ -78,7 +78,7 @@ module.exports = function (/* ctx */) {
       https: false,
       port: 8080,
       open: true, // opens browser window automatically
-      public: '192.168.1.85',
+      public: '192.168.1.9',
       before (app) {
         const cors = require('cors')
         app.use(cors())
