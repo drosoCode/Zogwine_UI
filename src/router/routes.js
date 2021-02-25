@@ -126,6 +126,12 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
+    path: '/player/remote/:device',
+    name: 'remote',
+    component: () => import('pages/player/Remote.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
     path: '/player/:mediaType/:data',
     name: 'playItem',
     component: () => import('pages/player/Item.vue'),

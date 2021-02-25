@@ -400,7 +400,7 @@ export default defineComponent({
             this.loadingInterval = setInterval(this.checkStatus, 4000)
           } else {
             this.playing = false
-            this.$router.push({ name: 'player' })
+            this.$router.push({ name: 'remote', params: { device: idDevice } })
           }
         })
     },
