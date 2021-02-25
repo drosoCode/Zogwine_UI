@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-slider @change="handleInput" @input="valChange" :value="value" :min="min" :max="max" ref="slider" label :label-value="labelVal" />
+        <q-slider @change="handleInput" @input="valChange" :value="value" :min="min" :max="max" ref="slider" label :label-value="labelVal" :color="color" />
     </div>
 </template>
 
@@ -60,6 +60,10 @@ export default defineComponent({
     bufferedColor: {
       required: false,
       default: '#00FF00'
+    },
+    color: {
+      required: false,
+      default: 'primary'
     }
   }
 })
