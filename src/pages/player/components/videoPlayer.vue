@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="!playing">
+        <div v-if="!playing" class="q-mx-md">
             <q-chip square color="primary" text-color="white" icon="local_fire_department">Codec: {{ fileInfos.video_codec }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="camera">Format: {{ fileInfos.format }}</q-chip>
             <q-chip square color="primary" text-color="white" icon="access_time">Duration: {{ duration }} min</q-chip>
