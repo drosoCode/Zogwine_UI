@@ -148,7 +148,8 @@ export default defineComponent({
       customSeekValue: -1,
       nextEpisode: -1,
       loadedStatus: 0,
-      nativeVideo: false
+      nativeVideo: false,
+      wakelock: null
     }
   },
   mounted () {
@@ -290,12 +291,15 @@ export default defineComponent({
       })
       this.videojsPlayer.on('pause', () => {
         this.$emit('status', 1)
+        this.updateWakeLock()
       })
       this.videojsPlayer.on('play', () => {
         this.$emit('status', 2)
+        this.updateWakeLock()
       })
       this.videojsPlayer.on('ended', () => {
         this.$emit('status', 0)
+        this.updateWakeLock()
       })
     },
     playNativeVideo: function () {
@@ -464,6 +468,18 @@ export default defineComponent({
     skipEpisode: function () {
       this.stopPlayer()
       this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.nextEpisode } })
+    },
+    updateWakeLock: function () {
+      if (this.playing && 'wakeLock' in navigator) {
+        if (!this.videojsPlayer.paused()) {
+          navigator.wakeLock.request().then((result) => {
+            this.wakeLock = result
+          })
+        } else if (this.wakeLock !== null) {
+          this.wakeLock.release()
+          this.wakeLock = null
+        }
+      }
     }
   },
   beforeDestroy: function () {
@@ -518,6 +534,8 @@ export default defineComponent({
       } else if (newVal === 2 && this.videojsPlayer.paused()) {
         this.videojsPlayer.play()
       }
+
+      this.updateWakeLock()
     },
     loadedStatus: function (val) {
       if (val >= 3) {
