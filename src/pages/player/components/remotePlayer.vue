@@ -1,15 +1,26 @@
 <template>
     <div>
-        <videoPlayer v-if="status !== 0" @time="updatePosition" @status="updateStatus" :status="status" :position="position" :startPlayer="true" :fullscreen="true" :showNext="false" :mediaType="mediaType" :mediaData="mediaData" :audioStreamSetup="audioStreamSetup" :subStreamSetup="subStreamSetup" :subFileSetup="subFileSetup" :resizeSetup="resizeSetup" :remove3dSetup="remove3dSetup" />
+        <videoPlayer v-if="status !== 0" @time="updatePosition" @status="updateStatus" :status="status" :position="position" :startPlayer="true" :showNext="false" :mediaType="mediaType" :mediaData="mediaData" :audioStreamSetup="audioStreamSetup" :subStreamSetup="subStreamSetup" :subFileSetup="subFileSetup" :resizeSetup="resizeSetup" :remove3dSetup="remove3dSetup" />
         <q-card class="row justify-center items-center text-white" style="background: radial-gradient(circle, #fc4e42 0%, #850000 100%); width: 30rem; height:20rem;" v-else>
         <q-card-section>
             <div class="text-h6" v-if="connection == -1">Connection Failed</div>
             <div class="text-h6" v-if="connection == 0">Connecting ...</div>
             <div class="text-h6" v-if="connection == 1">Waiting for media</div>
+            <div class="text-subtitle2">Press escape to exit fullscreen</div>
         </q-card-section>
         </q-card>
     </div>
 </template>
+
+<style>
+video, .video-js {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+body {
+  overflow: hidden;
+}
+</style>
 
 <script>
 import io from 'socket.io-client'
@@ -115,6 +126,15 @@ export default defineComponent({
       action: 'login',
       data: this.$store.getters.token
     })
+  },
+  watch: {
+    status: function (val) {
+      if (val !== 0 && this.$store.getters.showNavigation) {
+        this.$store.dispatch('showNavigation', false)
+      } else if (val === 0 && !this.$store.getters.showNavigation) {
+        this.$store.dispatch('showNavigation', true)
+      }
+    }
   },
   props: {
     name: {

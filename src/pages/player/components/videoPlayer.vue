@@ -147,7 +147,8 @@ export default defineComponent({
       customSeekBuffer: 0,
       customSeekValue: -1,
       nextEpisode: -1,
-      loadedStatus: 0
+      loadedStatus: 0,
+      nativeVideo: false
     }
   },
   mounted () {
@@ -298,6 +299,7 @@ export default defineComponent({
       })
     },
     playNativeVideo: function () {
+      this.nativeVideo = true
       // try to play native video and fall back to transcoding if it's not possible
       if ((this.audioStream.length > 1 && this.audioStreamValue.value !== 0) || (this.subStreamValue.codec in this.bitmapCodecs) || this.resizeValue.value !== -1 || this.remove3dValue.value !== 0) {
         // multiple audio streams and bitmap subtitles are not supported by browser
@@ -365,6 +367,7 @@ export default defineComponent({
       }
     },
     playVideo: function (idDevice = -1, forceSubs = false) {
+      this.nativeVideo = false
       // start transcoding
       this.createPlayer()
       this.customSeekValue = -1
@@ -419,9 +422,6 @@ export default defineComponent({
               type: 'application/x-mpegURL'
             })
             this.videojsPlayer.currentTime(0)
-            if (this.fullscreen) {
-              this.videojsPlayer.requestFullScreen()
-            }
           } else if (!resp.running) {
             clearInterval(this.loadingInterval)
             this.playing = false
@@ -452,7 +452,7 @@ export default defineComponent({
     },
     seekChange: function (val) {
       this.customSeekValue = val
-      if ((this.customSeekValue < this.startFromValue || this.customSeekValue > this.customSeekBuffer) && this.customSeekValue > 0) {
+      if ((this.customSeekValue < this.startFromValue || this.customSeekValue > this.customSeekBuffer) && this.customSeekValue > 0 && !this.nativeVideo) {
         console.log('restarting transcoder')
         this.startFromValue = this.customSeekValue
         this.stopPlayer()
@@ -536,10 +536,6 @@ export default defineComponent({
       required: true
     },
     startPlayer: {
-      required: false,
-      default: false
-    },
-    fullscreen: {
       required: false,
       default: false
     },

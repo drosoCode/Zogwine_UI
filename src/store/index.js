@@ -11,7 +11,8 @@ export default new Vuex.Store({
     appName: 'Zogwine',
     token: localStorage.getItem('zogwine-token') || null,
     userData: [],
-    darkMode: null
+    darkMode: null,
+    showNavigation: true
   },
   getters: {
     imageEndpoint: state => {
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     },
     token: state => {
       return state.token
+    },
+    showNavigation: state => {
+      return state.showNavigation
     },
     isAuthenticated: state => {
       if (state.token !== null) {
@@ -147,6 +151,9 @@ export default new Vuex.Store({
         localStorage.setItem('zogwine-dark', status)
         resolve(true)
       })
+    },
+    showNavigation ({ state }, value) {
+      state.showNavigation = value
     }
   }
 })
