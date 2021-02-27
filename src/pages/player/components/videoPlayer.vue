@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <div v-if="loading">
+        <div :hidden="!loading">
             <h1>
                 <q-spinner
                     :color="loadingColor"
