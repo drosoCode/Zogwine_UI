@@ -84,6 +84,7 @@ module.exports = function (/* ctx */) {
         app.use(cors())
       }
     },
+    devtool: 'source-map',
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
