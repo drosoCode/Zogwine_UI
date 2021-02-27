@@ -9,6 +9,7 @@
             <div class="text-subtitle2">Press escape to exit fullscreen</div>
         </q-card-section>
         </q-card>
+        <mediaSession v-if="mediaType !== -1" :mediaType="mediaType" :mediaData="mediaData" :status="status" :position="position" @play="status = 2" @pause="status = 1" @stop="status = 0" @seek="(val) => { this.position = val }" />
     </div>
 </template>
 
@@ -23,10 +24,11 @@
 import io from 'socket.io-client'
 import { defineComponent } from '@vue/composition-api'
 import videoPlayer from './videoPlayer'
+import mediaSession from './mediaSession'
 
 export default defineComponent({
   name: 'remotePlayer',
-  components: { videoPlayer },
+  components: { videoPlayer, mediaSession },
   data () {
     return {
       connection: 0,

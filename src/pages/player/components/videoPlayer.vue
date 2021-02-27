@@ -192,6 +192,7 @@ export default defineComponent({
       this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
         .then((response) => {
           this.fileInfos = response
+          this.$emit('duration', this.fileInfos.duration)
           if (this.audioStream.length > 0) {
             this.audioStreamValue = this.audioStream[0]
           }

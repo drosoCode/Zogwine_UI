@@ -46,6 +46,7 @@
           </q-card-section>
         </q-card>
     </div>
+    <mediaSession :mediaType="mediaType" :mediaData="mediaData" :status="status" :duration="duration" :position="position" @play="callDeviceFunction('play')" @pause="callDeviceFunction('pause')" @stop="callDeviceFunction('stop')" @seek="(val) => { seekChange(val) }" />
    </div>
 
     <div class="row justify-center items-center" v-if="mediaType === -1 || status === 0" style="height: 90vh;">
@@ -70,9 +71,10 @@
 import Vue from 'vue'
 import mediaCard from '../components/mediaCard.vue'
 import customSlider from './components/customSlider.vue'
+import mediaSession from './components/mediaSession.vue'
 
 export default Vue.extend({
-  components: { mediaCard, customSlider },
+  components: { mediaCard, customSlider, mediaSession },
   data () {
     return {
       mediaType: -1,
