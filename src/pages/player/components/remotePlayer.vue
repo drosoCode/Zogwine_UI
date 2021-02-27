@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="remotePlayer">
         <videoPlayer v-if="status !== 0" @time="updatePosition" @status="updateStatus" :status="status" :position="position" :startPlayer="true" :showNext="false" :mediaType="mediaType" :mediaData="mediaData" :audioStreamSetup="audioStreamSetup" :subStreamSetup="subStreamSetup" :subFileSetup="subFileSetup" :resizeSetup="resizeSetup" :remove3dSetup="remove3dSetup" />
         <q-card class="row justify-center items-center text-white" style="background: radial-gradient(circle, #fc4e42 0%, #850000 100%); width: 30rem; height:20rem;" v-else>
         <q-card-section>
@@ -13,12 +13,9 @@
 </template>
 
 <style>
-video, .video-js {
+.remotePlayer .video-js {
   width: 100vw !important;
   height: 100vh !important;
-}
-body {
-  overflow: hidden;
 }
 </style>
 
@@ -89,6 +86,8 @@ export default defineComponent({
     }
   },
   mounted () {
+    document.querySelector('body').style.overflow = 'hidden'
+
     this.socket = io(this.$store.getters.socketioEndpoint)
 
     this.socket.on('authentication', (data) => {
@@ -135,6 +134,9 @@ export default defineComponent({
         this.$store.dispatch('showNavigation', true)
       }
     }
+  },
+  beforeDestroy: function () {
+    document.querySelector('body').style.removeProperty('overflow')
   },
   props: {
     name: {
