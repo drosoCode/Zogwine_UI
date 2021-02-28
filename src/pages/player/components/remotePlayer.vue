@@ -84,6 +84,9 @@ export default defineComponent({
       if (data.remove3d !== undefined) {
         this.remove3dSetup = data.remove3d
       }
+      if (data.startFrom !== undefined) {
+        this.position = data.startFrom
+      }
       this.status = 2
     }
   },
