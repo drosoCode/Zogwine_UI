@@ -21,26 +21,32 @@
         <q-card class="q-mt-md col-xs-12 col-sm-12 col-md-10 col-lg-8 col-xl-6 noPadding">
           <q-card-section>
               <q-item v-if="deviceFunctions.includes('setVolume')">
-                  <q-item-section avatar>
-                  <q-icon color="primary" name="volume_up" />
+                  <q-item-section side>
+                    <q-icon color="primary" name="volume_up" />
                   </q-item-section>
                   <q-item-section>
-                  <q-slider
-                      v-model="volume"
-                      :min="0"
-                      :max="100"
-                      label
-                      color="primary"
-                      @change="setVolume"
-                  />
+                    <q-slider
+                        v-model="volume"
+                        :min="0"
+                        :max="100"
+                        label
+                        color="primary"
+                        @change="setVolume"
+                    />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge color="primary">{{ volume }}%</q-badge>
                   </q-item-section>
               </q-item>
               <q-item v-if="deviceFunctions.includes('seek')">
-                  <q-item-section avatar>
-                  <q-icon color="secondary" name="fast_forward" />
+                  <q-item-section side>
+                    <q-icon color="secondary" name="fast_forward" />
                   </q-item-section>
                   <q-item-section>
                       <customSlider :min="0" :max="duration" :value="progress" @update="seekChange" :buffered="loaded" color="secondary" bufferedColor="green-9"/>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge color="secondary">{{ timeLabel }}</q-badge>
                   </q-item-section>
               </q-item>
           </q-card-section>
@@ -88,7 +94,8 @@ export default Vue.extend({
       volume: 50,
       progress: 0,
       muted: false,
-      interval: null
+      interval: null,
+      positionLabel: '0:0'
     }
   },
   mounted () {
@@ -102,6 +109,11 @@ export default Vue.extend({
         this.updateStatus()
       })
     this.interval = setInterval(() => { this.updateStatus() }, 5000)
+  },
+  computed: {
+    timeLabel: function () {
+      return Math.floor(this.progress / 60) + ':' + Math.round(this.progress % 60)
+    }
   },
   methods: {
     updateStatus: function () {
