@@ -2,7 +2,7 @@
   <q-page>
     <backgroundImage :image="tvs.fanart"/>
 
-    <div class="row wrap justify-around">
+    <div v-focus-section class="row wrap justify-around">
 
         <q-card class="q-ma-sm-lg tvsCard row">
             <q-img :src="$store.getters.imageEndpoint+season.icon" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>

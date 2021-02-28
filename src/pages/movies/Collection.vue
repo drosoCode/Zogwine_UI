@@ -13,8 +13,8 @@
       style="height: 22em;"
       class="q-mx-xl"
     >
-    <div class="row no-wrap">
-        <movCard class="movCardList q-mr-lg" v-for="item in movs" :key="item.id" :title="item.title" :link="{name: 'movie', params: {id: item.id}}" :img="item.icon" :watchCount="item.watchCount" :premiered="item.premiered"></movCard>
+    <div class="row no-wrap" v-focus-section>
+        <movCard v-focus class="movCardList q-mr-lg" v-for="item in movs" :key="item.id" :title="item.title" :link="{name: 'movie', params: {id: item.id}}" :img="item.icon" :watchCount="item.watchCount" :premiered="item.premiered"></movCard>
     </div>
     </q-scroll-area>
 

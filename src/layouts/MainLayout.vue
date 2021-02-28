@@ -43,8 +43,8 @@
         @mouseover="miniState = false"
         @mouseout="miniState = true"
       >
-        <q-list>
-          <q-item clickable :to="{name: 'home'}" exact>
+        <q-list v-focus-section>
+          <q-item v-focus clickable :to="{name: 'home'}" exact>
             <q-item-section avatar>
               <q-icon name="home" />
             </q-item-section>
@@ -53,7 +53,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'movies'}">
+          <q-item v-focus clickable :to="{name: 'movies'}">
             <q-item-section avatar>
               <q-icon name="movie" />
             </q-item-section>
@@ -62,7 +62,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'tvshows'}">
+          <q-item v-focus clickable :to="{name: 'tvshows'}">
             <q-item-section avatar>
               <q-icon name="tv" />
             </q-item-section>
@@ -71,7 +71,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'music'}">
+          <q-item v-focus clickable :to="{name: 'music'}">
             <q-item-section avatar>
               <q-icon name="music_note"/>
             </q-item-section>
@@ -80,7 +80,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'games'}">
+          <q-item v-focus clickable :to="{name: 'games'}">
             <q-item-section avatar>
               <q-icon name="videogame_asset"/>
             </q-item-section>
@@ -89,7 +89,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'books'}">
+          <q-item v-focus clickable :to="{name: 'books'}">
             <q-item-section avatar>
               <q-icon name="library_books"/>
             </q-item-section>
@@ -98,7 +98,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'mangas'}">
+          <q-item v-focus clickable :to="{name: 'mangas'}">
             <q-item-section avatar>
               <q-icon name="texture"/>
             </q-item-section>
@@ -109,7 +109,7 @@
 
           <q-separator/>
 
-          <q-item clickable :to="{name: 'devices'}" v-if="$store.getters.cast">
+          <q-item v-focus clickable :to="{name: 'devices'}" v-if="$store.getters.cast">
             <q-item-section avatar>
               <q-icon name="memory"/>
             </q-item-section>
@@ -118,7 +118,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable :to="{name: 'player'}">
+          <q-item v-focus clickable :to="{name: 'player'}">
             <q-item-section avatar>
               <q-icon name="play_arrow"/>
             </q-item-section>
@@ -129,7 +129,7 @@
 
           <q-separator/>
 
-          <q-item clickable :to="{name: 'settings'}" v-if="$store.getters.isAdmin">
+          <q-item v-focus clickable :to="{name: 'settings'}" v-if="$store.getters.isAdmin">
             <q-item-section avatar>
               <q-icon name="settings"/>
             </q-item-section>
@@ -174,9 +174,21 @@ export default {
       this.$store.dispatch('darkMode', this.dark)
       this.$q.dark.set(this.dark)
     },
-    exitFullscreen: function (key) {
-      if (!this.$store.getters.showNavigation && key.key === 'Escape') {
+    clickFocusedElement: function () {
+      const element = document.activeElement
+      if (element.click() === undefined) {
+        element.childNodes.forEach(el => {
+          if (el.tagName === 'A') {
+            el.click()
+          }
+        })
+      }
+    },
+    handleKeyUp: function (key) {
+      if (key.key === 'Escape' && !this.$store.getters.showNavigation) {
         this.$store.dispatch('showNavigation', true)
+      } else if (key.key === 'Enter') {
+        this.clickFocusedElement()
       }
     }
   },
@@ -197,10 +209,10 @@ export default {
         return true
       }
     })
-    window.addEventListener('keyup', this.exitFullscreen)
+    window.addEventListener('keyup', this.handleKeyUp)
   },
   beforeDestroy () {
-    window.removeEventListener('keyup', this.this.exitFullscreen)
+    window.removeEventListener('keyup', this.handleKeyUp)
   }
 }
 </script>

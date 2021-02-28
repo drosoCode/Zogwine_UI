@@ -9,8 +9,8 @@
       <movDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg movCard" :title="mov.title" :premiered="mov.premiered" :overview="mov.overview" :rating="mov.rating" :scraperLink="mov.scraperLink" :scraperName="mov.scraperName" :watchCount="mov.watchCount"/>
     </div>
     <br>
-    <q-card class="q-ma-md q-pa-md" style="opacity: 0.8;">
-        <q-btn color="teal" class="full-width" label="Play" icon="play_arrow" @click="play" />
+    <q-card v-focus-section class="q-ma-md q-pa-md" style="opacity: 0.8;">
+        <q-btn v-focus color="teal" class="full-width" label="Play" icon="play_arrow" @click="play" />
         <br><br>
         <q-btn color="orange" class="full-width" label="Download" icon="cloud_download" @click="download" />
     </q-card>

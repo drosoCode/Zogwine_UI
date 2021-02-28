@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-card class="epCard" @click="play">
+        <q-card v-focus class="epCard" @click="play">
             <q-img :src="image" basic>
                 <div class="absolute-bottom text-h6" @click.stop="detailsPanel(true)">
                     E{{ episode }} - {{ title }}
