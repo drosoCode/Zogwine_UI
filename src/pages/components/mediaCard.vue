@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-card class="fit">
+        <q-card>
             <q-card-section horizontal class="section">
                 <q-card-section :class="{'flex': true, 'flex-center': true, 'section': true, 'col-6 q-ml-md q-mr-lg': !vertical, 'col-5': vertical}">
                     <q-img
