@@ -1,5 +1,5 @@
 <template>
-    <div class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+    <div>
         <q-card class="dev_card">
             <q-img :src="'/images/'+$attrs.type+'.png'" class="dev_img" />
               <q-linear-progress :value="playedPercent" :color="barColor" />

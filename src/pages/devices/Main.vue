@@ -1,6 +1,6 @@
 <template>
   <q-page class="row wrap justify-around q-mb-lg">
-    <deviceCard v-for="item in devices" :key="item.id" :id="item.id" :name="item.name" :type="item.type" :available="item.available" :enabled="item.enabled"></deviceCard>
+    <deviceCard class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="item in devices" :key="item.id" :id="item.id" :name="item.name" :type="item.type" :available="item.available" :enabled="item.enabled"></deviceCard>
   </q-page>
 </template>
 
