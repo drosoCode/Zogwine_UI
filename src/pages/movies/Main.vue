@@ -42,7 +42,6 @@ export default Vue.extend({
           }
         }
       }
-      console.log(ret)
       return ret
     }
   },
@@ -54,7 +53,6 @@ export default Vue.extend({
     this.$apiCall('movie/collection')
       .then((response) => {
         this.collections = response
-        console.log(this.display)
       })
   }
 })

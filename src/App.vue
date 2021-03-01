@@ -1,9 +1,6 @@
 <template>
   <div id="q-app">
     <MainLayout>
-      <q-page-container>
-        <router-view />
-      </q-page-container>
     </MainLayout>
   </div>
 </template>

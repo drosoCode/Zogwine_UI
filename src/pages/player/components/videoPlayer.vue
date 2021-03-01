@@ -458,7 +458,6 @@ export default defineComponent({
     seekChange: function (val) {
       this.customSeekValue = val
       if ((this.customSeekValue < this.startFromValue || this.customSeekValue > this.customSeekBuffer) && this.customSeekValue > 0 && !this.nativeVideo) {
-        console.log('restarting transcoder')
         this.startFromValue = this.customSeekValue
         this.stopPlayer()
         this.playVideo(-1)
