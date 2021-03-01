@@ -3,7 +3,7 @@
     <backgroundImage :image="mov.fanart"/>
 
     <div class="row wrap justify-around">
-      <q-img :src="$store.getters.imageEndpoint+mov.icon" class="col-3 q-mt-lg movIcon rounded-borders order-1"></q-img>
+      <q-img :src="itemImg" @error="itemImg = '/images/undefined_v.png'" class="col-3 q-mt-lg movIcon rounded-borders order-1"></q-img>
 
       <tags class="col-12 col-sm-4 col-md-3 q-mt-lg q-mt-lg movCard" :idMedia="$route.params.id" :mediaType="3" v-if="!$q.screen.lt.sm"/>
       <movDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg movCard" :title="mov.title" :premiered="mov.premiered" :overview="mov.overview" :rating="mov.rating" :scraperLink="mov.scraperLink" :scraperName="mov.scraperName" :watchCount="mov.watchCount"/>
@@ -43,13 +43,15 @@ export default Vue.extend({
   components: { backgroundImage, tags, movDesc },
   data () {
     return {
-      mov: []
+      mov: [],
+      itemImg: '/images/undefined_v.png'
     }
   },
   mounted () {
     this.$apiCall('movie/' + this.$route.params.id)
       .then((response) => {
         this.mov = response
+        this.itemImg = this.$store.getters.imageEndpoint + response.icon
       })
   },
   methods: {

@@ -2,7 +2,7 @@
     <div>
       <router-link :to="link">
         <q-card class="c_card">
-            <q-img class="c_img" :src="$store.getters.imageEndpoint + img">
+            <q-img class="c_img" :src="image" @error="image = '/images/undefined_v.png'">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ title }}</div>
                     <div class="text-subtitle2">{{ watchedMovies }} / {{ movieCount }}</div>
@@ -31,6 +31,11 @@ import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   name: 'collectionCard',
+  data () {
+    return {
+      image: this.$store.getters.imageEndpoint + this.img
+    }
+  },
   computed: {
     watchedPercent: function () {
       const dat = this.watchedMovies / this.movieCount

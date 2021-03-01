@@ -1,7 +1,7 @@
 <template>
     <div>
         <q-card v-focus class="epCard" @click="play">
-            <q-img :src="image" basic>
+            <q-img :src="image" @error="image = '/images/undefined_h.png'" basic>
                 <div class="absolute-bottom text-h6" @click.stop="detailsPanel(true)">
                     E{{ episode }} - {{ title }}
                     <q-badge transparent align="middle" :color="fillerColor" v-if="filler > 0">
@@ -47,7 +47,8 @@ export default defineComponent({
   name: 'episodeCard',
   data () {
     return {
-      details: false
+      details: false,
+      image: this.$store.getters.imageEndpoint + this.img
     }
   },
   methods: {
@@ -81,13 +82,6 @@ export default defineComponent({
         return 'teal'
       } else {
         return 'red'
-      }
-    },
-    image: function () {
-      if (this.img !== null) {
-        return this.$store.getters.imageEndpoint + this.img
-      } else {
-        return '/images/undefined_h.png'
       }
     },
     fillerColor: function () {

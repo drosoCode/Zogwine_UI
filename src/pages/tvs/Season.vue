@@ -5,7 +5,7 @@
     <div v-focus-section class="row wrap justify-around">
 
         <q-card class="q-ma-sm-lg tvsCard row">
-            <q-img :src="$store.getters.imageEndpoint+season.icon" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>
+            <q-img :src="image" @error="image = '/images/undefined_v.png'" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>
             <div class="col-xs-5 col-sm-8 col-md-4 q-pt-md q-pl-md">
                 <div class="text-h6">{{ tvs.title }} - {{ season.title }}</div>
                 Season: {{ season.season }} <br>
@@ -50,7 +50,8 @@ export default Vue.extend({
     return {
       season: [],
       episodes: [],
-      tvs: []
+      tvs: [],
+      image: '/images/undefined_v.png'
     }
   },
   computed: {
@@ -84,6 +85,7 @@ export default Vue.extend({
     this.$apiCall('/tvs/' + this.$route.params.id + '/season/' + this.$route.params.season)
       .then((response) => {
         this.season = response[0]
+        this.image = this.$store.getters.imageEndpoint + this.season.icon
       })
     this.$apiCall('/tvs/' + this.$route.params.id + '/season/' + this.$route.params.season + '/episode')
       .then((response) => {
