@@ -149,7 +149,8 @@ export default defineComponent({
       nextEpisode: -1,
       loadedStatus: 0,
       nativeVideo: false,
-      wakelock: null
+      wakelock: null,
+      seeking: false
     }
   },
   mounted () {
@@ -290,13 +291,27 @@ export default defineComponent({
       this.videojsPlayer.on('timeupdate', () => {
         this.$emit('time', this.videojsPlayer.currentTime())
       })
-      this.videojsPlayer.on('pause', () => {
-        this.$emit('status', 1)
-        this.updateWakeLock()
+      this.videojsPlayer.on('seeking', () => {
+        this.seeking = true
+      })
+      this.videojsPlayer.on('seeked', () => {
+        this.seeking = false
       })
       this.videojsPlayer.on('play', () => {
         this.$emit('status', 2)
         this.updateWakeLock()
+      })
+      this.videojsPlayer.on('pause', () => {
+        if (!this.seeking) {
+          this.$emit('status', 1)
+          this.updateWakeLock()
+        }
+      })
+      this.videojsPlayer.on('play', () => {
+        if (!this.seeking) {
+          this.$emit('status', 2)
+          this.updateWakeLock()
+        }
       })
       this.videojsPlayer.on('ended', () => {
         this.$emit('status', 0)
