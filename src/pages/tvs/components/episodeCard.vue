@@ -4,9 +4,10 @@
             <q-img :src="image" @error="image = '/images/undefined_h.png'" basic>
                 <div class="absolute-bottom text-h6" @click.stop="detailsPanel(true)">
                     E{{ episode }} - {{ title }}
-                    <q-badge transparent align="middle" :color="fillerColor" v-if="filler > 0">
+                    <q-badge transparent align="middle" :color="fillerColor" v-if="filler > 0" class="q-ml-sm">
                       Filler
                     </q-badge>
+                    <q-badge transparent color="secondary" :label="watchCount" size="sm" v-if="watchCount > 1" class="q-ml-sm"/>
                 </div>
             </q-img>
             <q-linear-progress :value="100" :color="barColor"/>
@@ -17,9 +18,15 @@
             <q-card-section>
               <div class="text-h6">
                 Episode {{ episode }}: {{ title }}
-                &nbsp;&nbsp;
-                <q-btn color="primary" label="Toggle" size="sm" @click="toggleEpisodeStatus" />
               </div>
+            </q-card-section>
+            <q-separator inset />
+            <q-card-section>
+                <q-btn color="primary" label="Toggle" size="sm" @click="toggleEpisodeStatus" />
+                <q-chip square align="middle" :color="fillerColor" v-if="filler > 0" class="q-ml-sm">
+                  Filler
+                </q-chip>
+                <q-chip square color="secondary" :label="'Watch count: ' + watchCount" v-if="watchCount > 1" class="q-ml-sm"/>
             </q-card-section>
             <q-separator inset />
             <q-card-section>
