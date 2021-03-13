@@ -1,4 +1,4 @@
-const CACHE_VERSION = 10
+const CACHE_VERSION = 12
 
 console.log('Service Worker Init')
 console.log('Cache Version: ' + CACHE_VERSION)

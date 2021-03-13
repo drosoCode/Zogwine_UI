@@ -38,7 +38,7 @@ export default defineComponent({
             this.$apiCall('tvs/' + response.idShow)
               .then((resp) => {
                 this.data2 = resp
-                this.$apiCall('core/person?mediaType=2&mediaData=' + this.data.idShow)
+                this.$apiCall('person/2/' + this.data.idShow)
                   .then((resp) => {
                     this.people = resp
                     this.loadMediaSession()
@@ -50,7 +50,7 @@ export default defineComponent({
         this.$apiCall('tvs/' + this.mediaData)
           .then((response) => {
             this.data = response
-            this.$apiCall('core/person?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+            this.$apiCall('person/' + this.mediaType + '/' + this.mediaData)
               .then((resp) => {
                 this.people = resp
                 this.loadMediaSession()
@@ -61,7 +61,7 @@ export default defineComponent({
         this.$apiCall('movie/' + this.mediaData)
           .then((response) => {
             this.data = response
-            this.$apiCall('core/person?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+            this.$apiCall('person/' + this.mediaType + '/' + this.mediaData)
               .then((resp) => {
                 this.people = resp
                 this.loadMediaSession()
