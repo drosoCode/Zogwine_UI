@@ -138,6 +138,18 @@ const routes = [
     beforeEnter: isAuthenticated
   },
   {
+    path: '/search',
+    name: 'search',
+    component: () => import('pages/search/Main.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/search/result',
+    name: 'search_result',
+    component: () => import('pages/search/Results.vue'),
+    beforeEnter: isAuthenticated
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import('pages/settings/Main.vue'),

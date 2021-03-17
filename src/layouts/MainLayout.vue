@@ -118,6 +118,15 @@
             </q-item-section>
           </q-item>
 
+          <q-item v-focus clickable :to="{name: 'search'}">
+            <q-item-section avatar>
+              <q-icon name="search"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Search</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item v-focus clickable :to="{name: 'player'}">
             <q-item-section avatar>
               <q-icon name="play_arrow"/>

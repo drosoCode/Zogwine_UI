@@ -1,13 +1,12 @@
 <template>
   <q-page>
+    <q-card class="q-mx-md q-my-md">
+      <q-checkbox v-model="showType[1]" label="TVS Episode" />
+      <q-checkbox v-model="showType[2]" label="TVS" />
+      <q-checkbox v-model="showType[3]" label="Movie" />
+    </q-card>
     <div class="row wrap justify-around">
-      <mediaCard :mediaType="mediaType" :mediaData="mediaData" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
-      <!--
-      <mediaCard :mediaType="2" :mediaData="163" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
-      <mediaCard :mediaType="1" :mediaData="17211" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
-      <mediaCard :mediaType="3" :mediaData="600" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
-      <mediaCard :mediaType="3" :mediaData="238" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
-      -->
+      <mediaCard v-for="r in filteredResults" :key="r[0] + ';' + r[1]" :mediaType="r[0]" :mediaData="r[1]" class="q-px-md q-pt-md col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3"/>
    </div>
   </q-page>
 </template>
@@ -20,13 +19,47 @@ export default Vue.extend({
   components: { mediaCard },
   data () {
     return {
-      mediaType: -1,
-      mediaData: ''
+      results: [],
+      showType: {
+        1: true,
+        2: true,
+        3: true
+      }
     }
   },
   mounted () {
+    const data = {
+      andMode: this.$route.params.andMode
+    }
+    if (this.$route.params.name !== undefined && this.$route.params.name !== null) {
+      data.name = this.$route.params.name
+    }
+    if (this.$route.params.date !== undefined && this.$route.params.date !== null) {
+      data.date = this.$route.params.date
+    }
+    if (this.$route.params.tag !== undefined && this.$route.params.tag !== null) {
+      data.tag = this.$route.params.tag
+    }
+    if (this.$route.params.person !== undefined && this.$route.params.person !== null) {
+      data.person = this.$route.params.person
+    }
+    if (Object.keys(data).length <= 1) {
+      this.$router.push({ name: 'search' })
+    } else {
+      this.$apiCall('/search', data, 'POST')
+        .then((response) => { this.results = response })
+    }
   },
-  methods: {
+  computed: {
+    filteredResults: function () {
+      const res = []
+      this.results.forEach(e => {
+        if (this.showType[e[0]]) {
+          res.push(e)
+        }
+      })
+      return res
+    }
   }
 })
 </script>
