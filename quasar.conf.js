@@ -21,7 +21,8 @@ module.exports = function (/* ctx */) {
     boot: [
       'axios',
       'api',
-      'navigation'
+      'navigation',
+      'utils'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

@@ -22,7 +22,7 @@
                             <q-item-section avatar>
                             <q-avatar rounded>
                                 <img :src="$store.getters.imageEndpoint + item.icon" v-if="item.icon !== null">
-                                <q-icon color="primary" :name="getIcon(item.name)" v-if="item.icon === null" />
+                                <q-icon color="primary" :name="$getTagIcon(item.name)" v-if="item.icon === null" />
                             </q-avatar>
                             </q-item-section>
                             <q-item-section>{{ capitalize(item.name) }}: {{ item.value }}</q-item-section>
@@ -71,19 +71,6 @@ export default defineComponent({
   methods: {
     capitalize: function (name) {
       return format.capitalize(name)
-    },
-    getIcon: function (name) {
-      if (name === 'genre') {
-        return 'leaderboard'
-      } else if (name === 'network') {
-        return 'wifi_tethering'
-      } else if (name === 'country') {
-        return 'flag'
-      } else if (name === 'production') {
-        return 'widgets'
-      } else {
-        return 'close'
-      }
     },
     showPeople: function () {
       if (this.people.length === 0) {
