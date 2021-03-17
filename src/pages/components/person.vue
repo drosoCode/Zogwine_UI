@@ -2,7 +2,7 @@
   <div>
     <div class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
         <q-card @click="showDetails">
-            <q-img class="img" :src="$store.getters.imageEndpoint + img">
+            <q-img class="img" :src="image" @error="image = '/images/undefined_v.png'">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ name }}</div>
                     <div class="text-subtitle2">{{ role }}</div>
@@ -46,7 +46,8 @@ export default defineComponent({
   name: 'person',
   data () {
     return {
-      show: false
+      show: false,
+      image: this.$store.getters.imageEndpoint + this.img
     }
   },
   computed: {
