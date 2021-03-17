@@ -24,7 +24,7 @@
                 </q-card-section>
 
                 <q-card-section v-if="mediaType == 2" class="section">
-                    <router-link :to="{ name: 'tvshow', params: { id: data.idShow } }"><h6 class="q-my-lg">{{ data.title }}</h6></router-link>
+                    <router-link :to="{ name: 'tvshow', params: { id: data.id } }"><h6 class="q-my-lg">{{ data.title }}</h6></router-link>
                     <br>
                     Type: TV Show
                     <br>
