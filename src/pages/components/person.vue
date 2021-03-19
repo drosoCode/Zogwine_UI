@@ -14,7 +14,9 @@
     <q-dialog v-model="show">
       <q-card>
         <q-card-section>
-          <div class="text-h6">{{ name }}</div>
+          <router-link  :to="{ name: 'search', params: { person: [id] } }">
+            <div class="text-h6">{{ name }}</div>
+          </router-link>
         </q-card-section>
         <q-separator inset />
         <q-card-section>
@@ -36,6 +38,9 @@
 .img {
     height: 14rem;
     width: 10rem;
+}
+.text-h6 {
+  color: white
 }
 </style>
 

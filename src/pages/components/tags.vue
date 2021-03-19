@@ -16,9 +16,9 @@
                         <q-item-section>People</q-item-section>
                     </q-item>
 
-                    <div v-for="item in tags" :key="item.idTag">
+                    <div v-for="item in tags" :key="item.id">
                         <q-separator />
-                        <q-item clickable v-ripple>
+                        <q-item clickable v-ripple :to="{ name: 'search', params: { tag: [item.id] } }">
                             <q-item-section avatar>
                             <q-avatar rounded>
                                 <img :src="$store.getters.imageEndpoint + item.icon" v-if="item.icon !== null">
@@ -40,7 +40,7 @@
             <q-separator />
             <q-card-section style="max-height: 70vh" class="scroll">
                 <div class="row wrap">
-                    <person v-for="person in people" :key="person.id" :name="person.name" :role="person.role" :id="person.idPers"  :img="person.icon" :description="person.description" :birthdate="person.birthdate" :deathdate="person.deathdate" :known_for="person.known_for" :gender="person.gender" />
+                    <person v-for="person in people" :key="person.id" :name="person.name" :role="person.role" :id="person.id"  :img="person.icon" :description="person.description" :birthdate="person.birthdate" :deathdate="person.deathdate" :known_for="person.known_for" :gender="person.gender" />
                 </div>
             </q-card-section>
             <q-separator />

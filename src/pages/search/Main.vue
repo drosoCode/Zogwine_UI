@@ -119,6 +119,24 @@ export default Vue.extend({
   mounted () {
     this.$apiCall('tag/category')
       .then((response) => { this.addTagCatg = response })
+
+    if ('person' in this.$route.params) {
+      this.$route.params.person.forEach(el => {
+        this.$apiCall('person/' + el)
+          .then((response) => {
+            this.peopleList.push(response)
+          })
+      })
+    }
+
+    if ('tag' in this.$route.params) {
+      this.$route.params.tag.forEach(el => {
+        this.$apiCall('tag/' + el)
+          .then((response) => {
+            this.tags.push(response)
+          })
+      })
+    }
   },
   methods: {
     addTag: function () {
