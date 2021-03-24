@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <div v-if="mediaType !== -1 && status !== 0">
-      <div class="row wrap justify-around">
+    <div v-if="status !== 0">
+      <div class="row wrap justify-around" v-if="mediaType !== -1">
         <mediaCard :mediaType="mediaType" :mediaData="mediaData" class="q-px-md q-pt-md col-xs-12 col-sm-12 col-md-10 col-lg-8 col-xl-6 noPadding"/>
     </div>
       <div class="row wrap justify-around">
@@ -55,7 +55,7 @@
     <mediaSession :mediaType="mediaType" :mediaData="mediaData" :status="status" :duration="duration" :position="position" @play="callDeviceFunction('play')" @pause="callDeviceFunction('pause')" @stop="callDeviceFunction('stop')" @seek="(val) => { seekChange(val) }" />
    </div>
 
-    <div class="row justify-center items-center" v-if="mediaType === -1 || status === 0" style="height: 90vh;">
+    <div class="row justify-center items-center" v-if="mediaType === -1 && status === 0" style="height: 90vh;">
         <q-card class="row justify-center items-center text-white" style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%); width: 30rem; height:20rem;">
             <q-card-section>
             <div class="text-h6">Nothing Playing</div>
@@ -167,9 +167,9 @@ export default Vue.extend({
       } else if (name === 'stop') {
         this.status = 0
       } else if (name === 'mute') {
-        this.mute = true
+        this.muted = true
       } else if (name === 'unmute') {
-        this.mute = false
+        this.muted = false
       } else {
         return
       }
