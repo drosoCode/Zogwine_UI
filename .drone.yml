@@ -1,0 +1,150 @@
+---
+kind: pipeline
+type: docker
+name: test
+
+steps:
+  - name: code_analysis
+    image: aosapps/drone-sonar-plugin
+    settings:
+      sonar_host:
+        from_secret: sonar_host
+      sonar_token:
+        from_secret: sonar_token
+
+  - name: discord_notification
+    image: appleboy/drone-discord
+    when:
+      status:
+        - success
+        - failure
+    settings:
+      webhook_id: 
+        from_secret: webhook_id
+      webhook_token:
+        from_secret: webhook_token
+      message: >
+        {{#success build.status}}
+        ✅ Build #{{build.number}} of `{{repo.name}}` succeeded.
+        📝 Commit by {{commit.author}} on `{{commit.branch}}`:
+        ```
+        {{commit.message}}
+        ```
+        {{else}}
+        ❌ Build #{{build.number}} of `{{repo.name}}` failed.
+        📝 Commit by {{commit.author}} on `{{commit.branch}}`:
+        ```
+        {{commit.message}}
+        ```
+        {{/success}}
+
+trigger:
+  event: 
+    - push
+    - pull_request
+
+---
+kind: pipeline
+type: docker
+name: android_build
+
+steps:
+  - name: build
+    image: mingc/android-build-box:latest
+    environment:
+      endpoint: 
+        from_secret: endpoint
+    commands:
+      - wget https://services.gradle.org/distributions/gradle-6.8.3-bin.zip -O /opt/gradle.zip
+      - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
+      - npm i -g @quasar/cli cordova
+      - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
+      - sed -i '2i"optOut": true,' /root/.config/insight-nodejs/insight-cordova.json  # prevent cordova prompt for telemetry
+      - sed -i -r "s|    baseURL:.*|    baseURL: '${endpoint}',|" /drone/src/store/index.js
+      - cd /drone/src && quasar build -m cordova -T android
+
+  - name: gitea_release
+    image: plugins/gitea-release
+    settings:
+      base_url:
+        from_secret: gitea_server
+      api_key:
+        from_secret: gitea_token
+      files: /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+      title: Android
+
+  - name: discord_notification
+    image: appleboy/drone-discord
+    when:
+      status:
+        - success
+        - failure
+    settings:
+      webhook_id:
+        from_secret: webhook_id
+      webhook_token:
+        from_secret: webhook_token
+      message: >
+        {{#success build.status}}
+        ✅ Deployment succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        {{else}}
+        ❌ Deployment failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        {{/success}}
+
+trigger:
+  event:
+  - promote
+  target:
+  - android
+
+---
+kind: pipeline
+type: docker
+name: web_build
+
+steps:
+  - name: build
+    image: node:14-buster-slim
+    commands:
+      - wget https://services.gradle.org/distributions/gradle-6.8.3-bin.zip -O /opt/gradle.zip
+      - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
+      - npm i -g @quasar/cli cordova
+      - cd /drone/src && npm i --save-dev --unsafe-perm=true --allow-root
+      - cd /drone/src && quasar build -m spa
+      - cp -R /drone/src/pwa/* /drone/src/dist/spa
+      - tar -czf /drone/src/web.tar.gz /drone/src/dist/spa
+
+  - name: gitea_release
+    image: plugins/gitea-release
+    settings:
+      base_url:
+        from_secret: gitea_server
+      api_key:
+        from_secret: gitea_token
+      files: /drone/src/web.tar.gz
+      title: Web
+
+  - name: discord_notification
+    image: appleboy/drone-discord
+    when:
+      status:
+        - success
+        - failure
+    settings:
+      webhook_id:
+        from_secret: webhook_id
+      webhook_token:
+        from_secret: webhook_token
+      message: >
+        {{#success build.status}}
+        ✅ Deployment succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        {{else}}
+        ❌ Deployment failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        {{/success}}
+
+trigger:
+  event:
+  - promote
+  target:
+  - web
+
