@@ -61,7 +61,7 @@ steps:
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
       - mkdir -p /root/.config/insight-nodejs
       - "echo '{\"clientId\": 1234567891, \"optOut\": true}' > /root/.config/insight-nodejs/insight-cordova.json" # prevent cordova prompt for telemetry
-      - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/store/index.js"
+      - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/src/store/index.js"
       - cd /drone/src && quasar build -m cordova -T android
 
   - name: gitea_release
@@ -152,6 +152,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 3d9a0e3930113b040641ab381fe5fc8587bb5f442284da910633cc40a4e4fde6
+hmac: 3c88d3c5f5fa14d2a2c7ece1149e73ae7e11526141022211a73b27059e95ed6c
 
 ...
