@@ -59,9 +59,7 @@ steps:
       - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
       - npm i -g @quasar/cli cordova
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
-      - cordova & # start cordova to create config file
-      - lastPid=$! && sleep 1 && kill $lastPid # kill cordova waiting for input
-      - "sed -i '2i\"optOut\": true,' /root/.config/insight-nodejs/insight-cordova.json"  # prevent cordova prompt for telemetry
+      - "echo '{\"clientId\": 1234567891, \"optOut\": true}' > /root/.config/insight-nodejs/insight-cordova.json" # prevent cordova prompt for telemetry
       - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/store/index.js"
       - cd /drone/src && quasar build -m cordova -T android
 
@@ -108,7 +106,7 @@ steps:
   - name: build
     image: node:14-buster-slim
     commands:
-      - apt-get update && apt-get install wget unzip
+      - apt-get update && apt-get install -y wget unzip
       - wget https://services.gradle.org/distributions/gradle-6.8.3-bin.zip -O /opt/gradle.zip
       - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
       - npm i -g @quasar/cli cordova
