@@ -59,8 +59,8 @@ steps:
       - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
       - npm i -g @quasar/cli cordova
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
-      - sed -i '2i"optOut": true,' /root/.config/insight-nodejs/insight-cordova.json  # prevent cordova prompt for telemetry
-      - sed -i -r "s|    baseURL:.*|    baseURL: '${endpoint}',|" /drone/src/store/index.js
+      - "sed -i '2i\"optOut\": true,' /root/.config/insight-nodejs/insight-cordova.json"  # prevent cordova prompt for telemetry
+      - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/store/index.js"
       - cd /drone/src && quasar build -m cordova -T android
 
   - name: gitea_release
@@ -148,3 +148,8 @@ trigger:
   target:
   - web
 
+---
+kind: signature
+hmac: b4eea96aad1b37efd596ec3dda9d04fcd4f3f8e4b4ea853256347ced20200e29
+
+...
