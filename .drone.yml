@@ -59,6 +59,7 @@ steps:
       - unzip /opt/gradle.zip && export PATH="/opt/gradle/bin:$PATH"
       - npm i -g @quasar/cli cordova
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
+      - mkdir -p /root/.config/insight-nodejs
       - "echo '{\"clientId\": 1234567891, \"optOut\": true}' > /root/.config/insight-nodejs/insight-cordova.json" # prevent cordova prompt for telemetry
       - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/store/index.js"
       - cd /drone/src && quasar build -m cordova -T android
@@ -151,6 +152,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 1efb2a58d11cc7d343f58bdaa34d9f9db8427132fac8d3df04ee68f02f833407
+hmac: 3d9a0e3930113b040641ab381fe5fc8587bb5f442284da910633cc40a4e4fde6
 
 ...
