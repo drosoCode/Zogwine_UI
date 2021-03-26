@@ -15,18 +15,16 @@ jobs:
       - name: Get tag name
         run: echo "TAG_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Delete tag
-        run: git tag -d $TAG_NAME && git push --delete origin $TAG_NAME
+        run: git tag -d $TAG_NAME && git push --delete origin $TAG_NAME && git pull
       - name: Increment cache version
         run: |
           sed -i -r 's/(.*)(\CACHE_VERSION = )([0-9]+)(.*)/echo "\1\2$((\3+1))\4"/ge' "${GITHUB_WORKSPACE}/pwa/sw_content.js"
           git config --global user.email "internet-site@outlook.com"
           git config --global user.name "CI"
           git add ${GITHUB_WORKSPACE}/pwa/sw_content.js
-          git checkout origin/master
           git commit -m "[CI] Increment cache version"
       - name: Recreate tag
         run: |
-          git checkout origin/master
           git tag $TAG_NAME
           git push origin master
       - name: Trigger sync
