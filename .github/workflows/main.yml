@@ -2,10 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+    tags:
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -14,7 +12,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[CI]')"
     steps:
       - uses: actions/checkout@v2
-
+      - name: Get tag name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Delete tag
+        run: git tag -d $TAG_NAME && git push --delete origin $TAG_NAME
       - name: Increment cache version
         run: |
           sed -i -r 's/(.*)(\CACHE_VERSION = )([0-9]+)(.*)/echo "\1\2$((\3+1))\4"/ge' "${GITHUB_WORKSPACE}/pwa/sw_content.js"
@@ -22,5 +23,10 @@ jobs:
           git config --global user.name "CI"
           git add ${GITHUB_WORKSPACE}/pwa/sw_content.js
           git commit -m "[CI] Increment cache version"
-          git push          
-
+      - name: Recreate tag
+        run: |
+          git tag $TAG_NAME
+          git push
+      - name: Trigger sync
+        run: curl -X POST "${{ secrets.webhook_url }}" -d '{"repository":{"name":"Zogwine_UI"}}' -H 'Content-Type:application/json'
+        
