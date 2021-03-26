@@ -18,6 +18,8 @@ jobs:
       - name: Increment cache version
         run: |
           sed -i -r 's/(.*)(\CACHE_VERSION = )([0-9]+)(.*)/echo "\1\2$((\3+1))\4"/ge' "${GITHUB_WORKSPACE}/pwa/sw_content.js"
+          git config --global user.email "internet-site@outlook.com"
+          git config --global user.name "CI"
           git add ${GITHUB_WORKSPACE}/pwa/sw_content.js
           git commit -m "[CI] Increment cache version"
           git push          
