@@ -22,11 +22,13 @@ jobs:
           git config --global user.email "internet-site@outlook.com"
           git config --global user.name "CI"
           git add ${GITHUB_WORKSPACE}/pwa/sw_content.js
+          git checkout master
           git commit -m "[CI] Increment cache version"
       - name: Recreate tag
         run: |
+          git checkout master
           git tag $TAG_NAME
-          git push
+          git push origin master
       - name: Trigger sync
         run: curl -X POST "${{ secrets.webhook_url }}" -d '{"repository":{"name":"Zogwine_UI"}}' -H 'Content-Type:application/json'
         
