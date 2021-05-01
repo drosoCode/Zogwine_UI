@@ -37,7 +37,8 @@ steps:
       - cd /drone/src && quasar build -m cordova -T android
       - /usr/bin/key2store.py
       - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore /tmp/store.p12 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk app -storepass changeit
-      - /opt/android-sdk/build-tools/30.0.0/zipalign -v 4 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk /drone/release/zogwine.apk
+      - /opt/android-sdk/build-tools/30.0.0/zipalign -v 4 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk /drone/src/app.apk
+      - mv /drone/src/app.apk /drone/release/zogwine.apk
     volumes:
       - name: release
         path: /drone/release
@@ -175,6 +176,6 @@ get:
 
 ---
 kind: signature
-hmac: 0df6d38c43b01f905b4e9b34e7dd84c970a8f11af4c7923d96497ec805415fb5
+hmac: bbbf68bb159ab17ecca2b16010ed93196bb01be5985d3a358c822bf416c849fa
 
 ...
