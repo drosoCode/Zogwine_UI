@@ -12,36 +12,9 @@ steps:
       sonar_token:
         from_secret: sonar_token
 
-  - name: discord_notification
-    image: appleboy/drone-discord
-    when:
-      status:
-        - success
-        - failure
-    settings:
-      webhook_id: 
-        from_secret: webhook_id
-      webhook_token:
-        from_secret: webhook_token
-      message: >
-        {{#success build.status}}
-        ✅ Build #{{build.number}} of `{{repo.name}}` succeeded.
-        📝 Commit by {{commit.author}} on `{{commit.branch}}`:
-        ```
-        {{commit.message}}
-        ```
-        {{else}}
-        ❌ Build #{{build.number}} of `{{repo.name}}` failed.
-        📝 Commit by {{commit.author}} on `{{commit.branch}}`:
-        ```
-        {{commit.message}}
-        ```
-        {{/success}}
-
 trigger:
   event: 
     - push
-    - pull_request
 
 ---
 kind: pipeline
@@ -50,29 +23,24 @@ name: android_build
 
 steps:
   - name: build
-    image: mingc/android-build-box:latest
+    image: registry.droso.io/ci/android:latest
     environment:
-      endpoint: 
+      endpoint:
         from_secret: endpoint
+      cert:
+        from_secret: cert
+      key:
+        from_secret: key
     commands:
-      - wget https://services.gradle.org/distributions/gradle-6.8.3-bin.zip -O /opt/gradle.zip
-      - unzip /opt/gradle.zip -d /opt && export PATH="/opt/gradle-6.8.3/bin:$PATH"
-      - npm i -g @quasar/cli cordova
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
-      - mkdir -p /root/.config/insight-nodejs
-      - "echo '{\"clientId\": 1234567891, \"optOut\": true}' > /root/.config/insight-nodejs/insight-cordova.json" # prevent cordova prompt for telemetry
       - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/src/store/index.js"
       - cd /drone/src && quasar build -m cordova -T android
-
-  - name: gitea_release
-    image: plugins/gitea-release
-    settings:
-      base_url:
-        from_secret: gitea_server
-      api_key:
-        from_secret: gitea_token
-      files: /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
-      title: Android
+      - /usr/bin/key2store.py
+      - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore /tmp/store.p12 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk app -storepass changeit
+      - /opt/android-sdk/build-tools/30.0.0/zipalign -v 4 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk /drone/release/zogwine.apk
+    volumes:
+      - name: release
+        path: /drone/release
 
   - name: discord_notification
     image: appleboy/drone-discord
@@ -87,16 +55,22 @@ steps:
         from_secret: webhook_token
       message: >
         {{#success build.status}}
-        ✅ Deployment succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        ✅ Android build succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
         {{else}}
-        ❌ Deployment failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        ❌ Android build failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
         {{/success}}
 
 trigger:
   event:
-  - promote
-  target:
-  - android
+  - push
+
+volumes:
+  - name: release
+    host:
+      path: /nas/Drone
+
+image_pull_secrets:
+- dockerconfigjson
 
 ---
 kind: pipeline
@@ -111,17 +85,10 @@ steps:
       - cd /drone/src && npm i --save-dev --unsafe-perm=true --allow-root
       - cd /drone/src && quasar build -m spa
       - cp -R /drone/src/pwa/* /drone/src/dist/spa
-      - tar -czf /drone/src/web.tar.gz /drone/src/dist/spa
-
-  - name: gitea_release
-    image: plugins/gitea-release
-    settings:
-      base_url:
-        from_secret: gitea_server
-      api_key:
-        from_secret: gitea_token
-      files: /drone/src/web.tar.gz
-      title: Web
+      - tar -czf /drone/release/zogwine_web.tar.gz /drone/src/dist/spa
+    volumes:
+      - name: release
+        path: /drone/release
 
   - name: discord_notification
     image: appleboy/drone-discord
@@ -136,19 +103,78 @@ steps:
         from_secret: webhook_token
       message: >
         {{#success build.status}}
-        ✅ Deployment succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        ✅ Web build succeeded. 💾 Build #{{build.number}} for `{{repo.name}}`.
         {{else}}
-        ❌ Deployment failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
+        ❌ Web build failed. 💾 Build #{{build.number}} for `{{repo.name}}`.
         {{/success}}
 
 trigger:
   event:
-  - promote
-  target:
-  - web
+  - push
+
+volumes:
+  - name: release
+    host:
+      path: /nas/Drone
+
+---
+kind: secret
+name: dockerconfigjson
+get:
+  path: kv/data/drone/registry/readonly
+  name: dockerconfigjson
+
+---
+kind: secret
+name: webhook_id
+get:
+  path: kv/data/discord/webhook/drone
+  name: id
+
+---
+kind: secret
+name: webhook_token
+get:
+  path: kv/data/discord/webhook/drone
+  name: token
+
+---
+kind: secret
+name: sonar_host
+get:
+  path: kv/data/sonarqube
+  name: host
+
+---
+kind: secret
+name: sonar_token
+get:
+  path: kv/data/sonarqube
+  name: token
+
+---
+kind: secret
+name: endpoint
+get:
+  path: kv/data/drone/zogwine_ui
+  name: endpoint
+
+---
+kind: secret
+name: cert
+get:
+  path: kv/data/drone/zogwine_ui
+  name: cert
+
+---
+kind: secret
+name: key
+get:
+  path: kv/data/drone/zogwine_ui
+  name: key
 
 ---
 kind: signature
-hmac: 7d19dff02a63e5cc0cb675123ac2304444fdb6571994a85f76073d2ec510e059
+hmac: 0df6d38c43b01f905b4e9b34e7dd84c970a8f11af4c7923d96497ec805415fb5
 
 ...
