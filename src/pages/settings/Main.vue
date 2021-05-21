@@ -24,7 +24,7 @@
             <q-tab-panel name="config">
                 <q-card>
                     <q-card-section>
-                        <h5>Actions</h5>
+                        <h5>Library</h5>
                         <q-btn color="orange" label="Refresh TVS Library" icon="refresh" class="q-ma-sm" @click="refreshTVS" :loading="threadStatus.tvs && runningThread" :disable="!threadStatus.tvs && runningThread">
                           <template v-slot:loading>
                             <q-spinner-gears class="on-left" />
@@ -55,7 +55,31 @@
                             Loading...
                           </template>
                         </q-btn>
+                    </q-card-section>
+                </q-card>
+                <q-card>
+                    <q-card-section>
+                        <h5>Sync</h5>
+                        <q-btn color="orange" label="Trackers Scan" icon="refresh" class="q-ma-sm" @click="trackerScan" :loading="threadStatus.trackerScan && runningThread" :disable="!threadStatus.trackerScan && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                        <q-btn color="orange" label="Trackers Sync" icon="refresh" class="q-ma-sm" @click="trackerSync" :loading="threadStatus.trackerSync && runningThread" :disable="!threadStatus.trackerSync && runningThread">
+                          <template v-slot:loading>
+                            <q-spinner-gears class="on-left" />
+                            Loading...
+                          </template>
+                        </q-btn>
+                    </q-card-section>
+                </q-card>
+                <q-card>
+                    <q-card-section>
+                        <h5>About</h5>
                         <q-btn color="green" label="Swagger API" icon="mdi-api" class="q-ma-sm" @click="openSwagger()"></q-btn>
+                        <q-btn color="grey-10" label="Github" icon="mdi-github" class="q-ma-sm" type="a" href="https://github.com/drosoCode/Zogwine" target="_blank"></q-btn>
+                        <q-btn color="grey-10" label="Github UI" icon="mdi-github" class="q-ma-sm" type="a" href="https://github.com/drosoCode/Zogwine_UI" target="_blank"></q-btn>
                     </q-card-section>
                 </q-card>
             </q-tab-panel>
@@ -117,7 +141,9 @@ export default Vue.extend({
         movie: false,
         upcomingEpisode: false,
         cache: false,
-        person: false
+        person: false,
+        trackerScan: false,
+        trackerSync: false
       },
       runningThread: false,
       statusInterval: null,
@@ -217,6 +243,30 @@ export default Vue.extend({
       })
       this.$apiCall('core/scan/person')
       this.threadStatus.person = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
+    },
+    trackerScan: function () {
+      this.$q.notify({
+        message: 'Trackers Scan Started',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('tracker/scan/all')
+      this.threadStatus.trackerScan = true
+      this.runningThread = true
+      this.statusInterval = setInterval(this.refreshStatus, 10000)
+    },
+    trackerSync: function () {
+      this.$q.notify({
+        message: 'Trackers Sync Started',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('tracker/sync/all')
+      this.threadStatus.trackerSync = true
       this.runningThread = true
       this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
