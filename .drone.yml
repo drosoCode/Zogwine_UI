@@ -34,6 +34,7 @@ steps:
     commands:
       - cd /drone/src && npm i --also=dev --unsafe-perm=true --allow-root
       - "sed -i -r \"s|    baseURL:.*|    baseURL: '${endpoint}',|\" /drone/src/src/store/index.js"
+      - cat /drone/src/src/store/index.js
       - cd /drone/src && quasar build -m cordova -T android
       - /usr/bin/key2store.py
       - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore /tmp/store.p12 /drone/src/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk app -storepass changeit
@@ -68,7 +69,7 @@ trigger:
 volumes:
   - name: release
     host:
-      path: /nas/Drone
+      path: /cache/drone
 
 image_pull_secrets:
 - dockerconfigjson
@@ -116,7 +117,7 @@ trigger:
 volumes:
   - name: release
     host:
-      path: /nas/Drone
+      path: /cache/drone
 
 ---
 kind: secret
@@ -176,6 +177,6 @@ get:
 
 ---
 kind: signature
-hmac: 191a86006960ffb0bbc45e5b043e7bf5d532fe7eb000c4227fcaaf3e53756b4a
+hmac: 72e9fa90e8dffaa1815321965d0a9bb9398c250156503aabce84fd775247d2d5
 
 ...
