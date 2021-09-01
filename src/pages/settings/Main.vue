@@ -22,61 +22,35 @@
         <q-tab-panels v-model="tab" animated>
 
             <q-tab-panel name="config">
-                <q-card>
+                <q-card class="q-my-lg">
                     <q-card-section>
-                        <h5>Library</h5>
-                        <q-btn color="orange" label="Refresh TVS Library" icon="refresh" class="q-ma-sm" @click="refreshTVS" :loading="threadStatus.tvs && runningThread" :disable="!threadStatus.tvs && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
-                        <q-btn color="orange" label="Refresh Movies Library" icon="refresh" class="q-ma-sm" @click="refreshMovies" :loading="threadStatus.movie && runningThread" :disable="!threadStatus.movie && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
-                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp" :loading="threadStatus.upcomingEpisode && runningThread" :disable="!threadStatus.upcomingEpisode && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
-                        <q-btn color="orange" label="Refresh Cache" icon="refresh" class="q-ma-sm" @click="refreshCache" :loading="threadStatus.cache && runningThread" :disable="!threadStatus.cache && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
-                        <q-btn color="orange" label="Refresh People" icon="refresh" class="q-ma-sm" @click="refreshPeople" :loading="threadStatus.person && runningThread" :disable="!threadStatus.person && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
+                        <h5 class="q-my-lg">Library</h5>
+                        <div class="row inline justify-between" style="width:100%">
+                          <q-btn color="orange" label="Rescan Library" icon="refresh" class="q-ma-sm col-3" @click="refreshLibrary" :disable="refreshMediaType == null || refreshLibraryID == null"></q-btn>
+                          <q-select v-model="refreshMediaType" :options="refreshMediaTypeOptions" class="col-3" label="Media Type" @input="loadLibraries"/>
+                          <q-select v-model="refreshLibraryID" :options="refreshLibraryIDOptions" class="col-3" label="Library ID" />
+                          <q-checkbox v-model="refreshAutoAdd" label="Auto Add" />
+                        </div>
                     </q-card-section>
                 </q-card>
-                <q-card>
+                <q-card class="q-mt-md">
                     <q-card-section>
-                        <h5>Sync</h5>
-                        <q-btn color="orange" label="Trackers Scan" icon="refresh" class="q-ma-sm" @click="trackerScan" :loading="threadStatus.trackerScan && runningThread" :disable="!threadStatus.trackerScan && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
-                        <q-btn color="orange" label="Trackers Sync" icon="refresh" class="q-ma-sm" @click="trackerSync" :loading="threadStatus.trackerSync && runningThread" :disable="!threadStatus.trackerSync && runningThread">
-                          <template v-slot:loading>
-                            <q-spinner-gears class="on-left" />
-                            Loading...
-                          </template>
-                        </q-btn>
+                        <h5 class="q-my-lg">System</h5>
+                        <q-btn color="orange" label="Refresh Upcoming Episodes" icon="refresh" class="q-ma-sm" @click="refreshUEp"></q-btn>
+                        <q-btn color="orange" label="Refresh Cache" icon="refresh" class="q-ma-sm" @click="refreshCache"></q-btn>
+                        <q-btn color="orange" label="Refresh People" icon="refresh" class="q-ma-sm" @click="refreshPeople"></q-btn>
                     </q-card-section>
                 </q-card>
-                <q-card>
+                <q-card class="q-my-lg">
                     <q-card-section>
-                        <h5>About</h5>
+                        <h5 class="q-my-lg">Sync</h5>
+                        <q-btn color="orange" label="Trackers Scan" icon="refresh" class="q-ma-sm" @click="trackerScan"></q-btn>
+                        <q-btn color="orange" label="Trackers Sync" icon="refresh" class="q-ma-sm" @click="trackerSync"></q-btn>
+                    </q-card-section>
+                </q-card>
+                <q-card class="q-my-lg">
+                    <q-card-section>
+                        <h5 class="q-my-lg">About</h5>
                         <q-btn color="green" label="Swagger API" icon="mdi-api" class="q-ma-sm" @click="openSwagger()"></q-btn>
                         <q-btn color="grey-10" label="Github" icon="mdi-github" class="q-ma-sm" type="a" href="https://github.com/drosoCode/Zogwine" target="_blank"></q-btn>
                         <q-btn color="grey-10" label="Github UI" icon="mdi-github" class="q-ma-sm" type="a" href="https://github.com/drosoCode/Zogwine_UI" target="_blank"></q-btn>
@@ -136,26 +110,24 @@ export default Vue.extend({
       tab: 'config',
       scraper_tvs: [],
       scraper_movies: [],
-      threadStatus: {
-        tvs: false,
-        movie: false,
-        upcomingEpisode: false,
-        cache: false,
-        person: false,
-        trackerScan: false,
-        trackerSync: false
-      },
-      runningThread: false,
-      statusInterval: null,
+      refreshMediaType: null,
+      refreshMediaTypeOptions: [
+        {
+          label: 'TV Shows',
+          value: 2
+        },
+        {
+          label: 'Movies',
+          value: 3
+        }
+      ],
+      refreshLibraryID: null,
+      refreshLibraryIDOptions: [],
+      refreshAutoAdd: false,
       contentType: 2
     }
   },
   mounted () {
-    this.$apiCall('core/scan/status')
-      .then((response) => {
-        this.threadStatus = response
-        this.runningThread = Object.values(response).includes(true)
-      })
     this.$apiCall('core/log/50')
       .then((response) => {
         this.logs = response
@@ -169,47 +141,28 @@ export default Vue.extend({
         this.scraper_movies = response
       })
   },
-  destoyed: function () {
-    if (this.statusInterval != null) {
-      clearInterval(this.statusInterval)
-    }
-  },
   methods: {
-    refreshStatus: function () {
-      this.$apiCall('core/scan/status')
+    // --------- library rescan methods -------
+    refreshLibrary: function () {
+      this.$q.notify({
+        message: 'Scanning Library',
+        icon: 'done',
+        position: 'bottom-left',
+        color: 'teal'
+      })
+      this.$apiCall('scraper/scan/' + this.refreshMediaType.value + '/' + this.refreshLibraryID.value + '?autoadd=' + this.refreshAutoAdd, null, 'POST')
+    },
+    loadLibraries: function () {
+      this.$apiCall('library?mediatype=' + this.refreshMediaType.value)
         .then((response) => {
-          this.threadStatus = response
-          this.runningThread = Object.values(response).includes(true)
-          if (!this.runningThread) {
-            clearInterval(this.statusInterval)
-            this.statusInterval = null
-          }
+          this.refreshLibraryIDOptions = []
+          this.refreshLibraryID = null
+          response.forEach(el => {
+            this.refreshLibraryIDOptions.push({ label: el.name, value: el.id })
+          })
         })
     },
-    refreshTVS: function () {
-      this.$q.notify({
-        message: 'Scanning TVS Library',
-        icon: 'done',
-        position: 'bottom-left',
-        color: 'teal'
-      })
-      this.$apiCall('tvs/scan')
-      this.threadStatus.tvs = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
-    },
-    refreshMovies: function () {
-      this.$q.notify({
-        message: 'Scanning Movies Library',
-        icon: 'done',
-        position: 'bottom-left',
-        color: 'teal'
-      })
-      this.$apiCall('movie/scan')
-      this.threadStatus.movie = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
-    },
+    // ---------------- system methods ----------
     refreshUEp: function () {
       this.$q.notify({
         message: 'Scanning Upcoming Episodes',
@@ -218,9 +171,6 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('/tvs/scan/upcoming')
-      this.threadStatus.upcomingEpisode = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshCache: function () {
       this.$q.notify({
@@ -230,9 +180,6 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('core/scan/cache')
-      this.threadStatus.cache = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     refreshPeople: function () {
       this.$q.notify({
@@ -242,10 +189,8 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('core/scan/person')
-      this.threadStatus.person = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
+    // --------  sync methods ---------------
     trackerScan: function () {
       this.$q.notify({
         message: 'Trackers Scan Started',
@@ -254,9 +199,6 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('tracker/scan/all')
-      this.threadStatus.trackerScan = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
     trackerSync: function () {
       this.$q.notify({
@@ -266,10 +208,8 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('tracker/sync/all')
-      this.threadStatus.trackerSync = true
-      this.runningThread = true
-      this.statusInterval = setInterval(this.refreshStatus, 10000)
     },
+    // -------- log tab methods --------------
     refreshLogs: function () {
       this.$apiCall('core/log/50')
         .then((response) => {
@@ -277,6 +217,7 @@ export default Vue.extend({
         })
       this.$refs.logScroll.setScrollPosition(this.$refs.logScroll.getScrollTarget().scrollHeight)
     },
+    // ----------------------
     openSwagger: function () {
       window.open(this.$store.getters.apiEndpoint + 'swagger/?token=' + this.$store.state.token, '_blank')
     }
