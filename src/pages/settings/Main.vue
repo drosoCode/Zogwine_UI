@@ -27,7 +27,7 @@
                         <h5 class="q-my-lg">Library</h5>
                         <div class="row inline justify-between" style="width:100%">
                           <q-btn color="orange" label="Rescan Library" icon="refresh" class="q-ma-sm col-3" @click="refreshLibrary" :disable="refreshMediaType == null || refreshLibraryID == null"></q-btn>
-                          <q-select v-model="refreshMediaType" :options="refreshMediaTypeOptions" class="col-3" label="Media Type" @input="loadLibraries"/>
+                          <q-select v-model="refreshMediaType" :options="mediaTypeOptions" class="col-3" label="Media Type" @input="loadLibraries"/>
                           <q-select v-model="refreshLibraryID" :options="refreshLibraryIDOptions" class="col-3" label="Library ID" />
                           <q-checkbox v-model="refreshAutoAdd" label="Auto Add" />
                         </div>
@@ -59,9 +59,9 @@
             </q-tab-panel>
 
             <q-tab-panel name="scrapers">
+                <q-select v-model="scraperMediaType" :options="mediaTypeOptions" class="col-3" label="Media Type" @input="loadScraperItems"/>
                 <div>
-                    <scraperCard v-for="tvs in scraper_tvs" :key="tvs.id" :data="tvs.multipleResults" :mediaType="2" :idMedia="tvs.id" :title="tvs.title"/>
-                    <scraperCard v-for="mov in scraper_movies" :key="mov.id" :data="mov.multipleResults" :mediaType="3" :idMedia="mov.id" :title="mov.title"/>
+                    <scraperCard v-for="it in scraperItems" :key="it.id" :mediaType="it.mediaType" :mediaData="it.mediaData"/>
                 </div>
             </q-tab-panel>
 
@@ -111,7 +111,7 @@ export default Vue.extend({
       scraper_tvs: [],
       scraper_movies: [],
       refreshMediaType: null,
-      refreshMediaTypeOptions: [
+      mediaTypeOptions: [
         {
           label: 'TV Shows',
           value: 2
@@ -124,6 +124,8 @@ export default Vue.extend({
       refreshLibraryID: null,
       refreshLibraryIDOptions: [],
       refreshAutoAdd: false,
+      scraperMediaType: null,
+      scraperItems: [],
       contentType: 2
     }
   },
@@ -208,6 +210,13 @@ export default Vue.extend({
         color: 'teal'
       })
       this.$apiCall('tracker/sync/all')
+    },
+    // -------- scrapers tab methods ---------
+    loadScraperItems: function () {
+      this.$apiCall('scraper/result/' + this.scraperMediaType.value)
+        .then((response) => {
+          this.scraperItems = response
+        })
     },
     // -------- log tab methods --------------
     refreshLogs: function () {

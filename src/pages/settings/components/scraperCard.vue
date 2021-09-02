@@ -13,7 +13,7 @@
           <q-btn icon="search" color="primary" style="height: 3rem" @click="setNewSearch"/>
         </div>
         <br>
-        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in scrapers" :key="index" :id="index" :mediaType="mediaType" :idMedia="idMedia" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :in_production="item.in_production" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
+        <scraperItem class="col-lg-6 col-12" v-for="(item, index) in items" :key="index" :id="index" :mediaType="mediaType" :mediaData="mediaData" :title="item.title" :icon="item.icon" :scraper="item.scraperName" :link="item.scraperLink" :date="item.premiered" :overview="item.overview" v-on:selected="select"/>
       </q-card>
     </div>
 </template>
@@ -29,31 +29,25 @@ export default defineComponent({
   data () {
     return {
       show: true,
-      newTitle: null
+      newTitle: null,
+      items: []
     }
   },
   props: {
-    data: {
+    mediaData: {
       type: String,
-      required: false
-    },
-    idMedia: {
-      type: Number,
       required: true
     },
     mediaType: {
       type: Number,
       required: true
-    },
-    title: {
-      type: String,
-      required: true
     }
   },
-  computed: {
-    scrapers: function () {
-      return JSON.parse(this.data)
-    }
+  mounted () {
+    this.$apiCall('scraper/result/' + this.mediaType + '/' + this.mediaData)
+      .then((response) => {
+        this.items = response
+      })
   },
   methods: {
     select: function () {
@@ -61,9 +55,9 @@ export default defineComponent({
     },
     setNewSearch: function () {
       if (this.mediaType === 2) {
-        this.$apiCall('/tvs/' + this.idMedia + '/scanTitle', { title: this.newTitle }, 'PUT')
+        this.$apiCall('/tvs/' + this.mediaData, { title: this.newTitle }, 'PUT')
       } else if (this.mediaType === 3) {
-        this.$apiCall('/movie/' + this.idMedia + '/scanTitle', { title: this.newTitle }, 'PUT')
+        this.$apiCall('/movie/' + this.mediaData, { title: this.newTitle }, 'PUT')
       }
       this.$q.notify({
         message: 'Title Updated',

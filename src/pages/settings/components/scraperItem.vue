@@ -11,8 +11,7 @@
             <div class="text-h5 q-mt-sm q-mb-xs">{{ title }}</div>
             <div class="text-caption text-grey">
               Premiered: {{ date }}<br>
-              Scraper: {{ scraper }}<br>
-              <span v-if="mediaType === 2">In Production: {{ in_production }}</span>
+              Scraper: <a :href="link">{{ scraper }}</a><br>
               <br><br>
               {{ overview }}
             <q-btn color="teal" class="full-width" label="Select" @click="select"/>
@@ -48,9 +47,8 @@ export default defineComponent({
     scraper: {
       required: true
     },
-    in_production: {
-      required: false,
-      default: false
+    link: {
+      required: true
     },
     date: {
       required: true
@@ -58,7 +56,7 @@ export default defineComponent({
     id: {
       required: true
     },
-    idMedia: {
+    mediaData: {
       required: true
     },
     mediaType: {
@@ -73,11 +71,7 @@ export default defineComponent({
         position: 'bottom-left',
         color: 'teal'
       })
-      if (this.mediaType === 2) {
-        this.$apiCall('/tvs/' + this.idMedia + '/select/' + this.id, null, 'POST')
-      } else if (this.mediaType === 3) {
-        this.$apiCall('/movie/' + this.idMedia + '/select/' + this.id, null, 'POST')
-      }
+      this.$apiCall('scraper/select/' + this.mediaType + '/' + this.mediaData + '/' + this.id, null, 'POST')
       this.$emit('selected')
     }
   }
