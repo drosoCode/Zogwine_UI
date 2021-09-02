@@ -5,6 +5,12 @@
   </div>
 </template>
 
+<style>
+.body--light {
+  background-color: #FAFAFA;
+}
+</style>
+
 <script>
 import MainLayout from './layouts/MainLayout.vue'
 
