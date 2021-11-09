@@ -29,6 +29,7 @@ export default defineComponent({
   data () {
     return {
       show: true,
+      title: '',
       newTitle: null,
       items: []
     }
@@ -46,7 +47,8 @@ export default defineComponent({
   mounted () {
     this.$apiCall('scraper/result/' + this.mediaType + '/' + this.mediaData)
       .then((response) => {
-        this.items = response
+        this.items = response.data
+        this.title = response.path
       })
   },
   methods: {
