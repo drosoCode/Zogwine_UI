@@ -31,6 +31,8 @@
           <q-td key="actions" :props="props">
             <q-btn color="primary" label="Update Metadata" size="sm" @click="update(props.row.id)"/>
             &nbsp;&nbsp;
+            <q-btn color="red" label="Reset Scraper" size="sm" @click="resetScraper(props.row)"/>
+            &nbsp;&nbsp;
             <q-btn color="red" label="Delete" size="sm" @click="deleteItem(props.row.id)"/>
           </q-td>
         </q-tr>
@@ -51,7 +53,8 @@ export default defineComponent({
       id: -1,
       pagination: {
         rowsPerPage: 20
-      }
+      },
+      selectedProps: {}
     }
   },
   mounted () {
@@ -118,6 +121,37 @@ export default defineComponent({
     },
     update: function (id) {
       console.log('update ' + id)
+    },
+    resetScraper: function (data) {
+      this.selectedProps = data
+
+      this.$q.dialog({
+        title: 'This action will reset the associated scraper, continue ?',
+        message: 'Current title',
+        prompt: {
+          model: data.title,
+          type: 'text'
+        },
+        cancel: true,
+        persistent: true
+      }).onOk((title) => {
+        if (this.type === 2) {
+          const req = {
+            fanart: null,
+            forceUpdate: 1,
+            icon: null,
+            overview: null,
+            premiered: null,
+            rating: -1,
+            scraperData: null,
+            scraperID: null,
+            scraperLink: null,
+            scraperName: null,
+            title: title
+          }
+          this.$apiCall('tvs/' + this.selectedProps.id, req, 'PUT')
+        }
+      })
     }
   },
   watch: {
