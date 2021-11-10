@@ -29,11 +29,11 @@
             </q-badge>
           </q-td>
           <q-td key="actions" :props="props">
-            <q-btn color="primary" label="Update Metadata" size="sm" @click="update(props.row.id)"/>
+            <q-btn color="primary" label="Update Metadata" size="sm" @click="editItem(props.row)"/>
             &nbsp;&nbsp;
             <q-btn color="red" label="Reset Scraper" size="sm" @click="resetScraper(props.row)"/>
             &nbsp;&nbsp;
-            <q-btn color="red" label="Delete" size="sm" @click="deleteItem(props.row.id)"/>
+            <q-btn color="red" label="Delete" size="sm" @click="deleteItem(props.row)"/>
           </q-td>
         </q-tr>
       </template>
@@ -43,6 +43,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
+import editDialog from './editDialog.vue'
 
 export default defineComponent({
   name: 'contentManager',
@@ -106,21 +107,41 @@ export default defineComponent({
           this.data = response
         })
     },
-    deleteItem: function (id) {
-      let url = ''
-      if (this.type === 1) {
-        url = 'tvs/episode/' + id
-      } else if (this.type === 2) {
-        url = 'tvs/' + id
-      }
+    deleteItem: function (data) {
+      this.selectedProps = data
 
-      this.$apiCall(url, null, 'delete')
-        .then((response) => {
-          console.log(response)
-        })
+      this.$q.dialog({
+        title: 'Delete Item',
+        message: 'Do you really want to delete ' + data.title + ' ?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        let url = ''
+        if (this.type === 1) {
+          url = 'tvs/episode/' + this.selectedProps.id
+        } else if (this.type === 2) {
+          url = 'tvs/' + this.selectedProps.id
+        }
+
+        this.$apiCall(url, null, 'delete')
+          .then((response) => {
+            console.log(response)
+          })
+      })
     },
-    update: function (id) {
-      console.log('update ' + id)
+    editItem: function (data) {
+      this.selectedProps = data
+      this.selectedProps.endpoint = { 1: 'tvs/episode/', 2: 'tvs/', 3: 'movie/' }[this.type]
+
+      this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id).then((response) => {
+        this.$q.dialog({
+          component: editDialog,
+          type: this.type,
+          fields: response
+        }).onOk((data) => {
+          this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id, data, 'PUT')
+        })
+      })
     },
     resetScraper: function (data) {
       this.selectedProps = data
