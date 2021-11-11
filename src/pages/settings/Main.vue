@@ -67,8 +67,8 @@
 
             <q-tab-panel name="content">
               <q-bar>
-                <div class="cursor-pointer" @click="contentType = 2">TV Shows</div>
-                <div class="cursor-pointer" @click="contentType = 3">Movies</div>
+                <div class="cursor-pointer" @click="contentType = -1; contentType = 2">TV Shows</div>
+                <div class="cursor-pointer" @click="contentType = -1; contentType = 3">Movies</div>
               </q-bar>
                 <div>
                     <contentManager :type="contentType"/>
