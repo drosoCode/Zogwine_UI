@@ -5,17 +5,22 @@
         <div class="text-h6">Edit Properties</div>
       </q-card-section>
       <q-card-section>
-        <div v-for="(value, name) in filteredFields"  :key="name">
-            <div class="q-gutter-sm" v-if="name === 'forceUpdate'">
-                <q-radio v-model="values[name]" :val="1" label="Update" />
-                <q-radio v-model="values[name]" :val="0" label="No Update" />
-                <q-radio v-model="values[name]" :val="-1" label="Freeze" />
-            </div>
-            <q-input v-model="values[name]" :label="name" type="number" v-else-if="name === 'rating' || name === 'idLib'"/>
-            <q-input v-model="values[name]" :label="name" type="date" v-else-if="name === 'premiered'"/>
-            <q-input v-model="values[name]" :label="name" autogrow v-else-if="name === 'overview'"/>
-            <q-input v-model="values[name]" :label="name" v-else/>
+        <div v-for="(value, name) in filteredFields" :key="name">
+          <editInput v-model="values[name]" :name="name" v-if="!advanced.includes(name)"/>
         </div>
+        <q-expansion-item
+          icon="mdi-alert"
+          label="Advanced"
+          header-class="text-red"
+        >
+          <q-card style="background-color: rgba(255,0,0,0.1);">
+            <q-card-section>
+              <div v-for="(value, name) in filteredFields" :key="name">
+                <editInput v-model="values[name]" :name="name" v-if="advanced.includes(name)"/>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="amber" flat label="Cancel" @click="onCancelClick" />
@@ -26,8 +31,10 @@
 </template>
 
 <script>
+import editInput from './editInput.vue'
 export default {
   name: 'editDialog',
+  components: { editInput },
   props: {
     type: {
       required: true
@@ -40,7 +47,8 @@ export default {
   data () {
     return {
       filteredFields: {},
-      values: {}
+      values: {},
+      advanced: ['scraperName', 'scraperData', 'scraperID', 'idLib', 'path']
     }
   },
   mounted () {
