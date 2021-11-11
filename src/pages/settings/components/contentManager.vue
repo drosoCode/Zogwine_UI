@@ -31,6 +31,8 @@
           <q-td key="actions" :props="props">
             <q-btn color="primary" label="Update Metadata" size="sm" @click="editItem(props.row)"/>
             &nbsp;&nbsp;
+            <q-btn color="red" label="Update Video Metadata" size="sm" @click="editVideoFile(props.row)" v-if="type == 1 || type == 3"/>
+            &nbsp;&nbsp;
             <q-btn color="red" label="Reset Scraper" size="sm" @click="resetScraper(props.row)"/>
             &nbsp;&nbsp;
             <q-btn color="red" label="Delete" size="sm" @click="deleteItem(props.row)"/>
@@ -136,10 +138,21 @@ export default defineComponent({
       this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id).then((response) => {
         this.$q.dialog({
           component: editDialog,
-          type: this.type,
           fields: response
         }).onOk((data) => {
           this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id, data, 'PUT')
+        })
+      })
+    },
+    editVideoFile: function (data) {
+      this.selectedProps = data
+
+      this.$apiCall('player/property/' + this.type + '/' + this.selectedProps.id).then((response) => {
+        this.$q.dialog({
+          component: editDialog,
+          fields: response
+        }).onOk((data) => {
+          this.$apiCall('player/property/' + this.type + '/' + this.selectedProps.id, data, 'PUT')
         })
       })
     },
