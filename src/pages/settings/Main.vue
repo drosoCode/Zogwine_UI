@@ -11,8 +11,10 @@
           inline-label
         >
           <q-tab name="config" label="Config" icon="settings" />
-          <q-tab name="scrapers" label="Scrapers" icon="create" />
+          <q-tab name="scrapersSelect" label="Selection" icon="create" />
           <q-tab name="content" label="Content" icon="view_list" />
+          <q-tab name="libraries" label="Libraries" icon="archive" />
+          <q-tab name="scrapersConfig" label="Scrapers" icon="mdi-database-sync" />
           <q-tab name="users" label="Users" icon="people" />
           <q-tab name="logs" label="Logs" icon="subject" />
         </q-tabs>
@@ -58,7 +60,7 @@
                 </q-card>
             </q-tab-panel>
 
-            <q-tab-panel name="scrapers">
+            <q-tab-panel name="scrapersSelect">
                 <q-select v-model="scraperMediaType" :options="mediaTypeOptions" class="col-3" label="Media Type" @input="loadScraperItems"/>
                 <div>
                     <scraperCard v-for="it in scraperItems" :key="it.id" :mediaType="it.mediaType" :mediaData="it.mediaData"/>
@@ -72,6 +74,16 @@
               </q-bar>
                 <div>
                     <contentManager :type="contentType"/>
+                </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="libraries">
+                <div>
+                </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="scrapersConfig">
+                <div>
                 </div>
             </q-tab-panel>
 
