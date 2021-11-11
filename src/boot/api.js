@@ -40,8 +40,8 @@ export default ({ Vue, store, router }) => {
             })
             router.push('/')
           } else {
-            let message = 'Error'
-            if (error.response.data.data !== undefined) { message += ': ' + error.response.data.data }
+            let message = 'Error: '
+            if (error.response.data.data !== undefined) { message += error.response.data.data } else { message += error.response.status }
             Notify.create({
               message: message,
               icon: 'mdi-alert',
