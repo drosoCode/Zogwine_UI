@@ -79,8 +79,8 @@ export default defineComponent({
         url = 'tvs/' + this.id + '/episode'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
-          { name: 'season', label: 'Season', field: 'season' },
-          { name: 'episode', label: 'Episode', field: 'episode' },
+          { name: 'season', label: 'Season', field: 'season', sortable: true },
+          { name: 'episode', label: 'Episode', field: 'episode', sortable: true },
           { name: 'actions', label: 'Actions', field: 'actions' }
         ]
       } else if (this.type === 2) {
@@ -88,8 +88,8 @@ export default defineComponent({
         url = 'tvs'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
-          { name: 'episodes', label: 'Episodes', field: 'episodes' },
-          { name: 'premiered', label: 'Date', field: 'premiered' },
+          { name: 'episodes', label: 'Episodes', field: 'episodes', sortable: true },
+          { name: 'premiered', label: 'Date', field: 'premiered', sortable: true },
           { name: 'actions', label: 'Actions', field: 'actions' }
         ]
       } else if (this.type === 3) {
@@ -97,7 +97,7 @@ export default defineComponent({
         url = 'movie'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
-          { name: 'premiered', label: 'Date', field: 'premiered' },
+          { name: 'premiered', label: 'Date', field: 'premiered', sortable: true },
           { name: 'actions', label: 'Actions', field: 'actions' }
         ]
       }
