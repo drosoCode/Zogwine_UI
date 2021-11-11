@@ -59,7 +59,7 @@ export default Vue.extend({
       this.$router.push({ name: 'playItem', params: { mediaType: 3, data: this.$route.params.id } })
     },
     download: function () {
-      this.$apiCall('player/file?mediaType=3&mediaData=' + this.$route.params.id)
+      this.$apiCall('player/file/3/' + this.$route.params.id)
         .then((response) => {
           window.open(response)
         })

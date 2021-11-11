@@ -36,9 +36,6 @@ export default {
   name: 'editDialog',
   components: { editInput },
   props: {
-    type: {
-      required: true
-    },
     fields: {
       required: true
     }
@@ -48,11 +45,11 @@ export default {
     return {
       filteredFields: {},
       values: {},
-      advanced: ['scraperName', 'scraperData', 'scraperID', 'idLib', 'path']
+      advanced: ['scraperName', 'scraperData', 'scraperID', 'idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size']
     }
   },
   mounted () {
-    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperID', 'scraperName', 'scraperData', 'scraperLink', 'idLib', 'path', 'forceUpdate']
+    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperLink', 'forceUpdate'] + this.advanced
     Object.keys(this.fields).forEach(i => {
       if (allowedFields.includes(i)) {
         this.filteredFields[i] = this.fields[i]

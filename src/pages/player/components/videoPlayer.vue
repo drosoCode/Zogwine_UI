@@ -190,7 +190,7 @@ export default defineComponent({
   },
   methods: {
     loadData: function () {
-      this.$apiCall('player/property?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+      this.$apiCall('player/property/' + this.mediaType + '/' + this.mediaData)
         .then((response) => {
           this.fileInfos = response
           this.$emit('duration', this.fileInfos.duration)
@@ -348,7 +348,7 @@ export default defineComponent({
       }
 
       // try to play the file
-      this.$apiCall('player/file?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData)
+      this.$apiCall('player/file/' + this.mediaType + '/' + this.mediaData)
         .then((videoUrl) => {
           this.playing = true
           this.createPlayer()
@@ -367,12 +367,13 @@ export default defineComponent({
     addSubtitleTracks: function (useStartFrom = true) {
       for (let i = 0; i < this.subStream.length; i++) {
         if (!(this.subStream[i].codec in this.bitmapCodecs) && this.subStream[i].value !== -1) {
-          let src = this.$store.getters.apiEndpoint + 'player/subtitle?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&token=' + this.$store.state.token + '&startFrom=' + (useStartFrom ? this.startFromValue : 0)
+          let src = this.$store.getters.apiEndpoint + 'player/subtitle/' + this.mediaType + '/' + this.mediaData
+          const queryParams = '?token=' + this.$store.state.token + '&startFrom=' + (useStartFrom ? this.startFromValue : 0)
 
           if (this.subStream[i].type === 1) {
-            src += '&subStream=' + this.subStream[i].value
+            src += '/stream/' + this.subStream[i].value + queryParams
           } else if (this.subStream[i].type === 2) {
-            src += '&subFile=' + this.subStream[i].value
+            src += '/file/' + this.subStream[i].value + queryParams
           }
 
           this.videojsPlayer.addRemoteTextTrack({
@@ -460,12 +461,12 @@ export default defineComponent({
       }
       if (this.playing) {
         if (this.videojsPlayer !== null) {
-          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + (this.fileInfos.startFrom + this.videojsPlayer.currentTime()))
+          this.$apiCall('player/stop?endTime=' + (this.startFromValue + this.videojsPlayer.currentTime()))
           this.videojsPlayer.dispose()
         } else if (this.$refs.videoPlayer !== undefined) {
-          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=' + this.$refs.videoPlayer.currentTime)
+          this.$apiCall('player/stop?endTime=' + (this.startFromValue + this.$refs.videoPlayer.currentTime))
         } else {
-          this.$apiCall('player/stop?mediaType=' + this.mediaType + '&mediaData=' + this.mediaData + '&endTime=0')
+          this.$apiCall('player/stop?endTime=0')
         }
         this.playing = false
       }

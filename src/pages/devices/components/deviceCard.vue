@@ -112,7 +112,7 @@ export default defineComponent({
           })
       }
 
-      this.$apiCall('player/property?mediaType=' + this.playingMedia.mediaType + '&mediaData=' + this.playingMedia.mediaData)
+      this.$apiCall('player/property/' + this.playingMedia.mediaType + '/' + this.playingMedia.mediaData)
         .then((resp) => {
           this.duration = resp.duration
         })

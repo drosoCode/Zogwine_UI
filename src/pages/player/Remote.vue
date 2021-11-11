@@ -138,7 +138,7 @@ export default Vue.extend({
               this.$apiCall('device/' + this.$route.params.device + '/function/playingMedia')
                 .then((response) => {
                   if (response.mediaType !== this.mediaType && response.mediaData !== this.mediaData) {
-                    this.$apiCall('player/property?mediaType=' + response.mediaType + '&mediaData=' + response.mediaData)
+                    this.$apiCall('player/property/' + response.mediaType + '/' + response.mediaData)
                       .then((resp) => {
                         this.duration = resp.duration
                       })

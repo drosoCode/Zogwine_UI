@@ -66,7 +66,7 @@ export default defineComponent({
       this.$router.push({ name: 'playItem', params: { mediaType: 1, data: this.id } })
     },
     download: function () {
-      this.$apiCall('player/file?mediaType=1&mediaData=' + this.id)
+      this.$apiCall('player/file/1/' + this.id)
         .then((response) => {
           window.open(response)
         })
