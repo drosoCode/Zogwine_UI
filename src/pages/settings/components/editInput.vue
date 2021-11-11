@@ -5,7 +5,7 @@
         <q-radio :value="value" @input="updateValue" :val="0" label="No Update" />
         <q-radio :value="value" @input="updateValue" :val="-1" label="Freeze" />
     </div>
-    <q-input :value="value" @input="updateValue" :label="name" type="number" v-else-if="name === 'rating' || name === 'idLib'"/>
+    <q-input :value="value" @input="updateValue" :label="name" type="number" v-else-if="numbers.includes(name)"/>
     <q-input :value="value" @input="updateValue" :label="name" type="date" v-else-if="name === 'premiered'"/>
     <q-input :value="value" @input="updateValue" :label="name" autogrow v-else-if="name === 'overview'"/>
     <q-input :value="value" @input="updateValue" :label="name" v-else/>
@@ -25,9 +25,14 @@ export default defineComponent({
       required: true
     }
   },
+  data () {
+    return {
+      numbers: ['rating', 'idLib']
+    }
+  },
   methods: {
     updateValue: function (value) {
-      this.$emit('input', value)
+      if (this.numbers.includes(this.name)) { this.$emit('input', parseInt(value)) } else { this.$emit('input', value) }
     }
   }
 })
