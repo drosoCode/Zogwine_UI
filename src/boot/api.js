@@ -40,8 +40,10 @@ export default ({ Vue, store, router }) => {
             })
             router.push('/')
           } else {
+            let message = 'Error'
+            if (error.response.data.data !== undefined) { message += ': ' + error.response.data.data }
             Notify.create({
-              message: 'Network Error',
+              message: message,
               icon: 'mdi-alert',
               position: 'bottom-left',
               color: 'red'
