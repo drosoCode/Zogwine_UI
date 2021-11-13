@@ -38,6 +38,9 @@ export default {
   props: {
     fields: {
       required: true
+    },
+    type: {
+      required: true
     }
   },
   emits: ['ok', 'hide'],
@@ -45,11 +48,15 @@ export default {
     return {
       filteredFields: {},
       values: {},
-      advanced: ['scraperName', 'scraperData', 'scraperID', 'idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size']
+      advanced: ['idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size']
     }
   },
   mounted () {
-    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperLink', 'forceUpdate'] + this.advanced
+    if (this.type !== 5 && this.type !== 1) {
+      this.advanced = this.advanced.concat(['scraperName', 'scraperData', 'scraperID'])
+    }
+    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperLink', 'forceUpdate'].concat(this.advanced)
+
     Object.keys(this.fields).forEach(i => {
       if (allowedFields.includes(i)) {
         this.filteredFields[i] = this.fields[i]
