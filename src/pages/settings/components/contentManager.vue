@@ -18,6 +18,11 @@
           <q-td key="episode" :props="props">
               {{ props.row.episode }}
           </q-td>
+          <q-td key="seasons" :props="props">
+            <q-btn color="green" size="sm" @click="type = 5; id = props.row.id">
+              {{ props.row.seasons }}
+            </q-btn>
+          </q-td>
           <q-td key="episodes" :props="props">
             <q-btn color="green" size="sm" @click="type = 1; id = props.row.id">
               {{ props.row.episodes }}
@@ -33,7 +38,7 @@
             &nbsp;&nbsp;
             <q-btn color="red" label="Update Video Metadata" size="sm" @click="editVideoFile(props.row)" v-if="type == 1 || type == 3"/>
             &nbsp;&nbsp;
-            <q-btn color="red" label="Reset Scraper" size="sm" @click="resetScraper(props.row)"/>
+            <q-btn color="red" label="Reset Scraper" size="sm" @click="resetScraper(props.row)" v-if="type == 2 || type == 3"/>
             &nbsp;&nbsp;
             <q-btn color="red" label="Delete" size="sm" @click="deleteItem(props.row)"/>
           </q-td>
@@ -67,6 +72,8 @@ export default defineComponent({
     title: function () {
       if (this.type === 1) {
         return 'TV Shows / Episodes'
+      } else if (this.type === 5) {
+        return 'TV Shows / Seasons'
       } else if (this.type === 2) {
         return 'TV Shows'
       } else if (this.type === 3) {
@@ -85,11 +92,19 @@ export default defineComponent({
           { name: 'episode', label: 'Episode', field: 'episode', sortable: true },
           { name: 'actions', label: 'Actions', field: 'actions' }
         ]
+      } else if (this.type === 5) {
+        url = 'tvs/' + this.id + '/season'
+        this.columns = [
+          { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
+          { name: 'season', label: 'Season', field: 'season', sortable: true },
+          { name: 'actions', label: 'Actions', field: 'actions' }
+        ]
       } else if (this.type === 2) {
         this.id = -1
         url = 'tvs'
         this.columns = [
           { name: 'title', align: 'center', label: 'Name', field: 'title', sortable: true },
+          { name: 'seasons', label: 'Seasons', field: 'seasons', sortable: true },
           { name: 'episodes', label: 'Episodes', field: 'episodes', sortable: true },
           { name: 'premiered', label: 'Date', field: 'premiered', sortable: true },
           { name: 'actions', label: 'Actions', field: 'actions' }
@@ -109,6 +124,19 @@ export default defineComponent({
           this.data = response
         })
     },
+    getEndpoint: function (data) {
+      let url = ''
+      if (this.type === 1) {
+        url = 'tvs/episode/' + data.id
+      } else if (this.type === 2) {
+        url = 'tvs/' + data.id
+      } else if (this.type === 3) {
+        url = 'movie/' + data.id
+      } else if (this.type === 5) {
+        url = 'tvs/' + data.idShow + '/season/' + data.season
+      }
+      return url
+    },
     deleteItem: function (data) {
       this.selectedProps = data
 
@@ -118,14 +146,7 @@ export default defineComponent({
         cancel: true,
         persistent: true
       }).onOk(() => {
-        let url = ''
-        if (this.type === 1) {
-          url = 'tvs/episode/' + this.selectedProps.id
-        } else if (this.type === 2) {
-          url = 'tvs/' + this.selectedProps.id
-        }
-
-        this.$apiCall(url, null, 'delete')
+        this.$apiCall(this.getEndpoint(this.selectedProps), null, 'delete')
           .then((response) => {
             console.log(response)
           })
@@ -133,14 +154,14 @@ export default defineComponent({
     },
     editItem: function (data) {
       this.selectedProps = data
-      this.selectedProps.endpoint = { 1: 'tvs/episode/', 2: 'tvs/', 3: 'movie/' }[this.type]
 
-      this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id).then((response) => {
+      this.$apiCall(this.getEndpoint(this.selectedProps)).then((response) => {
         this.$q.dialog({
           component: editDialog,
-          fields: response
+          fields: response,
+          type: this.type
         }).onOk((data) => {
-          this.$apiCall(this.selectedProps.endpoint + this.selectedProps.id, data, 'PUT')
+          this.$apiCall(this.getEndpoint(this.selectedProps), data, 'PUT')
         })
       })
     },
