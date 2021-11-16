@@ -132,7 +132,9 @@ export default defineComponent({
     artist: function () {
       let ret = ''
       this.people.forEach(el => {
-        if (el.known_for.toLowerCase() === 'writing' && (parseInt(this.mediaType) === 1 || parseInt(this.mediaType) === 2)) {
+        if (el.known_for === null) {
+          ret = 'Unknown'
+        } else if (el.known_for.toLowerCase() === 'writing' && (parseInt(this.mediaType) === 1 || parseInt(this.mediaType) === 2)) {
           ret = el.name
         } else if (el.known_for.toLowerCase() === 'production' && parseInt(this.mediaType) === 3) {
           ret = el.name

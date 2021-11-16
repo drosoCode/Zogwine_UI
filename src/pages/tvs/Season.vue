@@ -7,12 +7,12 @@
         <q-card class="q-ma-sm-lg tvsCard row">
             <q-img :src="image" @error="image = '/images/undefined_v.png'" class="col-3 tvsIcon rounded-borders q-pa-sm"></q-img>
             <div class="col-xs-5 col-sm-8 col-md-4 q-pt-md q-pl-md">
-                <div class="text-h6">{{ tvs.title }} - {{ season.title }}</div>
-                Season: {{ season.season }} <br>
-                Episodes: {{ season.episodes }} <br>
-                Premiered: {{ season.premiered }} <br>
+                <div class="text-h6">{{ tvs.title }} - {{ seasonData.title }}</div>
+                Season: {{ seasonData.season }} <br>
+                Episodes: {{ seasonData.episodes }} <br>
+                Premiered: {{ seasonData.premiered }} <br>
                 <br>
-                <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ season.watchedEpisodes }} / {{ season.episodes }}</q-chip>
+                <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ seasonData.watchedEpisodes }} / {{ seasonData.episodes }}</q-chip>
                 <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />
             </div>
             <div class="col-12 col-md-6 q-pt-md">
@@ -48,7 +48,7 @@ export default Vue.extend({
   components: { backgroundImage, episodeCard },
   data () {
     return {
-      season: [],
+      seasonData: [],
       episodes: [],
       tvs: [],
       image: '/images/undefined_v.png'
@@ -56,36 +56,36 @@ export default Vue.extend({
   },
   computed: {
     chipColor: function () {
-      if (this.season.watchedEpisodes === 0) {
+      if (this.seasonData.watchedEpisodes === 0) {
         return 'red'
-      } else if (this.season.watchedEpisodes === this.season.episodes) {
+      } else if (this.seasonData.watchedEpisodes === this.seasonData.episodes) {
         return 'teal'
       } else {
         return 'orange'
       }
     },
     watchIcon: function () {
-      if (this.season.watchedEpisodes === 0) {
+      if (this.seasonData.watchedEpisodes === 0) {
         return 'clear'
-      } else if (this.season.watchedEpisodes === this.season.episodes) {
+      } else if (this.seasonData.watchedEpisodes === this.seasonData.episodes) {
         return 'done'
       } else {
         return 'schedule'
       }
     },
     overview: function () {
-      if (this.season.overview === '') {
+      if (this.seasonData.overview === '') {
         return 'No data available'
       } else {
-        return this.season.overview
+        return this.seasonData.overview
       }
     }
   },
   mounted () {
     this.$apiCall('/tvs/' + this.$route.params.id + '/season/' + this.$route.params.season)
       .then((response) => {
-        this.season = response[0]
-        this.image = this.$store.getters.imageEndpoint + this.season.icon
+        this.seasonData = response
+        this.image = this.$store.getters.imageEndpoint + this.seasonData.icon
       })
     this.$apiCall('/tvs/' + this.$route.params.id + '/season/' + this.$route.params.season + '/episode')
       .then((response) => {

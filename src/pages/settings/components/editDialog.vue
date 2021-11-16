@@ -51,7 +51,7 @@ export default {
       advanced: ['idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size']
     }
   },
-  mounted () {
+  beforeMount () {
     if (this.type !== 5 && this.type !== 1) {
       this.advanced = this.advanced.concat(['scraperName', 'scraperData', 'scraperID'])
     }
