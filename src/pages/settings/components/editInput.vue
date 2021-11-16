@@ -32,7 +32,7 @@ export default defineComponent({
   },
   data () {
     return {
-      numbers: ['rating', 'idLib', 'duration', 'size']
+      numbers: ['rating', 'idLib', 'duration', 'size', 'idCollection']
     }
   },
   methods: {

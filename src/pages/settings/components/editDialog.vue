@@ -48,7 +48,7 @@ export default {
     return {
       filteredFields: {},
       values: {},
-      advanced: ['idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size']
+      advanced: ['idLib', 'path', 'format', 'duration', 'stereo3d', 'ratio', 'dimension', 'pix_fmt', 'video_codec', 'size', 'idCollection']
     }
   },
   beforeMount () {
