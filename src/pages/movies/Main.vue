@@ -1,6 +1,6 @@
 <template>
   <q-page class="row wrap justify-around q-mb-lg" v-focus-section>
-      <div v-for="item in display" :key="item.id" class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+      <div v-for="item in display" :key="item.id.toString() + item.addDate.toString()" class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
         <movCard v-focus v-if="'idCollection' in item" :title="item.title" :link="{name: 'movie', params: {id: item.id}}" :img="item.icon" :watchCount="item.watchCount" :premiered="item.premiered"></movCard>
         <collectionCard v-focus v-else :title="item.title" :link="{name: 'movie_collection', params: {id: item.id}}" :img="item.icon" :movieCount="item.movieCount" :watchedMovies="item.watchedMovies"></collectionCard>
       </div>
