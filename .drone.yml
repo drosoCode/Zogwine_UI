@@ -4,17 +4,26 @@ type: docker
 name: test
 
 steps:
-  - name: code_analysis
-    image: aosapps/drone-sonar-plugin
+  - name: analysis
+    image: registry.droso.io/ci/sonar:latest
     settings:
       sonar_host:
         from_secret: sonar_host
       sonar_token:
         from_secret: sonar_token
+      sources: "src/"
+      sonar_name: Zogwine_UI
+      sonar_key: Zogwine_UI
+      sonar_quality_enabled: true
+      showProfiling: true
 
 trigger:
   event: 
     - push
+    - pull_request
+
+image_pull_secrets:
+  - dockerconfigjson
 
 ---
 kind: pipeline
@@ -64,7 +73,8 @@ steps:
 
 trigger:
   event:
-  - push
+    - push
+    - pull_request
 
 volumes:
   - name: release
@@ -72,7 +82,10 @@ volumes:
       path: /cache/drone
 
 image_pull_secrets:
-- dockerconfigjson
+  - dockerconfigjson
+
+depends_on:
+  - test
 
 ---
 kind: pipeline
@@ -112,12 +125,16 @@ steps:
 
 trigger:
   event:
-  - push
+    - push
+    - pull_request
 
 volumes:
   - name: release
     host:
       path: /cache/drone
+
+depends_on:
+  - test
 
 ---
 kind: secret
