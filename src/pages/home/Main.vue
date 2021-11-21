@@ -1,8 +1,7 @@
 <template>
     <div class="q-ma-md">
       <div class="row wrap">
-        <h4 class="q-ma-xs">Statistics</h4>
-        <br>
+        <h4 class="q-ma-xs" style="width: 100%;">Statistics</h4>
         <q-separator/>
           <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="tv" title="TV Shows" :value="stats.tvsCount" color="secondary"/>
           <statCard class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-2 q-my-md q-mx-sm-md" icon="receipt" title="Episodes" :value="stats.watchedEpisodeCount + '/' + stats.episodeCount" color="secondary"/>
@@ -35,10 +34,10 @@ export default Vue.extend({
       .then((response) => {
         this.stats = response
       })
-    this.$apiCall('tvs/episode/upcoming')
+    /* this.$apiCall('tvs/episode/upcoming')
       .then((response) => {
         this.ep = response
-      })
+      }) */
   }
 })
 </script>
