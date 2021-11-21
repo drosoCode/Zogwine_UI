@@ -57,9 +57,9 @@ export default defineComponent({
     },
     setNewSearch: function () {
       if (this.mediaType === 2) {
-        this.$apiCall('/tvs/' + this.mediaData, { title: this.newTitle }, 'PUT')
+        this.$apiCall('/tvs/' + this.mediaData, { title: this.newTitle, forceUpdate: 1 }, 'PUT')
       } else if (this.mediaType === 3) {
-        this.$apiCall('/movie/' + this.mediaData, { title: this.newTitle }, 'PUT')
+        this.$apiCall('/movie/' + this.mediaData, { title: this.newTitle, forceUpdate: 1 }, 'PUT')
       }
       this.$q.notify({
         message: 'Title Updated',
