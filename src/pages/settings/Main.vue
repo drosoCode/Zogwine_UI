@@ -202,7 +202,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('core/scan/person')
+      this.$apiCall('scraper/scan/7', null, 'POST')
     },
     // --------  sync methods ---------------
     trackerScan: function () {
