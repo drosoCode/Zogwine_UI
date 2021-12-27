@@ -116,7 +116,7 @@ export default new Vuex.Store({
           method: 'POST'
         })
           .then((response) => {
-            state.token = response.data.data
+            state.token = response.data.data.token
             if (auth[2]) {
               localStorage.setItem('zogwine-token', state.token)
             }
