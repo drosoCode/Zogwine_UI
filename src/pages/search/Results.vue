@@ -46,7 +46,7 @@ export default Vue.extend({
     if (Object.keys(data).length <= 1) {
       this.$router.push({ name: 'search' })
     } else {
-      this.$apiCall('/search', data, 'POST')
+      this.$apiCall('search', data, 'POST')
         .then((response) => { this.results = response })
     }
   },

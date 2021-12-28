@@ -184,7 +184,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('/tvs/scan/upcoming')
+      this.$apiCall('tvs/scan/upcoming')
     },
     refreshCache: function () {
       this.$q.notify({

@@ -184,7 +184,7 @@ export default Vue.extend({
     },
     searchPerson: function () {
       if (this.personSearch !== '') {
-        this.$apiCall('/person/name/' + this.personSearch)
+        this.$apiCall('person/name/' + this.personSearch)
           .then((response) => {
             this.availablePeopleList = response
             this.showPeopleSelect = true
