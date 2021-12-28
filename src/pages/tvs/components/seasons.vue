@@ -5,7 +5,7 @@
       class="q-mx-xl"
     >
     <div v-focus-section class="row no-wrap">
-        <tvsCard v-focus class="seasonCard" v-for="item in seasons" :key="item.id" :title="item.title" :link="{name: 'season', params: {id: idShow, season: item.season}}" :img="item.icon" :nbEp="item.episodes" :watchedEp="item.watchedEpisodes"></tvsCard>
+        <tvsCard v-focus class="seasonCard" v-for="item in seasons" :key="item.id" :title="item.title" :link="{name: 'season', params: {id: idShow, season: item.season}}" :img="item.icon" :nbEp="item.episode" :watchedEp="item.watchedEpisode"></tvsCard>
     </div>
     </q-scroll-area>
 </template>

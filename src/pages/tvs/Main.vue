@@ -1,6 +1,6 @@
 <template>
   <q-page v-focus-section class="row wrap justify-around q-mb-lg">
-    <tvsCard v-focus v-for="item in tvs" :key="item.id" :title="item.title" :link="{name: 'tvshow', params: {id: item.id}}" :img="item.icon" :nbEp="item.episodes" :watchedEp="item.watchedEpisodes"></tvsCard>
+    <tvsCard v-focus v-for="item in tvs" :key="item.id" :title="item.title" :link="{name: 'tvshow', params: {id: item.id}}" :img="item.icon" :nbEp="item.episode" :watchedEp="item.watchedEpisode"></tvsCard>
   </q-page>
 </template>
 

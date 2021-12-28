@@ -12,7 +12,7 @@
                 Episodes: {{ seasonData.episodes }} <br>
                 Premiered: {{ new Date(seasonData.premiered).toISOString().split('T')[0] }} <br>
                 <br>
-                <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ seasonData.watchedEpisodes }} / {{ seasonData.episodes }}</q-chip>
+                <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ seasonData.watchedEpisode }} / {{ seasonData.episode }}</q-chip>
                 <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />
             </div>
             <div class="col-12 col-md-6 q-pt-md">

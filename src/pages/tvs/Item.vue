@@ -6,12 +6,12 @@
       <q-img :src="image" @error="image = '/images/undefined_v.png'" class="col-3 q-mt-lg tvsIcon rounded-borders order-1"></q-img>
 
       <tags class="col-12 col-sm-4 col-md-3 q-mt-lg q-mt-lg tvsCard" :idMedia="$route.params.id" :mediaType="2" v-if="!$q.screen.lt.sm"/>
-      <tvsDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg tvsCard" :title="tvs.title" :premiered="tvs.premiered" :overview="tvs.overview" :rating="tvs.rating" :scraperLink="tvs.scraperLink" :scraperName="tvs.scraperName" :seasons="tvs.season" :episodes="tvs.episode" :watchedEpisodes="tvs.watchedEpisodes"/>
+      <tvsDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg tvsCard" :title="tvs.title" :premiered="tvs.premiered" :overview="tvs.overview" :rating="tvs.rating" :scraperLink="tvs.scraperLink" :scraperName="tvs.scraperName" :seasons="tvs.season" :episodes="tvs.episode" :watchedEpisodes="tvs.watchedEpisode"/>
     </div>
     <br>
     <seasons :idShow="$route.params.id" />
 
-    <tvsDesc v-if="$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg tvsCard" :title="tvs.title" :premiered="tvs.premiered" :overview="tvs.overview" :rating="tvs.rating" :scraperLink="tvs.scraperLink" :scraperName="tvs.scraperName" :seasons="tvs.season" :episodes="tvs.episode" :watchedEpisodes="tvs.watchedEpisodes"/>
+    <tvsDesc v-if="$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg tvsCard" :title="tvs.title" :premiered="tvs.premiered" :overview="tvs.overview" :rating="tvs.rating" :scraperLink="tvs.scraperLink" :scraperName="tvs.scraperName" :seasons="tvs.season" :episodes="tvs.episode" :watchedEpisodes="tvs.watchedEpisode"/>
     <tags class="col-12 col-sm-4 col-md-3 q-mt-lg q-mt-lg tvsCard" :idMedia="$route.params.id" :mediaType="2" v-if="$q.screen.lt.sm"/>
 
   </q-page>
