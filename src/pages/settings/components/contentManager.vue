@@ -20,7 +20,7 @@
           </q-td>
           <q-td key="seasons" :props="props">
             <q-btn color="green" size="sm" @click="type = 5; id = props.row.id">
-              {{ props.row.seasons }}
+              {{ props.row.season }}
             </q-btn>
           </q-td>
           <q-td key="episodes" :props="props">

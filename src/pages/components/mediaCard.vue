@@ -32,9 +32,9 @@
                     <br>
                     Rating: {{ data.rating }}
                     <br>
-                    Seasons: {{ data.seasons }}
+                    Seasons: {{ data.season }}
                     <br>
-                    Episodes: {{ data.episodes }}
+                    Episodes: {{ data.episode }}
                     <br>
                     Infos: <a :href="data.scraperLink" target="_blank">{{ data.scraperName }}</a>
                 </q-card-section>
