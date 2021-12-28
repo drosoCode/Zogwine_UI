@@ -37,7 +37,13 @@ export default defineComponent({
   },
   methods: {
     updateValue: function (value) {
-      if (this.numbers.includes(this.name)) { this.$emit('input', parseInt(value)) } else { this.$emit('input', value) }
+      if (this.numbers.includes(this.name)) {
+        this.$emit('input', parseInt(value))
+      } else if (this.name === 'premiered') {
+        // convert to timestamp
+        const ts = new Date(value).getTime() / 1000
+        this.$emit('input', ts)
+      } else { this.$emit('input', value) }
     }
   }
 })
