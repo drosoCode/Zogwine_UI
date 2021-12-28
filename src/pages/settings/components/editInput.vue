@@ -11,7 +11,7 @@
         <q-radio :value="value" @input="updateValue" :val="2" label="3D TAB" />
     </div>
     <q-input :value="value" @input="updateValue" :label="name" type="number" v-else-if="numbers.includes(name)"/>
-    <q-input :value="value" @input="updateValue" :label="name" type="date" v-else-if="name === 'premiered'"/>
+    <q-input :value="new Date(value).toISOString().split('T')[0]" @input="updateValue" :label="name" type="date" v-else-if="name === 'premiered'"/>
     <q-input :value="value" @input="updateValue" :label="name" autogrow v-else-if="name === 'overview'"/>
     <q-input :value="value" @input="updateValue" :label="name" v-else/>
   </div>
