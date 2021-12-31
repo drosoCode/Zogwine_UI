@@ -10,7 +10,7 @@
                 <div class="text-h6">{{ tvs.title }} - {{ seasonData.title }}</div>
                 Season: {{ seasonData.season }} <br>
                 Episodes: {{ seasonData.episodes }} <br>
-                Premiered: {{ new Date(seasonData.premiered).toISOString().split('T')[0] }} <br>
+                Premiered: {{ $formatDate(seasonData.premiered) }} <br>
                 <br>
                 <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ seasonData.watchedEpisode }} / {{ seasonData.episode }}</q-chip>
                 <q-btn color="secondary" label="Toggle" @click="toggleSeason" size="sm" />

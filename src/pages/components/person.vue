@@ -21,8 +21,8 @@
         <q-separator inset />
         <q-card-section>
           gender: {{ genderTxt }} <br>
-          Birthdate: {{ birthdate }} <br>
-          Deathdate: {{ deathdate }} <br>
+          Birthdate: {{ $formatDate(birthdate) }} <br>
+          Deathdate: {{ $formatDate(deathdate) }} <br>
           Known For: {{ known_for }} <br>
           Role: {{ role }}
           <br>

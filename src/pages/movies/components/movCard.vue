@@ -5,7 +5,7 @@
             <q-img class="mov_img" :src="image" @error="image = '/images/undefined_v.png'">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ title }}</div>
-                    <div class="text-subtitle2">{{ premiered }}</div>
+                    <div class="text-subtitle2">{{ $formatDate(premiered) }}</div>
                 </div>
             </q-img>
             <q-linear-progress :value="100" :color="barColor"/>

@@ -28,7 +28,7 @@
                     <br>
                     Type: TV Show
                     <br>
-                    Premiered: {{ new Date(data.premiered).toISOString().split('T')[0] }}
+                    Premiered: {{ $formatDate(date.premiered) }}
                     <br>
                     Rating: {{ data.rating }}
                     <br>
@@ -44,7 +44,7 @@
                     <br>
                     Type: Movie
                     <br>
-                    Premiered: {{ new Date(data.premiered).toISOString().split('T')[0] }}
+                    Premiered: {{ $formatDate(date.premiered) }}
                     <br>
                     Rating: {{ data.rating }}
                     <br>

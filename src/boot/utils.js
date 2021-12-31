@@ -22,4 +22,8 @@ export default ({ Vue, store, router }) => {
       return this.$store.getters.imageEndpoint + img
     }
   }
+
+  Vue.prototype.$formatDate = function (date) {
+    return new Date(date).toISOString().split('T')[0]
+  }
 }

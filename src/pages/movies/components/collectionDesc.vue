@@ -5,7 +5,7 @@
         </q-card-section>
         <q-separator inset />
         <q-card-section>
-          Premiered: {{ new Date(premiered).toISOString().split('T')[0] }} <br>
+          Premiered: {{ $formatDate(premiered) }} <br>
           Movies: {{ movieCount }} <br>
           Scraper: <a :href="scraperLink" target="_blank">{{ scraperName }}</a> <br>
           <br>

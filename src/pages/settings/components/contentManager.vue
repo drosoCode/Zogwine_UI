@@ -30,7 +30,7 @@
           </q-td>
           <q-td key="premiered" :props="props">
             <q-badge color="purple">
-              {{ new Date(props.row.premiered).toISOString().split('T')[0] }}
+              {{ $formatDate(props.row.premiered) }}
             </q-badge>
           </q-td>
           <q-td key="actions" :props="props">
