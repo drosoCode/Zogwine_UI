@@ -33,7 +33,7 @@ export default defineComponent({
   name: 'movCard',
   data () {
     return {
-      image: this.$store.getters.imageEndpoint + this.img
+      image: this.$getImageLink(this.img)
     }
   },
   computed: {

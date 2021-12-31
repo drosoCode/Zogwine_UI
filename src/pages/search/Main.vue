@@ -33,7 +33,7 @@
             <div class="row wrap">
               <div v-for="p in peopleList" :key="p.id" class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
                 <q-card @click="removePerson(p.id)">
-                  <q-img class="img" :src="(p.icon === null ?  '/images/undefined_v.png' : $store.getters.imageEndpoint + p.icon)" @error="p.icon = null">
+                  <q-img class="img" :src="(p.icon === null ?  '/images/undefined_v.png' : $getImageLink(p.icon))" @error="p.icon = null">
                     <div class="absolute-bottom">
                       <div class="text-h6">{{ p.name }}</div>
                     </div>
@@ -53,7 +53,7 @@
           <q-card-section>
             <q-chip v-for="t in tags" square removable @remove="removeTag(t.id)" color="primary" text-color="white" :key="t.id">
               <q-avatar>
-                <img :src="$store.getters.imageEndpoint + t.icon" v-if="t.icon !== null">
+                <img :src="$getImageLink(t.icon)" v-if="t.icon !== null">
                 <q-icon color="white" size="sm" :name="$getTagIcon(t.name)" v-if="t.icon === null" />
               </q-avatar>
               {{ t.name }} : {{ t.value }}
@@ -72,7 +72,7 @@
             <div class="row wrap">
               <div v-for="p in availablePeopleList" :key="p.id" class="q-px-md q-pt-md col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
                 <q-card @click="addPerson(p)">
-                  <q-img class="img" :src="(p.icon === null ?  '/images/undefined_v.png' : $store.getters.imageEndpoint + p.icon)" @error="p.icon = null">
+                  <q-img class="img" :src="(p.icon === null ?  '/images/undefined_v.png' : $getImageLink(p.icon))" @error="p.icon = null">
                     <div class="absolute-bottom">
                       <div class="text-h6">{{ p.name }}</div>
                     </div>

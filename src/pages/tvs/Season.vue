@@ -85,7 +85,7 @@ export default Vue.extend({
     this.$apiCall('tvs/' + this.$route.params.id + '/season/' + this.$route.params.season)
       .then((response) => {
         this.seasonData = response
-        this.image = this.$store.getters.imageEndpoint + this.seasonData.icon
+        this.image = this.$getImageLink(this.seasonData.icon)
       })
     this.$apiCall('tvs/' + this.$route.params.id + '/season/' + this.$route.params.season + '/episode')
       .then((response) => {

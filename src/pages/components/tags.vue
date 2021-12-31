@@ -21,7 +21,7 @@
                         <q-item clickable v-ripple :to="{ name: 'search', params: { tag: [item.id] } }">
                             <q-item-section avatar>
                             <q-avatar rounded>
-                                <img :src="$store.getters.imageEndpoint + item.icon" v-if="item.icon !== null">
+                                <img :src="$getImageLink(item.icon)" v-if="item.icon !== null">
                                 <q-icon color="primary" :name="$getTagIcon(item.name)" v-if="item.icon === null" />
                             </q-avatar>
                             </q-item-section>

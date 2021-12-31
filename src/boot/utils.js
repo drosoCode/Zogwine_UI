@@ -13,4 +13,13 @@ export default ({ Vue, store, router }) => {
       return 'close'
     }
   }
+
+  Vue.prototype.$getImageLink = function (img) {
+    if (img.substring(0, 4) === 'http') {
+      return img
+    } else {
+      console.log(img)
+      return this.$store.getters.imageEndpoint + img
+    }
+  }
 }

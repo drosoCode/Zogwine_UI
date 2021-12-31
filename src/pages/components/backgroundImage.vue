@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-image" :style="{backgroundImage: 'url(\''+ $store.getters.imageEndpoint + this.image + '\')'}"></div>
+    <div class="bg-image" :style="{backgroundImage: 'url(\''+ $getImageLink(this.image) + '\')'}"></div>
 </template>
 
 <style scoped>

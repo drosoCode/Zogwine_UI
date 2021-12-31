@@ -52,7 +52,7 @@ export default defineComponent({
   data () {
     return {
       show: false,
-      image: this.$store.getters.imageEndpoint + this.img
+      image: this.$getImageLink(this.img)
     }
   },
   computed: {

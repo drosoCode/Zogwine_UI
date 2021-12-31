@@ -51,7 +51,7 @@ export default Vue.extend({
     this.$apiCall('movie/' + this.$route.params.id)
       .then((response) => {
         this.mov = response
-        this.itemImg = this.$store.getters.imageEndpoint + response.icon
+        this.itemImg = this.$getImageLink(response.icon)
       })
   },
   methods: {

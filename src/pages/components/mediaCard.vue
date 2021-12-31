@@ -4,7 +4,7 @@
             <q-card-section horizontal class="section">
                 <q-card-section :class="{'flex': true, 'flex-center': true, 'section': true, 'col-6 q-ml-md q-mr-lg': !vertical, 'col-5': vertical}">
                     <q-img
-                        :src="(data.icon === null ?  '/images/undefined_v.png' : $store.getters.imageEndpoint + data.icon)" @error="data.icon = null"
+                        :src="(data.icon === null ?  '/images/undefined_v.png' : $getImageLink(data.icon))" @error="data.icon = null"
                         :class="{'rounded-borders': true, 'hImg': !vertical,  'vImg': vertical}"
                     />
                 </q-card-section>

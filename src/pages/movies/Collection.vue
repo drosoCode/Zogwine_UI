@@ -3,7 +3,7 @@
     <backgroundImage :image="collection.fanart"/>
 
     <div class="row wrap justify-around">
-      <q-img :src="$store.getters.imageEndpoint+collection.icon" class="col-3 q-mt-lg movIcon rounded-borders order-1"></q-img>
+      <q-img :src="$getImageLink(collection.icon)" class="col-3 q-mt-lg movIcon rounded-borders order-1"></q-img>
       <collectionDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-9 q-mt-lg movCard" :title="collection.title" :premiered="collection.premiered" :overview="collection.overview" :watchedMovies="collection.watchedMovies" :movieCount="collection.movieCount" :scraperLink="collection.scraperLink" :scraperName="collection.scraperName" />
     </div>
     <br>

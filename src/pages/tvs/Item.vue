@@ -48,7 +48,7 @@ export default Vue.extend({
     this.$apiCall('tvs/' + this.$route.params.id)
       .then((response) => {
         this.tvs = response
-        this.image = this.$store.getters.imageEndpoint + this.tvs.icon
+        this.image = this.$getImageLink(this.tvs.icon)
       })
   }
 })

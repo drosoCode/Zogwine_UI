@@ -23,7 +23,7 @@ export default defineComponent({
   computed: {
     image: function () {
       if (this.img !== null) {
-        return this.$store.getters.imageEndpoint + this.img
+        return this.$getImageLink(this.img)
       } else {
         return '/images/undefined_h.png'
       }
