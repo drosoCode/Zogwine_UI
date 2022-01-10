@@ -56,18 +56,18 @@ export default Vue.extend({
   },
   computed: {
     chipColor: function () {
-      if (this.seasonData.watchedEpisodes === 0) {
+      if (this.seasonData.watchedEpisode === 0) {
         return 'red'
-      } else if (this.seasonData.watchedEpisodes === this.seasonData.episodes) {
+      } else if (this.seasonData.watchedEpisode === this.seasonData.episode) {
         return 'teal'
       } else {
         return 'orange'
       }
     },
     watchIcon: function () {
-      if (this.seasonData.watchedEpisodes === 0) {
+      if (this.seasonData.watchedEpisode === 0) {
         return 'clear'
-      } else if (this.seasonData.watchedEpisodes === this.seasonData.episodes) {
+      } else if (this.seasonData.watchedEpisode === this.seasonData.episode) {
         return 'done'
       } else {
         return 'schedule'
