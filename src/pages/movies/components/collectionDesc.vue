@@ -9,7 +9,7 @@
           Movies: {{ movieCount }} <br>
           Scraper: <a :href="scraperLink" target="_blank">{{ scraperName }}</a> <br>
           <br>
-          <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ watchedMovies }} / {{ movieCount }}</q-chip>
+          <q-chip square :color="chipColor" text-color="white" :icon="watchIcon">Watched {{ watchCount }} / {{ movieCount }}</q-chip>
           <br>
           <br>
           {{ overview }}
@@ -24,18 +24,18 @@ export default defineComponent({
   name: 'collectionDesc',
   computed: {
     chipColor: function () {
-      if (this.watchedMovies === 0) {
+      if (this.watchCount === 0) {
         return 'red'
-      } else if (this.watchedMovies === this.movieCount) {
+      } else if (this.watchCount === this.movieCount) {
         return 'teal'
       } else {
         return 'orange'
       }
     },
     watchIcon: function () {
-      if (this.watchedMovies === 0) {
+      if (this.watchCount === 0) {
         return 'clear'
-      } else if (this.watchedMovies === this.movieCount) {
+      } else if (this.watchCount === this.movieCount) {
         return 'done'
       } else {
         return 'schedule'
@@ -58,7 +58,7 @@ export default defineComponent({
     scraperName: {
       required: true
     },
-    watchedMovies: {
+    watchCount: {
       required: true
     },
     movieCount: {

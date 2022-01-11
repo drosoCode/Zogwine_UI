@@ -1,10 +1,10 @@
 <template>
   <q-page>
-    <backgroundImage :image="collection.fanart"/>
+    <backgroundImage :image="$getImageLink(collection.fanart)"/>
 
     <div class="row wrap justify-around">
       <q-img :src="$getImageLink(collection.icon)" class="col-3 q-mt-lg movIcon rounded-borders order-1"></q-img>
-      <collectionDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-9 q-mt-lg movCard" :title="collection.title" :premiered="collection.premiered" :overview="collection.overview" :watchedMovies="collection.watchedMovies" :movieCount="collection.movieCount" :scraperLink="collection.scraperLink" :scraperName="collection.scraperName" />
+      <collectionDesc v-if="!$q.screen.lt.sm" class="col-12 col-md-9 q-mt-lg movCard" :title="collection.title" :premiered="collection.premiered" :overview="collection.overview" :watchCount="collection.watchCount" :movieCount="collection.movieCount" :scraperLink="collection.scraperLink" :scraperName="collection.scraperName" />
     </div>
     <br>
 
@@ -18,7 +18,7 @@
     </div>
     </q-scroll-area>
 
-    <collectionDesc v-if="$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg movCard" :title="collection.title" :premiered="collection.premiered" :overview="collection.overview" :watchedMovies="collection.watchedMovies" :movieCount="collection.movieCount" :scraperLink="collection.scraperLink" :scraperName="collection.scraperName" />
+    <collectionDesc v-if="$q.screen.lt.sm" class="col-12 col-md-5 q-mt-lg movCard" :title="collection.title" :premiered="collection.premiered" :overview="collection.overview" :watchCount="collection.watchCount" :movieCount="collection.movieCount" :scraperLink="collection.scraperLink" :scraperName="collection.scraperName" />
   </q-page>
 </template>
 
@@ -49,7 +49,7 @@ export default Vue.extend({
   data () {
     return {
       movs: [],
-      collection: []
+      collection: {}
     }
   },
   mounted () {

@@ -15,6 +15,9 @@ export default ({ Vue, store, router }) => {
   }
 
   Vue.prototype.$getImageLink = function (img) {
+    if (img === undefined || img === null) {
+      return img
+    }
     if (img.substring(0, 4) === 'http') {
       return img
     } else {

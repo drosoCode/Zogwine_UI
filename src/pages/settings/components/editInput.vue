@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-gutter-sm" v-if="name === 'forceUpdate'">
+    <div class="q-gutter-sm" v-if="name === 'updateMode'">
         <q-radio :value="value" @input="updateValue" :val="1" label="Update" />
         <q-radio :value="value" @input="updateValue" :val="0" label="No Update" />
         <q-radio :value="value" @input="updateValue" :val="-1" label="Freeze" />

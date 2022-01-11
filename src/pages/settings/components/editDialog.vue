@@ -55,7 +55,7 @@ export default {
     if (this.type !== 5 && this.type !== 1) {
       this.advanced = this.advanced.concat(['scraperName', 'scraperData', 'scraperID'])
     }
-    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperLink', 'forceUpdate'].concat(this.advanced)
+    const allowedFields = ['title', 'overview', 'icon', 'fanart', 'rating', 'premiered', 'scraperLink', 'updateMode', 'website', 'trailer'].concat(this.advanced)
 
     Object.keys(this.fields).forEach(i => {
       if (allowedFields.includes(i)) {

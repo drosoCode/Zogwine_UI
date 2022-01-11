@@ -5,7 +5,7 @@
             <q-img class="c_img" :src="image" @error="image = '/images/undefined_v.png'">
                 <div class="absolute-bottom">
                     <div class="text-h6">{{ title }}</div>
-                    <div class="text-subtitle2">{{ watchedMovies }} / {{ movieCount }}</div>
+                    <div class="text-subtitle2">{{ watchCount }} / {{ movieCount }}</div>
                 </div>
             </q-img>
             <q-linear-progress :value="watchedPercent" :color="barColor"/>
@@ -38,7 +38,7 @@ export default defineComponent({
   },
   computed: {
     watchedPercent: function () {
-      const dat = this.watchedMovies / this.movieCount
+      const dat = this.watchCount / this.movieCount
       if (dat === 0) {
         return 100
       } else {
@@ -46,7 +46,7 @@ export default defineComponent({
       }
     },
     barColor: function () {
-      const dat = this.watchedMovies / this.movieCount
+      const dat = this.watchCount / this.movieCount
       if (dat === 1) {
         return 'teal'
       } else if (dat === 0) {
@@ -69,7 +69,7 @@ export default defineComponent({
     movieCount: {
       required: true
     },
-    watchedMovies: {
+    watchCount: {
       required: true
     }
   }

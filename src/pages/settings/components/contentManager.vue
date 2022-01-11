@@ -193,7 +193,7 @@ export default defineComponent({
         if (this.type === 2) {
           const req = {
             fanart: null,
-            forceUpdate: 1,
+            updateMode: 1,
             icon: null,
             overview: null,
             premiered: null,
