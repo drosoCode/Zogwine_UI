@@ -37,26 +37,32 @@ export default new Vuex.Store({
         return false
       }
     },
-    isAdmin: (getters) => {
-      if (getters.userData.admin === 1) {
+    isAdmin: (state, getters) => {
+      if (getters.systemGroup.includes('admin')) {
         return true
       } else {
         return false
       }
     },
-    cast: (getters) => {
-      if (getters.userData.cast === 1) {
+    cast: (state, getters) => {
+      if (getters.systemGroup.includes('cast')) {
         return true
       } else {
         return false
       }
     },
-    receive: (getters) => {
-      if (getters.userData.receive === 1) {
+    receive: (state, getters) => {
+      if (getters.systemGroup.includes('receive')) {
         return true
       } else {
         return false
       }
+    },
+    systemGroup: (state, getters) => {
+      if (getters.userData.systemGroup !== null) { return getters.userData.systemGroup } else { return [] }
+    },
+    userGroup: (state, getters) => {
+      if (getters.userData.userGroup !== null) { return getters.userData.userGroup } else { return [] }
     },
     userData: (state, getters) => {
       if (getters.isAuthenticated) {
