@@ -32,6 +32,7 @@
                           <q-select v-model="refreshMediaType" :options="mediaTypeOptions" class="col-3" label="Media Type" @input="loadLibraries"/>
                           <q-select v-model="refreshLibraryID" :options="refreshLibraryIDOptions" class="col-3" label="Library ID" />
                           <q-checkbox v-model="refreshAutoAdd" label="Auto Add" />
+                          <q-checkbox v-model="refreshAddUnknown" label="Add Unknown" />
                         </div>
                     </q-card-section>
                 </q-card>
@@ -120,8 +121,6 @@ export default Vue.extend({
     return {
       logs: '',
       tab: 'config',
-      scraper_tvs: [],
-      scraper_movies: [],
       refreshMediaType: null,
       mediaTypeOptions: [
         {
@@ -136,6 +135,7 @@ export default Vue.extend({
       refreshLibraryID: null,
       refreshLibraryIDOptions: [],
       refreshAutoAdd: false,
+      refreshAddUnknown: false,
       scraperMediaType: null,
       scraperItems: [],
       contentType: 2
@@ -145,14 +145,6 @@ export default Vue.extend({
     this.$apiCall('core/log/50')
       .then((response) => {
         this.logs = response
-      })
-    this.$apiCall('tvs/scan/result')
-      .then((response) => {
-        this.scraper_tvs = response
-      })
-    this.$apiCall('movie/scan/result')
-      .then((response) => {
-        this.scraper_movies = response
       })
   },
   methods: {
@@ -164,7 +156,7 @@ export default Vue.extend({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('scraper/scan/' + this.refreshMediaType.value + '/' + this.refreshLibraryID.value + '?autoadd=' + this.refreshAutoAdd, null, 'POST')
+      this.$apiCall('scraper/scan/' + this.refreshMediaType.value + '/' + this.refreshLibraryID.value + '?autoadd=' + this.refreshAutoAdd + '&addunknown=' + this.refreshAddUnknown, null, 'POST')
     },
     loadLibraries: function () {
       this.$apiCall('library?mediatype=' + this.refreshMediaType.value)
