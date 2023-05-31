@@ -192,16 +192,16 @@ export default defineComponent({
       }).onOk((title) => {
         if (this.type === 2) {
           const req = {
-            fanart: null,
+            fanart: '',
             updateMode: 1,
-            icon: null,
-            overview: null,
-            premiered: null,
+            icon: '',
+            overview: '',
+            premiered: 0,
             rating: -1,
-            scraperData: null,
-            scraperID: null,
-            scraperLink: null,
-            scraperName: null,
+            scraperData: '',
+            scraperID: ' ',
+            scraperLink: '',
+            scraperName: ' ',
             title: title
           }
           this.$apiCall('tvs/' + this.selectedProps.id, req, 'PUT')

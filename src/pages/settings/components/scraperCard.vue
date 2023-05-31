@@ -29,9 +29,7 @@ export default defineComponent({
   data () {
     return {
       show: true,
-      title: '',
-      newTitle: null,
-      items: []
+      newTitle: null
     }
   },
   props: {
@@ -40,14 +38,13 @@ export default defineComponent({
     },
     mediaType: {
       required: true
+    },
+    title: {
+      required: true
+    },
+    items: {
+      required: true
     }
-  },
-  mounted () {
-    this.$apiCall('scraper/result/' + this.mediaType + '/' + this.mediaData)
-      .then((response) => {
-        this.items = response.data
-        this.title = response.path
-      })
   },
   methods: {
     select: function () {

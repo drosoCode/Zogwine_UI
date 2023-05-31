@@ -64,7 +64,7 @@
             <q-tab-panel name="scrapersSelect">
                 <q-select v-model="scraperMediaType" :options="mediaTypeOptions" class="col-3" label="Media Type" @input="loadScraperItems"/>
                 <div>
-                    <scraperCard v-for="it in scraperItems" :key="it.id" :mediaType="it.mediaType" :mediaData="it.mediaData"/>
+                    <scraperCard v-for="it in scraperItems" :key="it.id" :mediaType="it.mediaType" :mediaData="it.mediaData" :items="it.data" :title="it.name"/>
                 </div>
             </q-tab-panel>
 
@@ -125,11 +125,11 @@ export default Vue.extend({
       mediaTypeOptions: [
         {
           label: 'TV Shows',
-          value: 2
+          value: 'tvs'
         },
         {
           label: 'Movies',
-          value: 3
+          value: 'movie'
         }
       ],
       refreshLibraryID: null,

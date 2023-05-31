@@ -71,7 +71,7 @@ export default defineComponent({
         position: 'bottom-left',
         color: 'teal'
       })
-      this.$apiCall('scraper/select/' + this.mediaType + '/' + this.mediaData + '/' + this.id, null, 'POST')
+      this.$apiCall('scraper/result/' + this.mediaType + '/' + this.mediaData + '/' + this.id, null, 'POST')
       this.$emit('selected')
     }
   }
