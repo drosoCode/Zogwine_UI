@@ -27,6 +27,6 @@ export default ({ Vue, store, router }) => {
   }
 
   Vue.prototype.$formatDate = function (date) {
-    return new Date(date).toISOString().split('T')[0]
+    return new Date(date * 1000).toISOString().split('T')[0]
   }
 }
