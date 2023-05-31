@@ -232,7 +232,7 @@ export default Vue.extend({
     },
     // ----------------------
     openSwagger: function () {
-      window.open(this.$store.getters.apiEndpoint + 'swagger/?token=' + this.$store.state.token, '_blank')
+      window.open(this.$store.state.baseURL + '/swagger/', '_blank')
     }
   }
 })
